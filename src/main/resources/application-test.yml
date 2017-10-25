@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    data-password: 123
+    username: root
+    url: jdbc:
+    driver-class-name:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true

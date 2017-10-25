@@ -1,0 +1,100 @@
+<head th:fragment="footer-js"
+      xmlns:th="http://www.thymeleaf.org">
+    <!-- jQuery Pjax -->
+    <script th:src="@{/dist/jquery.pjax.js}"></script>
+    <script th:src="@{/dist/jquery.form.js}"></script>
+    <script th:src="@{/dist/layer/layer.js}"></script>
+    <!-- Slimscroll -->
+    <script th:src="@{/admin-lte/bower_components/jquery-slimscroll/jquery.slimscroll.min.js}"></script>
+    <!-- FastClick -->
+    <script th:src="@{/admin-lte/bower_components/fastclick/lib/fastclick.js}"></script>
+
+
+    <!-- jQuery UI 1.11.4 -->
+    <script th:src="@{/admin-lte/bower_components/jquery-ui/jquery-ui.min.js}"></script>
+    <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+    <script>
+        $.widget.bridge('uibutton', $.ui.button);
+    </script>
+    <!-- Morris.js charts -->
+    <script th:src="@{/admin-lte/bower_components/raphael/raphael.min.js}"></script>
+    <script th:src="@{/admin-lte/bower_components/morris.js/morris.min.js}"></script>
+    <!-- Sparkline -->
+    <script th:src="@{/admin-lte/bower_components/jquery-sparkline/dist/jquery.sparkline.min.js}"></script>
+    <!-- jvectormap -->
+    <script th:src="@{/admin-lte/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js}"></script>
+    <script th:src="@{/admin-lte/plugins/jvectormap/jquery-jvectormap-world-mill-en.js}"></script>
+    <!-- jQuery Knob Chart -->
+    <script th:src="@{/admin-lte/bower_components/jquery-knob/dist/jquery.knob.min.js}"></script>
+    <!-- ChartJS -->
+    <script th:src="@{/admin-lte/bower_components/Chart.js/Chart.js}"></script>
+    <!-- daterangepicker -->
+    <script th:src="@{/admin-lte/bower_components/moment/min/moment.min.js}"></script>
+    <script th:src="@{/admin-lte/bower_components/bootstrap-daterangepicker/daterangepicker.js}"></script>
+    <!-- datepicker -->
+    <script th:src="@{/admin-lte/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js}"></script>
+    <!-- Bootstrap WYSIHTML5 -->
+    <script th:src="@{/admin-lte/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js}"></script>
+    <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
+    <!--<script th:src="@{/admin-lte/dist/js/pages/dashboard.js}"></script>-->
+    <!-- FLOT CHARTS -->
+    <script th:src="@{/admin-lte/bower_components/Flot/jquery.flot.js}"></script>
+    <!-- FLOT RESIZE PLUGIN - allows the chart to redraw when the window is resized -->
+    <script th:src="@{/admin-lte/bower_components/Flot/jquery.flot.resize.js}"></script>
+    <!-- FLOT PIE PLUGIN - also used to draw donut charts -->
+    <script th:src="@{/admin-lte/bower_components/Flot/jquery.flot.pie.js}"></script>
+    <!-- FLOT CATEGORIES PLUGIN - Used to draw bar charts -->
+    <script th:src="@{/admin-lte/bower_components/Flot/jquery.flot.categories.js}"></script>
+    <!-- PACE -->
+    <script th:src="@{/admin-lte/bower_components/PACE/pace.min.js}"></script>
+    <!-- Select2 -->
+    <script th:src="@{/admin-lte/bower_components/select2/dist/js/select2.full.min.js}"></script>
+    <!-- InputMask -->
+    <script th:src="@{/admin-lte/plugins/input-mask/jquery.inputmask.js}"></script>
+    <script th:src="@{/admin-lte/plugins/input-mask/jquery.inputmask.date.extensions.js}"></script>
+    <script th:src="@{/admin-lte/plugins/input-mask/jquery.inputmask.extensions.js}"></script>
+    <!-- bootstrap color picker -->
+    <script th:src="@{/admin-lte/bower_components/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js}"></script>
+    <!-- bootstrap time picker -->
+    <script th:src="@{/admin-lte/plugins/timepicker/bootstrap-timepicker.min.js}"></script>
+    <!-- iCheck 1.0.1 -->
+    <script th:src="@{/admin-lte/plugins/iCheck/icheck.min.js}"></script>
+    <!-- CK Editor -->
+    <script th:src="@{/admin-lte/bower_components/ckeditor/ckeditor.js}"></script>
+    <!-- DataTables -->
+    <script th:src="@{/admin-lte/bower_components/datatables.net/js/jquery.dataTables.min.js}"></script>
+    <script th:src="@{/admin-lte/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js}"></script>
+    <!-- Bootstrap slider -->
+    <script th:src="@{/admin-lte/plugins/bootstrap-slider/bootstrap-slider.js}"></script>
+    <script th:src="@{/admin-lte/bower_components/fullcalendar/dist/fullcalendar.min.js}"></script>
+    <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
+    <!--<script th:src="@{/admin-lte/dist/js/pages/dashboard2.js}"></script>-->
+    <!-- AdminLTE App -->
+    <script th:src="@{/admin-lte/dist/js/adminlte.min.js}"></script>
+    <!-- AdminLTE for demo purposes [换肤] -->
+    <script th:src="@{/admin-lte/dist/js/demo.js}"></script>
+
+    <script type="text/javascript">
+        function bindLeftMenusEvent() {
+            $('.sidebar-menu a[data-pjax]').on('click', function () {
+                $('.sidebar-menu .active').each(function (i, el) {
+                    $(el).removeClass('active');
+                });
+                $(this).parent().addClass('active');
+            });
+        }
+
+        $(document).ready(function () {
+            if ($.support.pjax) {
+                $(document).pjax('a[data-pjax]', '#pjax-container', {
+                    maxCacheLength: 0,
+                    push: false,
+                    replace: true,
+                    fragment: '#pjax-container',
+                    timeout: 8000
+                });
+                bindLeftMenusEvent();
+            }
+        });
+    </script>
+</head>

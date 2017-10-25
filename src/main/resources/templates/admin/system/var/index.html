@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta th:replace="/admin/fragments/meta::meta"/>
+    <title>系统参数页面</title>
+    <css th:replace="/admin/fragments/all-css :: all-css"></css>
+    <js th:replace="/admin/fragments/head-js :: head-js"></js>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+    <div th:replace="/admin/fragments/header::header"></div>
+    <div th:replace="/admin/fragments/left-menu::left-menu"></div>
+    <div id="pjax-container" class="content-wrapper">
+        <!--查询框-->
+        <query-modal th:replace="/admin/system/var/query-modal :: query-modal"></query-modal>
+        <!--./查询框-->
+        <!-- 位置提示 -->
+        <section class="content-header">
+            <h1>
+                系统参数
+                <small>设置系统参数或配置</small>
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+                <li class="active">系统参数</li>
+            </ol>
+        </section>
+        <!-- 内容区域 -->
+        <section class="content">
+            <!-- Small boxes (Stat box) -->
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box">
+                        <div class="box-header">
+                            <header class="tool-bar">
+                                <h3 class="pull-left">系统参数配置</h3>
+                                <div class="pull-right tool-button">
+                                    <a th:href="@{/admin/system/var/add-view.html}"
+                                       class="btn btn-primary" data-pjax>
+                                        <i class="fa fa-plus"></i> 增加配置项
+                                    </a>
+                                    <button class="btn btn-danger" id="js-trash">
+                                        <i class="fa fa-trash-o"></i> 删除选中
+                                    </button>
+                                    <button class="btn btn-info"
+                                            data-toggle="modal"
+                                            data-target="#js-query-model">
+                                        <i class="fa fa-search"></i> 查询
+                                    </button>
+                                </div>
+                            </header>
+                        </div>
+                        <!-- /.box-header -->
+                        <div class="box-body">
+                            <table id="js-system-var-table" class="table table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <th>配置项</th>
+                                    <th>参数值</th>
+                                    <th>说明</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                </div>
+            </div>
+            <!-- /.row -->
+        </section>
+        <!-- /内容区域 -->
+        <script>
+            var allRequest = {};
+            $(function () {
+                // 所有网络请求
+                allRequest = {
+                    deleteSystemVars: function (ids) {
+                        if (!!ids && !!ids.length) {
+                            layer.confirm('确定删除选中的 ' + ids.length + ' 行？', {
+                                btn: ['确定', '取消'] //按钮
+                            }, function () {
+//                                    $.post('', {ids: ids.toString()}, function (data) {
+//                                        layer.msg('删除成功', {icon: 1});
+//                                    }, 'json');
+                            }, function () {
+                                layer.msg('取消删除');
+                            });
+                        } else {
+                            layer.msg('请先选中行');
+                        }
+                    },
+                    deleteSystemVar: function (id) {
+                        this.deleteSystemVars([id])
+                    }
+                };
+
+                // 系统参数配置表格
+                const systemTable = {
+                    $obj: $('#js-system-var-table'),
+                    dataTableObject: null,
+                    getSelectedRow: function () {
+                        return this.dataTableObject.rows('.selected').data();
+                    },
+                    init: function () {
+                        // 初始化
+                        this.dataTableObject = this.$obj.DataTable({
+                            paging: true,
+                            pagingType: "full_numbers",
+                            ordering: true,
+                            searching: false,
+                            lengthChange: true,
+                            info: true,
+                            autoWidth: true,
+                            processing: true,
+                            serverSide: true,    //true代表后台处理分页，false代表前台处理分页
+                            lengthMenu: [10, 15, 20],
+                            deferRender: true,//当处理大数据时，延迟渲染数据，有效提高Datatables处理能力
+                            language: {    // 语言设置
+                                lengthMenu: "每页 _MENU_ 条",
+                                info: "结果: _START_ ~ _END_ , 共 _TOTAL_ 条",
+                                infoEmpty: "没有数据",
+                                infoFiltered: "(从 _MAX_ 条数据中检索)",
+                                zeroRecords: "没有检索到数据",
+                                search: "搜索:",
+                                paginate: {
+                                    sFirst: "首页",
+                                    sPrevious: "前一页",
+                                    sNext: "后一页",
+                                    sLast: "尾页"
+                                }
+                            },
+                            ajax: {
+                                url: '/admin/system/var/data',
+                                type: 'POST',
+                                contentType: 'application/json',
+                                data: function (params) {
+                                    // 携带参数
+                                    return JSON.stringify(params);
+                                }
+                            },
+                            columns: [
+                                {data: 'id', bSortable: true},
+                                {data: 'name', bSortable: true}
+                            ]
+                        });
+                        // 绑定多选
+                        this.$obj.children('tbody').on('click', 'tr', function () {
+                            $(this).toggleClass('selected');
+                        });
+
+                        var that = this;
+                        // ==========================自定义=============================
+                        // + 删除选中事件
+                        $('#js-trash').on('click', function () {
+                            var selectedRow = that.getSelectedRow();
+                            var ids = [];
+                            if (!!selectedRow.length) {
+                                $.each(selectedRow, function (i, obj) {
+                                    ids.push(obj.id);
+                                });
+                            }
+                            allRequest.deleteSystemVar(ids);
+                        });
+                        // + 查询事件
+                        $("#js-query").on('click', function () {
+                            $('#js-query-model').modal('hide')
+                            layer.msg('正在进行条件查询, 请稍后..');
+                            that.$obj.ajax.reload();
+                        });
+                    }
+                };
+                systemTable.init();
+            });
+        </script>
+    </div>
+    <div th:replace="/admin/fragments/main-footer::main-footer"></div>
+    <div th:replace="/admin/fragments/right-setting::right-setting"></div>
+    <div class="control-sidebar-bg"></div>
+</div>
+<js th:replace="/admin/fragments/footer-js::footer-js"></js>
+</body>
+</html>

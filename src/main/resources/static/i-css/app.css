@@ -1,0 +1,25 @@
+.bg-white {
+    background-color: #fff;
+}
+
+.shadow {
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.tool-bar {
+    min-height: 50px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.tool-bar > .tool-button {
+    margin-top: 8px;
+}
+
+tr.selected {
+    background-color: #EDF0F5;
+}
+
+.i-navbar {
+    margin: 10px 0;
+}
