@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 /**
  * Created by hocgin on 2017/10/25.
  * email: hocgin@gmail.com
- *
+ * 用户细节信息
  */
 public class IUser implements UserDetails {
     private final String username;
