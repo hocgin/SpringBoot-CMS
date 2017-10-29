@@ -28,6 +28,9 @@ public class Role implements Serializable{
     private Boolean available = Boolean.FALSE; // 是否可用, 默认保留, 不分配。
     
     @DBRef
+    private Department department;
+    
+    @DBRef
     private Collection<Permission> permissions;
     
     public Role() {

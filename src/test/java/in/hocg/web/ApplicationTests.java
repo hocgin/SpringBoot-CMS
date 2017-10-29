@@ -39,8 +39,7 @@ public class ApplicationTests {
         permission.setName("用户添加");
         permission.setAvailable(true);
         permission.setPermission("user.add");
-        permission.setTree("0");
-        permission.setParentId("0");
+        permission.setParent("0");
         permissionRepository.save(permission);
         
         Role role = new Role();

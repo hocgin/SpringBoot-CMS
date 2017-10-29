@@ -38,7 +38,7 @@ public class DepartmentController extends BaseController {
     }
     
     @RequestMapping("/add-view.html")
-    public String vAdd(@RequestParam("parent-id") String parentId, Model model) {
+    public String vAdd(@RequestParam(value = "parent-id", required = false) String parentId, Model model) {
         if (parentId != null) {
             Department department = departmentService.findById(parentId);
             model.addAttribute("o", department);

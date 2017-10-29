@@ -4,8 +4,6 @@ import in.hocg.web.modules.domain.Department;
 import in.hocg.web.modules.domain.repository.DepartmentRepository;
 import in.hocg.web.modules.service.DepartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.datatables.mapping.DataTablesInput;
-import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -27,9 +25,10 @@ public class DepartmentServiceImpl extends BaseService implements DepartmentServ
     @Override
     public void insert(Department department) {
         String parentId = department.getParent();
-        if (parentId != null) {
-            Department parent = departmentRepository.findOne(parentId);
-            setHasChildren(parent, true);
+        if (!StringUtils.isEmpty(parentId)) {
+            Department parentDepartment = departmentRepository.findOne(parentId);
+            parentDepartment.setHasChildren(true);
+            departmentRepository.save(parentDepartment);
         }
         departmentRepository.save(department);
     }
@@ -54,7 +53,8 @@ public class DepartmentServiceImpl extends BaseService implements DepartmentServ
             if (all == null
                     || all.size() == 0) {
                 Department parentDepartment = departmentRepository.findOne(department.getParent());
-                setHasChildren(parentDepartment, false);
+                parentDepartment.setHasChildren(false);
+                departmentRepository.save(parentDepartment);
             }
         }
         // 删除此单位权限 及 子类单位权限
@@ -79,16 +79,7 @@ public class DepartmentServiceImpl extends BaseService implements DepartmentServ
         departmentRepository.save(department);
     }
     
-    public void setHasChildren(Department department, boolean hasChildren) {
-        department.setHasChildren(hasChildren);
-        departmentRepository.save(department);
-    }
-    
     @Override
-    public DataTablesOutput<Department> data(DataTablesInput input) {
-        return departmentRepository.findAll(input);
-    }
-    
     public List<Department> queryChildren(String parentId) {
         return departmentRepository.findAllByParentIn(parentId);
     }

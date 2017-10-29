@@ -3,7 +3,7 @@
         xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta th:replace="/admin/fragments/meta::meta"/>
-    <title>单位管理</title>
+    <title>权限管理</title>
     <css th:replace="/admin/fragments/all-css :: all-css"></css>
     <js th:replace="/admin/fragments/head-js :: head-js"></js>
 </head>
@@ -31,7 +31,8 @@
                         </div>
                         <button class="btn btn-default" data-dismiss="modal" type="button">取消</button>
                         <button class="btn btn-primary" type="submit"
-                                onclick="tree.selectParentMenu()">确定</button>
+                                onclick="tree.selectParentMenu()">确定
+                        </button>
                     </div>
                 </div>
             </div>
@@ -41,7 +42,7 @@
             <!-- Small boxes (Stat box) -->
             <div class="row">
                 <div class="col-xs-12 i-navbar">
-                    <a class="btn btn-primary" th:href="@{/admin/system/department/index.html}" data-pjax><i
+                    <a class="btn btn-primary" th:href="@{/admin/system/permission/index.html}" data-pjax><i
                             class="fa fa-arrow-left"></i> 返回
                     </a>
                 </div>
@@ -53,18 +54,20 @@
                         <!-- /.box-header -->
                         <!-- form start -->
                         <form id="systemVariableForm"
-                              th:action="@{/admin/system/department/insert}"
+                              th:action="@{/admin/system/permission/update}"
                               method="POST">
+                            <input type="hidden" name="id"
+                                   th:value="${o.id}">
                             <div class="box-body">
                                 <div class="form-group">
-                                    <label for="parent">上级单位</label>
+                                    <label for="parent">上级菜单</label>
                                     <div class="input-group">
                                         <input type="text" class="form-control" id="parent"
-                                               placeholder="不选择默认为顶级单位"
-                                               th:value="${o}?${o.name}:''"
+                                               placeholder="不选择默认为顶级菜单"
+                                               th:value="${parent}?${parent.name}:''"
                                                disabled="disabled">
                                         <input type="hidden" name="parent"
-                                               th:value="${o}?${o.id}:''">
+                                               th:value="${o}?${o.parent}:''">
                                         <span class="input-group-btn">
                                             <button type="button" class="btn btn-info btn-flat"
                                                     data-target="#js-select-model" data-toggle="modal">选择</button>
@@ -72,29 +75,60 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="name">单位名称</label>
+                                    <label for="name">名称</label>
                                     <input class="form-control" id="name" name="name"
-                                           placeholder="请输入单位名称"
+                                           placeholder="请输入名称"
+                                           required
+                                           th:value="${o.name}"
                                            type="text">
                                 </div>
                                 <div class="form-group">
-                                    <label for="phone">联系电话</label>
-                                    <input class="form-control" id="phone" name="phone"
-                                           placeholder="请输入联系电话"
-                                           type="text">
+                                    <label for="type">权限类型</label>
+                                    <select class="form-control" id="type" name="type">
+                                        <option value="menu" th:selected="${o.type=='menu'}">菜单</option>
+                                        <option value="data" th:selected="${o.type=='data'}">数据</option>
+                                    </select>
                                 </div>
                                 <div class="form-group">
-                                    <label for="address">单位地址</label>
-                                    <input class="form-control" id="address" name="address"
-                                           placeholder="请输入单位地址"
+                                    <label for="permission">权限标识</label>
+                                    <input class="form-control" id="permission" name="permission"
+                                           placeholder="请输入权限标识"
+                                           required
+                                           th:value="${o.permission}"
                                            type="text">
                                 </div>
+
+
+                                <div id="divId">
+                                    <div class="form-group">
+                                        <label for="url">URL</label>
+                                        <input class="form-control" id="url" name="url"
+                                               placeholder="请输入URL"
+                                               th:value="${o.url}"
+                                               type="text">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="target">Target</label>
+                                        <input class="form-control" id="target" name="target"
+                                               placeholder="请输入target"
+                                               th:value="${o.target}"
+                                               type="text">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="icon">图标</label>
+                                        <input class="form-control" id="icon" name="icon"
+                                               placeholder="请输入图标"
+                                               th:value="${o.icon}"
+                                               type="text">
+                                        <p>图标预览: <i id="js-show-icon"></i></p>
+                                    </div>
+                                </div>
                                 <div class="form-group">
-                                    <label for="description">单位描述</label>
-                                    <textarea class="form-control" id="description" name="description"
-                                              placeholder="请输入 ..."
-                                              style="resize:none"
-                                              rows="3"></textarea>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" name="available" th:checked="${o.available}"> 是否启用
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                             <!-- /.box-body -->
@@ -119,7 +153,6 @@
                     },
                     success: function (data, statusText, xhr, form) {
                         if (data.code === 200) {
-                            form.resetForm(); // 重置表单
                             layer.msg(data.message, {icon: 1});
                         } else {
                             layer.msg(data.message, {icon: 2});
@@ -139,7 +172,7 @@
                                 dataType: 'json',
                                 data: {
                                     url: function (node) {
-                                        return node.id === '#' ? '/admin/system/department/tree' : ('/admin/system/department/tree/' + node.id)
+                                        return node.id === '#' ? '/admin/system/permission/tree' : ('/admin/system/department/tree/' + node.id)
                                     }
                                 }
                             }
@@ -161,6 +194,20 @@
                     }
                 };
                 tree.init();
+                // 图标实时预览
+                $('#icon').on('keyup', function () {
+                    $('#js-show-icon').attr('class', $(this).val());
+                });
+                $("#type").on("change", function () {
+                    if ($(this).val() === 'menu') {
+                        $("#divId").show();
+                    } else {
+                        $("#url").val("");
+                        $("#target").val("");
+                        $("#icon").val("");
+                        $("#divId").hide();
+                    }
+                });
             });
         </script>
     </div>
