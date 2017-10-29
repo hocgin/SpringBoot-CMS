@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta th:replace="/admin/fragments/meta::meta"/>
+    <title>单位管理</title>
+    <css th:replace="/admin/fragments/all-css :: all-css"></css>
+    <js th:replace="/admin/fragments/head-js :: head-js"></js>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+    <div th:replace="/admin/fragments/header::header"></div>
+    <div th:replace="/admin/fragments/left-menu::left-menu"></div>
+    <div id="pjax-container" class="content-wrapper">
+        <!--Modal 单位详情-->
+        <div class="modal fade in" id="js-detail-modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                </div>
+            </div>
+        </div>
+        <!--./Modal 单位详情-->
+        <!-- 位置提示 -->
+        <section class="content-header">
+            <h1>
+                单位管理
+                <small>配置相关单位</small>
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="#"><i class="fa fa-dashboard"></i> 首页</a></li>
+                <li class="active">单位管理</li>
+            </ol>
+        </section>
+        <!-- 内容区域 -->
+        <section class="content">
+            <!-- Small boxes (Stat box) -->
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box">
+                        <div class="box-header">
+                            <header class="tool-bar">
+                                <h3 class="pull-left">单位管理</h3>
+                                <div class="pull-right tool-button">
+                                    <a th:href="@{/admin/system/department/add-view.html}"
+                                       class="btn btn-primary" data-pjax>
+                                        <i class="fa fa-plus"></i> 新建单位
+                                    </a>
+                                    <!--<button class="btn btn-danger" id="js-trash">-->
+                                    <!--<i class="fa fa-trash-o"></i> 删除选中-->
+                                    <!--</button>-->
+                                    <!--<button class="btn btn-info"-->
+                                    <!--data-toggle="modal"-->
+                                    <!--data-target="#js-query-model">-->
+                                    <!--<i class="fa fa-search"></i> 查询-->
+                                    <!--</button>-->
+                                </div>
+                            </header>
+                        </div>
+                        <!-- /.box-header -->
+                        <div class="box-body">
+                            <table id="js-system-department-table" class="table treetable">
+                                <thead>
+                                <tr>
+                                    <th>单位名称</th>
+                                    <th>描述</th>
+                                    <th>电话</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody th:utext="${root}">
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                </div>
+            </div>
+            <!-- /.row -->
+        </section>
+        <!-- /内容区域 -->
+        <script>
+            var allRequest = {};
+            $(function () {
+                // 所有网络请求
+                allRequest = {
+                    deleteSystemVars: function (ids) {
+                        if (!!ids && ids.length === 1) {
+                            layer.confirm('删除后无法恢复，并且用户也将失去此单位的关系；<br/>'
+                                + '如果选中的是父级单位，那么父级单位下面的所有子单位也全部会删除，请谨慎操作！<br/>'
+                                + '确定要删除吗？', {
+                                btn: ['确定', '取消'] //按钮
+                            }, function () {
+                                $.post('/admin/system/department/delete', {id: ids.toString()}, function (data) {
+                                    layer.msg('删除成功', {icon: 1});
+                                    table.treetableObject.treetable("removeNode", ids);
+                                }, 'json');
+                            }, function () {
+                                layer.msg('取消删除');
+                            });
+                        } else {
+                            layer.msg('请先选中行');
+                        }
+                    },
+                    deleteSystemVar: function (id) {
+                        this.deleteSystemVars([id])
+                    }
+                };
+
+                $('#js-detail-modal').on("hidden.bs.modal", function () {
+                    $(this).removeData("bs.modal");
+                });
+
+                // 系统参数配置表格
+                const table = {
+                    $obj: $('#js-system-department-table'),
+                    treetableObject: null,
+                    getSelectedRow: function () {
+//                        return this.dataTableObject.rows('.selected').data();
+                    },
+                    init: function () {
+                        var that = this;
+                        // 初始化
+                        this.treetableObject = this.$obj.treetable({
+                            expandable: true,
+                            stringCollapse: '收起',
+                            stringExpand: '展开',
+                            expanderTemplate: '<i class="fa fa-plus"></i>',
+                            clickableNodeNames: true,
+                            //展开
+                            onNodeExpand: function () {
+                                var that = this;
+                                console.log("loading node", that.id);
+                                //是否已经加载
+                                var rows = "<tr data-tt-id=\"loading\" data-tt-parent-id=\"" + that.id + "\" data-tt-branch=\"false\"><td colspan='5'>loading</td></tr>";
+                                table.treetableObject.treetable("loadBranch", that, rows);
+                                $.post("/admin/system/department/children/" + that.id, {}, function (result) {
+                                    table.treetableObject.treetable("unloadBranch", that);
+                                    table.treetableObject.treetable("loadBranch", that, result.data);
+                                });
+
+                            }
+                        });
+                        console.log("loading init", this.treetableObject);
+                        // 绑定多选
+                        // ==========================自定义=============================
+                    }
+                };
+                table.init();
+            })
+        </script>
+    </div>
+    <div th:replace="/admin/fragments/main-footer::main-footer"></div>
+    <div th:replace="/admin/fragments/right-setting::right-setting"></div>
+    <div class="control-sidebar-bg"></div>
+</div>
+<js th:replace="/admin/fragments/footer-js::footer-js"></js>
+</body>
+</html>
