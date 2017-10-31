@@ -4,7 +4,7 @@
 public final String BASE_TEMPLATES_PATH = "path/%s";
 
 @GetMapping('*-view.html')
-public String *View(){
+public String v*(){
     return String.format(BASE_TEMPLATES_PATH, "*-view")
 }
 ```
@@ -13,10 +13,10 @@ public String *View(){
 4. `content.html` 为`#pjax-container`的内容
 
 ## 关于服务器返回数据 `in.hocg.web.lang.body.response.Results`
-- 200 表示成功
-- 500 表示服务器错误
-- 1000 数据校验失败
-- 1100 数据库操作失败
+- `200` 表示成功
+- `500` 表示服务器错误
+- `1000` 数据校验失败
+- `1100` 数据库操作失败
 
 ## JS 相关 class 或 id 使用 驼峰式命名# Spring-Boot-ing
 # JWTSpringSecurity

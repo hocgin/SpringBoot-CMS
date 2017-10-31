@@ -54,9 +54,6 @@ public class AuthController {
     public Results register(User user) throws AuthenticationException{
         CheckError checkError = CheckError.get();
         User register = authService.register(user, checkError);
-        if (checkError.isPass()) {
-            return Results.success(register);
-        }
-        return Results.error(1, checkError.getFirstErrorMessage());
+        return Results.check(checkError).setData(register);
     }
 }

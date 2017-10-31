@@ -1,6 +1,7 @@
 package in.hocg.web.lang.body.response;
 
 import in.hocg.web.lang.CheckError;
+import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
 
@@ -68,10 +69,17 @@ public class Results<T> implements Serializable {
     
     public static Results check(CheckError checkError, String success) {
         if (checkError.isPass()) {
-            return Results.success()
-                    .setMessage(success);
+            Results results = Results.success();
+            if (!StringUtils.isEmpty(success)) {
+                results.setMessage(success);
+            }
+            return results;
         } else {
             return Results.error(CheckError.CODE, checkError.getFirstErrorMessage());
         }
+    }
+    
+    public static Results check(CheckError checkError) {
+        return check(checkError, null);
     }
 }

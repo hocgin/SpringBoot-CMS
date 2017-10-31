@@ -8,6 +8,7 @@ import in.hocg.web.modules.web.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -39,7 +40,7 @@ public class DepartmentController extends BaseController {
     
     @RequestMapping("/add-view.html")
     public String vAdd(@RequestParam(value = "parent-id", required = false) String parentId, Model model) {
-        if (parentId != null) {
+        if (!StringUtils.isEmpty(parentId)) {
             Department department = departmentService.findById(parentId);
             model.addAttribute("o", department);
         }
@@ -56,7 +57,7 @@ public class DepartmentController extends BaseController {
     public String vUpdate(@PathVariable("department-id") String departmentId, Model model) {
         Department department = departmentService.findById(departmentId);
         model.addAttribute("o", department);
-        if (department.getParent() != null) {
+        if (!StringUtils.isEmpty(department.getParent())) {
             model.addAttribute("parent", departmentService.findById(department.getParent()));
         }
         return "/admin/system/department/update-view";

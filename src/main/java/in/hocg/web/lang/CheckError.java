@@ -8,7 +8,7 @@ import java.util.HashMap;
  * 存储检测异常
  */
 public class CheckError extends HashMap<String, String> {
-    public static final int CODE = 10;
+    public static final int CODE = 1000;
     private CheckError() {
     
     }
