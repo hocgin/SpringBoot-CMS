@@ -8,6 +8,7 @@ import java.util.HashMap;
  * 存储检测异常
  */
 public class CheckError extends HashMap<String, String> {
+    public static final int CODE = 10;
     private CheckError() {
     
     }
@@ -38,5 +39,10 @@ public class CheckError extends HashMap<String, String> {
      */
     public String[] getAllErrorMessage() {
         return values().toArray(new String[]{});
+    }
+    
+    public CheckError putError(String message) {
+        put("ERROR", message);
+        return this;
     }
 }

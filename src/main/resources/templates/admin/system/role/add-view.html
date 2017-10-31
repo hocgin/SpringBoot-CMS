@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta th:replace="/admin/fragments/meta::meta"/>
+    <title>新建角色</title>
+    <css th:replace="/admin/fragments/all-css :: all-css"></css>
+    <js th:replace="/admin/fragments/head-js :: head-js"></js>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+    <div th:replace="/admin/fragments/header::header"></div>
+    <div th:replace="/admin/fragments/left-menu::left-menu"></div>
+    <div id="pjax-container" class="content-wrapper">
+        <div class="modal fade in" id="js-select-model">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                            <span aria-hidden="true">×</span></button>
+                        <h4 class="modal-title">选择所属单位</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div id="js-tree"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-default" data-dismiss="modal" type="button">取消</button>
+                        <button class="btn btn-primary" type="submit"
+                                onclick="tree.selectParentMenu()">确定
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 内容区域 -->
+        <section class="content">
+            <!-- Small boxes (Stat box) -->
+            <div class="row">
+                <div class="col-xs-12 i-navbar">
+                    <a class="btn btn-primary" th:href="@{/admin/system/role/index.html}" data-pjax><i
+                            class="fa fa-arrow-left"></i> 返回
+                    </a>
+                </div>
+                <div class="col-xs-12">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">新建角色</h3>
+                        </div>
+                        <form id="systemVariableForm"
+                              class="stepy"
+                              th:action="@{/admin/system/role/insert}"
+                              method="POST">
+                            <input type="hidden" id="permissionIds" name="permissionIds"/>
+                            <fieldset title="第一步">
+                                <legend>基本信息</legend>
+                                <div class="box-body">
+                                    <div class="form-group">
+                                        <label for="department">所属单位</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="department"
+                                                   placeholder="请选择单位或系统角色"
+                                                   disabled="disabled">
+                                            <input type="hidden"
+                                                   name="department.id">
+                                            <span class="input-group-btn">
+                                            <button type="button" class="btn btn-info btn-flat"
+                                                    data-target="#js-select-model" data-toggle="modal">选择</button>
+                                        </span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="name">角色名称</label>
+                                        <input class="form-control" id="name" name="name"
+                                               placeholder="请输入角色名称"
+                                               required
+                                               type="text">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="role">权限标识</label>
+                                        <input class="form-control" id="role" name="role"
+                                               placeholder="请输入权限标识"
+                                               required
+                                               type="text">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="description">角色说明</label>
+                                        <textarea class="form-control" id="description" name="description"
+                                                  placeholder="请输入 ..."
+                                                  style="resize:none"
+                                                  rows="3"></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" name="available"> 是否启用
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <fieldset title="第二步">
+                                <legend>分配菜单权限</legend>
+                                <div class="form-group">
+                                    <div class="col-sm-8">
+                                        <div class="panel">
+                                            <div class="panel-heading">
+                                                <h5>分配<b>权限</b></h5>
+                                            </div>
+                                            <div class="panel-body">
+                                                <div id="js-permission-tree"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="panel">
+                                            <div class="panel-heading">
+                                                <h5>权限<b>描述</b></h5>
+                                            </div>
+                                            <div id="js-description" class="panel-body">
+                                                <div class='alert alert-info'>请勾选每一个需要分配的菜单</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <button class="stepy-finish btn btn-primary pull-right">完成</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- /.row -->
+        </section>
+        <!-- /内容区域 -->
+        <script>
+            var tree;
+            $(function () {
+                $('#systemVariableForm').ajaxForm({
+                    dataType: 'json',
+                    beforeSubmit: function (arr, form, option) {
+                        form.find("button:submit").attr('disable', true);
+                        if (form.attr("isSubmit") === undefined) {//与stepy结合使用时，要避免二次提交的问题
+                            form.attr("isSubmit", true);
+                        } else {
+                            form.removeAttr("isSubmit");
+                            return false;
+                        }
+                    },
+                    success: function (data, statusText, xhr, form) {
+                        if (data.code === 200) {
+                            form.resetForm(); // 重置表单
+                            layer.msg(data.message, {icon: 1});
+//                            $("#permissionIds").val("");
+                            //回到第一个step
+//                            $(".stepy").stepy("step", 1);
+                        } else {
+                            layer.msg(data.message, {icon: 2});
+                        }
+                        form.find("button:submit").attr('disable', false);
+                    }
+                });
+
+                tree = {
+                    $el: $('#js-tree'),
+                    obj: null,
+                    init: function () {
+                        var that = this;
+                        this.$el.jstree({
+                            plugins: ['wholerow', 'json_data'],
+                            core: {
+                                dataType: 'json',
+                                data: {
+                                    url: function (node) {
+                                        return '/admin/system/department/tree/' + (node.id === '#' ? '' : node.id)
+                                    }
+                                }
+                            }
+                        }).on("dblclick.jstree", function (node) {
+                            that.selectParentMenu();
+                        });
+                    },
+                    selectParentMenu: function () { //选择父菜单
+                        var tree = $.jstree.reference("#js-tree");
+                        var node = tree.get_selected(true);
+                        $("#department").val(node[0].text);
+                        $("input[name='department.id']").val(node[0].id);
+                        $("#js-select-model").modal("hide");
+                    }
+                };
+                tree.init();
+
+                var permissionTree;
+                $(".stepy").stepy({
+                    backLabel: "上一步",
+                    nextLabel: "下一步",
+                    block: true,
+                    legend: false,
+                    select: function (step) {
+                        if (step === 2) {
+                            if (!permissionTree) {
+                                permissionTree = $("#js-permission-tree").jstree({
+                                    plugins: ["wholerow", "checkbox"],
+                                    core: {
+                                        data: {
+                                            url: function (node) {
+                                                return '/admin/system/permission/tree/' + (node.id === '#' ? '' : node.id)
+                                            }
+                                        }
+                                    },
+                                    checkbox: {
+                                        three_state: false,
+                                        cascade: 'down'
+                                    }
+                                }).on("hover_node.jstree", function (e, data) {
+                                    if (!!data.node.original.permission
+                                        && !!data.node.original.name) {
+                                        $("#js-description .alert-info").html(
+                                            '权限标识符: ' + data.node.original.permission + '<br/>' +
+                                            '权限描述: ' + data.node.original.name + '<br/>'
+                                        );
+                                    }
+                                }).on("dehover_node.jstree", function (e, data) {
+                                    $("#js-description .alert-info").html('请勾选每一个需要分配的菜单');
+                                })
+                            }
+                        }
+                    }, finish: function () {
+                        var tree = $.jstree.reference("#js-permission-tree");
+                        var nodes = tree.get_selected();
+                        $("#permissionIds").val(nodes);
+                    }
+                });
+            });
+        </script>
+    </div>
+    <div th:replace="/admin/fragments/main-footer::main-footer"></div>
+    <div th:replace="/admin/fragments/right-setting::right-setting"></div>
+    <div class="control-sidebar-bg"></div>
+</div>
+<js th:replace="/admin/fragments/footer-js::footer-js"></js>
+</body>
+</html>

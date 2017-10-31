@@ -7,6 +7,7 @@ import in.hocg.web.modules.web.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -38,7 +39,7 @@ public class PermissionController extends BaseController {
     
     @RequestMapping("/add-view.html")
     public String vAdd(@RequestParam(value = "parent-id", required = false) String parentId, Model model) {
-        if (parentId != null) {
+        if (!StringUtils.isEmpty(parentId)) {
             Permission permission = permissionService.findById(parentId);
             model.addAttribute("o", permission);
         }
@@ -55,14 +56,14 @@ public class PermissionController extends BaseController {
     public String vUpdate(@PathVariable("permission-id") String permissionId, Model model) {
         Permission permission = permissionService.findById(permissionId);
         model.addAttribute("o", permission);
-        if (permission.getParent() != null) {
+        if (!StringUtils.isEmpty(permission.getParent())) {
             model.addAttribute("parent", permissionService.findById(permission.getParent()));
         }
         return "/admin/system/permission/update-view";
     }
     
     /**
-     * 增加一个部门
+     * 增加一个权限
      *
      * @param permission
      * @return
@@ -122,6 +123,8 @@ public class PermissionController extends BaseController {
                     one.put("id", o.getId());
                     one.put("text", o.getName());
                     one.put("children", o.isHasChildren());
+                    one.put("permission", o.getPermission());
+                    one.put("name", o.getName());
                     result.add(one);
                 });
         return result;
@@ -137,25 +140,19 @@ public class PermissionController extends BaseController {
                     one.put("id", o.getId());
                     one.put("text", o.getName());
                     one.put("children", o.isHasChildren());
+                    one.put("permission", o.getPermission());
+                    one.put("name", o.getName());
                     result.add(one);
                 });
         return result;
     }
     
-    @PostMapping("/start")
+    @PostMapping("/available/{id}")
     @ResponseBody
-    public Results startById(String id) {
-        permissionService.updateAvailable(id, true);
+    public Results stopById(@PathVariable("id") String id, boolean available) {
+        permissionService.updateAvailable(id, available);
         return Results.success()
-                .setMessage("开启成功");
-    }
-    
-    @PostMapping("/stop")
-    @ResponseBody
-    public Results stopById(String id) {
-        permissionService.updateAvailable(id, false);
-        return Results.success()
-                .setMessage("禁用成功");
+                .setMessage(String.format("%s成功", available? "开启": "禁用"));
     }
     
     /**
@@ -192,17 +189,17 @@ public class PermissionController extends BaseController {
                                 "                    <span class=\"caret\"></span>\n" +
                                 "                    <span class=\"sr-only\">Toggle Dropdown</span>\n" +
                                 "                  </button>\n" +
+                        
                                 "                  <ul class=\"dropdown-menu\" role=\"menu\">\n" +
                                 "                    <li><a href=\"/admin/system/permission/%s\" pjax-data>修改</a></li>\n" +
                                 "                    <li><a href=\"javascript:;;\" onclick=\"allRequest.deleteById(%s)\">删除</a></li>\n" +
                                 "                    <li class=\"divider\"></li>\n" +
                                 "                    <li><a href=\"/admin/system/permission/%s\" data-pjax>添加子权限</a></li>\n" +
                                 "                    <li class=\"divider\"></li>\n" +
-                                "                    <li><a href=\"javascript:;;\" onclick=\"allRequest.startById('%s')\">启用</a></li>\n" +
-                                "                    <li><a href=\"javascript:;;\" onclick=\"allRequest.stopById('%s')\">禁用</a></li>\n" +
+                                "                    <li><a href=\"javascript:;;\" onclick=\"allRequest.available('%s', 1)\">启用</a></li>\n" +
+                                "                    <li><a href=\"javascript:;;\" onclick=\"allRequest.available('%s', 0)\">禁用</a></li>\n" +
                                 "                  </ul>\n" +
                                 "                </div>",
-                        permission.getId(),
                         permission.getId(),
                         String.format("['%s']", permission.getId()),
                         String.format("add-view.html?parent-id=%s", permission.getId()),

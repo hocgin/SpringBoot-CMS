@@ -23,3 +23,10 @@ tr.selected {
 .i-navbar {
     margin: 10px 0;
 }
+a.button-back,
+a.button-next,
+a.button-back:hover,
+a.button-next:hover
+{
+    color: #fff;
+}

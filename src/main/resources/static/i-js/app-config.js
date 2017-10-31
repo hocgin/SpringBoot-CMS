@@ -30,30 +30,21 @@ const LangUtils = {
 
 
 const DATA_TABLE_CONFIG = {
-    paging: true,
-    pagingType: "full_numbers",
-    ordering: true,
-    searching: true,
-    lengthChange: true,
-    info: true,
-    autoWidth: true,
-    processing: true,
-    // serverSide: true,    //true代表后台处理分页，false代表前台处理分页
-    aLengthMenu: [10, 15, 20],
-    deferRender: true,//当处理大数据时，延迟渲染数据，有效提高Datatables处理能力
-    oLanguage: {    // 语言设置
-        sLengthMenu: "每页 _MENU_ 条",
-        sInfo: "结果: _START_ ~ _END_ , 共 _TOTAL_ 条",
-        sInfoEmpty: "没有数据",
-        sInfoFiltered: "(从 _MAX_ 条数据中检索)",
-        sZeroRecords: "没有检索到数据",
-        sSearch: "搜索:",
-        oPaginate: {
+    language: {    // 语言设置
+        info: "结果: _START_ ~ _END_ , 共 _TOTAL_ 条",
+        infoEmpty: "没有数据",
+        infoFiltered: "(从 _MAX_ 条数据中检索)",
+        zeroRecords: "没有检索到数据",
+        search: "搜索:",
+        paginate: {
             sFirst: "首页",
             sPrevious: "前一页",
             sNext: "后一页",
             sLast: "尾页"
         }
+    },
+    preDrawCallback: function () {
+        layer.msg('加载中');
     }
 };
 

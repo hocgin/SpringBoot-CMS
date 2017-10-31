@@ -84,7 +84,8 @@
                 // 所有网络请求
                 allRequest = {
                     deleteSystemVars: function (ids) {
-                        if (!!ids && ids.length === 1) {
+                        if (!!ids
+                            && ids.length === 1) {
                             layer.confirm('删除后无法恢复，并且用户也将失去此单位的关系；<br/>'
                                 + '如果选中的是父级单位，那么父级单位下面的所有子单位也全部会删除，请谨慎操作！<br/>'
                                 + '确定要删除吗？', {

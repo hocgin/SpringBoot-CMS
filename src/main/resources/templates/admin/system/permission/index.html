@@ -103,31 +103,19 @@
                             layer.msg('请先选中行');
                         }
                     },
-                    startById: function (id) {
-                        if (!!id) {
-                            layer.confirm('确定要开启它？', {
+                    available: function (id, isAvailable) { // isAvailable 1:0
+                        var available = !!isAvailable;
+                        if (!!id
+                            && isAvailable !== undefined) {
+                            layer.confirm('确定要' + (available ? '开启' : '关闭') + '它？', {
                                 btn: ['确定', '取消'] //按钮
                             }, function () {
-                                $.post('/admin/system/permission/start', {id: id.toString()}, function (data) {
+                                $.post('/admin/system/permission/available/' + id.toString(), {available: available}, function (data) {
                                     layer.msg(data.message, {icon: 1});
-                                    $('#js-' + id).attr('class', 'fa fa-circle text-success');
+                                    $('#js-' + id).attr('class', 'fa fa-circle ' + (available ? 'text-success' : 'text-danger'));
                                 }, 'json');
                             }, function () {
-                                layer.msg('取消开启');
-                            });
-                        }
-                    },
-                    stopById: function (id) {
-                        if (!!id) {
-                            layer.confirm('确定要禁用它？', {
-                                btn: ['确定', '取消'] //按钮
-                            }, function () {
-                                $.post('/admin/system/permission/stop', {id: id.toString()}, function (data) {
-                                    layer.msg(data.message, {icon: 1});
-                                    $('#js-' + id).attr('class', 'fa fa-circle text-danger');
-                                }, 'json');
-                            }, function () {
-                                layer.msg('取消禁用');
+                                layer.msg('取消' + (available ? '开启' : '关闭'));
                             });
                         }
                     }

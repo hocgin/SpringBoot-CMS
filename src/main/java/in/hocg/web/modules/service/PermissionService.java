@@ -17,7 +17,9 @@ public interface PermissionService {
     
     List<Permission> queryRoot();
     
-    Permission findById(String parentId);
+    Permission findById(String id);
+    
+    List<Permission> queryById(String... id);
     
     void updateAvailable(String id, boolean b);
 }

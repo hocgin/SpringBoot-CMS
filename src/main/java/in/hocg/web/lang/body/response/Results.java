@@ -1,5 +1,7 @@
 package in.hocg.web.lang.body.response;
 
+import in.hocg.web.lang.CheckError;
+
 import java.io.Serializable;
 
 /**
@@ -58,9 +60,18 @@ public class Results<T> implements Serializable {
     }
     
     public static Results result(Integer code, String message, Object data) {
-        Results<Object> result = new Results<>();
+        Results result = new Results<>();
         return result.setCode(code)
                 .setMessage(message)
                 .setData(data);
+    }
+    
+    public static Results check(CheckError checkError, String success) {
+        if (checkError.isPass()) {
+            return Results.success()
+                    .setMessage(success);
+        } else {
+            return Results.error(CheckError.CODE, checkError.getFirstErrorMessage());
+        }
     }
 }

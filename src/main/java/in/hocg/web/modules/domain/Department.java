@@ -35,6 +35,15 @@ public class Department implements Serializable {
     @JsonView(DataTablesOutput.View.class)
     private String phone;        // 联系电话
     
+    /**
+     * 树路径
+     * 算法(根为""):
+     * 0001 0001 0001
+     * 二级  三级  四级
+     *
+     */
+    private String path;
+    
     @JsonView(DataTablesOutput.View.class)
     private boolean hasChildren = Boolean.FALSE; // 是否有子节点
 }
