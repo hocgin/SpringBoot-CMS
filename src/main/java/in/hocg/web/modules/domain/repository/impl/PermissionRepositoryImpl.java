@@ -35,4 +35,10 @@ public class PermissionRepositoryImpl
                 .regex(regexPath))
                 .with(new Sort(new Sort.Order(Sort.Direction.DESC, "path"))));
     }
+    
+    @Override
+    public List<Permission> findAllByIdOrderByPathAes(String... id) {
+        return find(Query.query(Criteria.where("id").in(id))
+                .with(new Sort(new Sort.Order(Sort.Direction.ASC, "path"))));
+    }
 }

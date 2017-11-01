@@ -62,7 +62,7 @@ public class AuthServiceImpl implements AuthService {
         user.setPassword(encoder.encode(rawPassword));
         user.setLastPasswordResetDate(new Timestamp(new Date().getTime()));
         // 分配用户权限
-        user.setRole(Collections.singleton(roleRepository.findByRole(Role.ROLE_USER)));
+        user.setRole(Collections.singleton(roleRepository.findTopByRole(Role.ROLE_USER)));
         return userRepository.insert(user);
     }
     

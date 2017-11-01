@@ -1,0 +1,46 @@
+<div class="modal-header">
+    <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+        <span aria-hidden="true">×</span></button>
+    <h4 class="modal-title">查询条件</h4>
+</div>
+<div class="modal-body">
+    <div class="form-group">
+        <label for="js-tree">选择单位</label>
+        <input type="hidden" id="department">
+        <div id="js-tree"></div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-default pull-left" data-dismiss="modal" type="button">取消</button>
+    <button class="btn btn-primary" onclick="tree.selectParentMenu()" type="submit">查询</button>
+</div>
+<script>
+    var tree = {
+        $el: $('#js-tree'),
+        obj: null,
+        init: function () {
+            var that = this;
+            this.$el.jstree({
+                plugins: ['wholerow', 'json_data'],
+                core: {
+                    dataType: 'json',
+                    data: {
+                        url: function (node) {
+                            return '/admin/system/department/tree/' + (node.id === '#' ? '' : node.id)
+                        }
+                    }
+                }
+            }).on("dblclick.jstree", function (node) {
+                that.selectParentMenu();
+            });
+        },
+        selectParentMenu: function () { //选择父菜单
+            var tree = $.jstree.reference("#js-tree");
+            var node = tree.get_selected(true);
+            $('#department').val(node[0].id);
+            $('#js-query-modal').modal("hide");
+            systemTable.reloadAll();
+        }
+    };
+    tree.init();
+</script>

@@ -12,10 +12,10 @@ import java.util.Collection;
  * Created by hocgin on 2017/10/24.
  * email: hocgin@gmail.com
  */
-//@Entity
 @Data
 @Document(collection = "Role")
 public class Role implements Serializable{
+    
     @Id
     private String id;
     
@@ -36,9 +36,6 @@ public class Role implements Serializable{
     public Role() {
     }
     
-    public Role(String name) {
-        this.name = name;
-    }
     
     public static final String ROLE_USER = "ROLE_USER";
 }

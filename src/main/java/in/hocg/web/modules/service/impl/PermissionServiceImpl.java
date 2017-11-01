@@ -73,7 +73,12 @@ public class PermissionServiceImpl extends BaseService implements PermissionServ
     
     @Override
     public List<Permission> queryById(String... id) {
-        return permissionRepository.findALlByIdIn(id);
+        return permissionRepository.findAllByIdIn(id);
+    }
+    
+    @Override
+    public List<Permission> queryAllByIdOrderByPathAes(String... id) {
+        return permissionRepository.findAllByIdOrderByPathAes(id);
     }
     
     @Override

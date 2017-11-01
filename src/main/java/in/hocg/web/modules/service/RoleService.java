@@ -1,8 +1,9 @@
 package in.hocg.web.modules.service;
 
+import in.hocg.web.filter.RoleQueryFilter;
+import in.hocg.web.filter.RoleUpdateInfoFilter;
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.modules.domain.Role;
-import org.springframework.data.mongodb.datatables.mapping.DataTablesInput;
 import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
 
 /**
@@ -11,7 +12,7 @@ import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
  */
 public interface RoleService {
     
-    DataTablesOutput<Role> data(DataTablesInput input);
+    DataTablesOutput<Role> data(RoleQueryFilter input);
     
     void insert(Role role, String[] permissionIds, CheckError checkError);
     
@@ -19,5 +20,9 @@ public interface RoleService {
     
     void updateAvailable(String id, boolean b);
     
-    Object find(String id);
+    Role find(String id);
+    
+    void save(RoleUpdateInfoFilter updateInfoFilter, CheckError checkError);
+    
+    void save(String id, String[] permissionIds, CheckError checkError);
 }

@@ -17,7 +17,7 @@ public interface PermissionRepository
     
     void deleteAllByIdIn(String... ids);
     
-    List<Permission> findALlByIdIn(String... ids);
+    List<Permission> findAllByIdIn(String... ids);
     
     long countByParent(String parent);
     

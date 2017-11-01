@@ -25,4 +25,7 @@ public interface PermissionRepositoryCustom {
      * @return
      */
     List<Permission> findAllByPathRegexOrderByPathDesc(String regexPath);
+    
+    
+    List<Permission> findAllByIdOrderByPathAes(String... id);
 }

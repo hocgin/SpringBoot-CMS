@@ -20,6 +20,7 @@ public interface PermissionService {
     Permission findById(String id);
     
     List<Permission> queryById(String... id);
+    List<Permission> queryAllByIdOrderByPathAes(String... id);
     
     void updateAvailable(String id, boolean b);
 }

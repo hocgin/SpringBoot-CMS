@@ -1,12 +1,14 @@
 package in.hocg.web.modules.web.admin.system;
 
+import in.hocg.web.filter.RoleQueryFilter;
+import in.hocg.web.filter.RoleUpdateInfoFilter;
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.lang.body.response.Results;
 import in.hocg.web.modules.domain.Role;
+import in.hocg.web.modules.service.PermissionService;
 import in.hocg.web.modules.service.RoleService;
 import in.hocg.web.modules.web.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.datatables.mapping.DataTablesInput;
 import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,29 +22,49 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/admin/system/role")
 public class RoleController extends BaseController {
     private RoleService roleService;
+    private PermissionService permissionService;
+    public final String BASE_TEMPLATES_PATH = "/admin/system/role/%s";
     
     @Autowired
-    public RoleController(RoleService roleService) {
+    public RoleController(RoleService roleService,
+                          PermissionService permissionService) {
         this.roleService = roleService;
+        this.permissionService = permissionService;
     }
     
-    @RequestMapping("/index.html")
+    @GetMapping("/index.html")
     public String vIndex(Model model) {
-        return "/admin/system/role/index";
+        return String.format(BASE_TEMPLATES_PATH, "index");
     }
-    @RequestMapping("/add-view.html")
+    
+    @GetMapping("/add-view.html")
     public String vAdd(Model model) {
-        return "/admin/system/role/add-view";
+        return String.format(BASE_TEMPLATES_PATH, "add-view");
     }
+    
+    @GetMapping("/query-modal.html")
+    public String vQuery() {
+        return String.format(BASE_TEMPLATES_PATH, "query-modal");
+    }
+    
+    @GetMapping("/update-info-view/{id}")
+    public String vUpdateInfo(@PathVariable("id") String id, Model model) {
+        model.addAttribute("role", roleService.find(id));
+        return String.format(BASE_TEMPLATES_PATH, "update-info-view");
+    }
+    
+    @GetMapping("/update-permission-view/{id}")
+    public String vUpdatePermission(@PathVariable("id") String id, Model model) {
+        model.addAttribute("role", roleService.find(id));
+        return String.format(BASE_TEMPLATES_PATH, "update-permission-view");
+    }
+    
     
     @RequestMapping("/data")
     @ResponseBody
-    public DataTablesOutput data(DataTablesInput input) {
-        DataTablesOutput<Role> data = roleService.data(input);
-        data.setDraw(0);
-        return data;
+    public DataTablesOutput<Role> data(@RequestBody RoleQueryFilter input) {
+        return roleService.data(input);
     }
-    
     
     /**
      * 增加一个角色
@@ -57,6 +79,23 @@ public class RoleController extends BaseController {
         CheckError checkError = CheckError.get();
         roleService.insert(role, permissionIds, checkError);
         return Results.check(checkError, "增加成功");
+    }
+    
+    @RequestMapping("/update")
+    @ResponseBody
+    public Results update(RoleUpdateInfoFilter updateInfoFilter) {
+        CheckError checkError = CheckError.get();
+        roleService.save(updateInfoFilter, checkError);
+        return Results.check(checkError, "修改信息成功");
+    }
+    
+    @PostMapping("/update-permission")
+    @ResponseBody
+    public Results updatePermission(@RequestParam("id") String id,
+                                    @RequestParam("permissionId[]") String[] permissionIds) {
+        CheckError checkError = CheckError.get();
+        roleService.save(id, permissionIds, checkError);
+        return Results.check(checkError, "分配权限成功");
     }
     
     /**
@@ -78,13 +117,16 @@ public class RoleController extends BaseController {
     public Results startById(@PathVariable("id") String id, boolean available) {
         roleService.updateAvailable(id, available);
         return Results.success()
-                .setMessage(String.format("%s成功", available? "开启": "禁用"));
+                .setMessage(String.format("%s成功", available ? "开启" : "禁用"));
     }
     
     
-    @RequestMapping("/detail/{detail-id}")
-    public String vDetail(@PathVariable("detail-id") String detailId, Model model) {
-//        model.addAttribute("o", roleService.find(detailId));
+    @RequestMapping("/detail/{id}")
+    public String vDetail(@PathVariable("id") String id, Model model) {
+        Role role = roleService.find(id);
+        
+        
+        model.addAttribute("role", role);
         return "/admin/system/role/detail-modal";
     }
 }

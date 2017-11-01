@@ -20,6 +20,14 @@
             </div>
         </div>
         <!--./Modal 角色详情-->
+        <!--Modal 查询框-->
+        <div class="modal fade in" id="js-query-modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                </div>
+            </div>
+        </div>
+        <!--./Modal 查询框-->
         <div class="i-right-box">
             <!-- 位置提示 -->
             <section class="content-header">
@@ -49,11 +57,12 @@
                                         <button class="btn btn-danger" id="js-trash">
                                             <i class="fa fa-trash-o"></i> 删除选中
                                         </button>
-                                        <button class="btn btn-info"
-                                                data-toggle="modal"
-                                                data-target="#js-query-model">
-                                            <i class="fa fa-thumb-tack"></i> 选择单位(系统单位)
-                                        </button>
+                                        <a th:href="@{/admin/system/role/query-modal.html}"
+                                           class="btn btn-info"
+                                           data-toggle="modal"
+                                           data-target="#js-query-modal">
+                                            <i class="fa fa-thumb-tack"></i> 查询
+                                        </a>
                                     </div>
                                 </header>
                             </div>
@@ -64,6 +73,7 @@
                                     <tr>
                                         <th>角色名称</th>
                                         <th>角色标识</th>
+                                        <th>所属单位</th>
                                         <th>状态</th>
                                         <th>操作</th>
                                     </tr>
@@ -82,6 +92,7 @@
         </div>
         <script>
             var allRequest = {};
+            var systemTable;
             $(function () {
                 // 所有网络请求
                 allRequest = {
@@ -92,7 +103,7 @@
                             }, function () {
                                 $.post('/admin/system/role/delete', {id: ids.toString()}, function (data) {
                                     systemTable.reloadPage();
-//                                    layer.msg(data.message, {icon: 1});
+                                    layer.msg(data.message, {icon: 1});
                                 }, 'json');
                             }, function () {
                                 layer.msg('取消删除');
@@ -123,7 +134,7 @@
                 };
 
                 // 系统参数配置表格
-                const systemTable = {
+                systemTable = {
                     $obj: $('#js-system-var-table'),
                     dataTableObject: {},
                     getSelectedRow: function () {
@@ -147,6 +158,7 @@
                                 type: 'POST',
                                 contentType: 'application/json',
                                 data: function (params) {
+                                    params.department = $('#department').val() || '';
                                     // 携带参数
                                     return JSON.stringify(params);
                                 }
@@ -154,6 +166,7 @@
                             columns: [
                                 {data: 'name', bSortable: true},
                                 {data: 'role', bSortable: true},
+                                {data: 'department.name', bSortable: true},
                                 {data: 'available', bSortable: true}
                             ],
                             order: [[0, "desc"]],
@@ -166,7 +179,7 @@
                                             return '<i id="js-' + row.id + '" class="fa fa-circle text-danger"></i>';
                                         }
                                     },
-                                    targets: 2
+                                    targets: 3
                                 }, { // 操作
                                     render: function (data, type, row) {
                                         return '<div class="btn-group">' +
@@ -178,9 +191,9 @@
                                             '         <ul class="dropdown-menu" role="menu">' +
                                             '             <li><a class="js-modal" href="/admin/system/role/detail/' + row.id + '" data-target="#js-detail-modal" data-toggle="modal">查看权限</a></li>' +
                                             '             <li class="divider"></li>' +
-                                            '             <li><a href="/admin/system/role/%s" pjax-data>分配权限</a></li>' +
-                                            '             <li><a href="/admin/system/role/%s" pjax-data>分配用户</a></li>' +
-                                            '             <li><a href="/admin/system/role/%s" pjax-data>修改信息</a></li>' +
+                                            '             <li><a href="/admin/system/role/update-permission-view/' + row.id + '" pjax-data>分配权限</a></li>' +
+                                            '             <li><a href="/admin/system/role/" pjax-data>分配用户</a></li>' +
+                                            '             <li><a href="/admin/system/role/update-info-view/' + row.id + '" pjax-data>修改信息</a></li>' +
                                             '             <li class="divider"></li>' +
                                             '             <li><a href="javascript:;;" onclick="allRequest.deleteById(\'' + row.id + '\')">删除</a></li>' +
                                             '             <li class="divider"></li>' +
@@ -189,7 +202,7 @@
                                             '         </ul>' +
                                             '   </div>';
                                     },
-                                    targets: 3
+                                    targets: 4
                                 }
                             ]
                         });
@@ -209,14 +222,22 @@
                                     ids.push(obj.id);
                                 });
                             }
-                            allRequest.deleteSystemVar(ids);
+                            allRequest.deleteByIds(ids);
                         });
                     },
                     reloadPage: function () {
                         this.dataTableObject.ajax.reload(null, false);
+                    },
+                    reloadAll: function () {
+                        this.dataTableObject.ajax.reload();
                     }
                 };
                 systemTable.init();
+
+
+                $('#js-detail-modal').on("hidden.bs.modal", function () {
+                    $(this).removeData("bs.modal");
+                });
             });
         </script>
     </div>

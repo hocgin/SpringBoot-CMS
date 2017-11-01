@@ -2,32 +2,44 @@
      xmlns:th="http://www.thymeleaf.org">
     <button aria-label="Close" class="close" data-dismiss="modal" type="button">
         <span aria-hidden="true">×</span></button>
-    <h4 class="modal-title" th:text="|角色详情()|">角色详情</h4>
+    <h4 class="modal-title" th:text="|角色权限 (${role.name})|">角色权限</h4>
 </div>
 <div class="modal-body"
      xmlns:th="http://www.thymeleaf.org">
     <div class="row">
         <div class="col-xs-12">
-            <div class="list-group">
-                <a href="javascript:;" class="list-group-item" title="名称">
-                    <i class="fa fa-smile-o"></i> <span th:text="11"></span>
-                </a>
-                <a href="javascript:;" class="list-group-item" title="ID">
-                    <i class="fa fa-terminal"></i> <span th:text="11"></span>
-                </a>
-                <a href="javascript:;" class="list-group-item" title="地址">
-                    <i class="fa fa-home"></i> <span th:text="11"></span>
-                </a>
-                <a href="javascript:;" class="list-group-item" title="联系电话">
-                    <i class="fa fa-phone"></i> <span th:text="11"></span>
-                </a>
-                <a href="javascript:;" class="list-group-item" title="描述">
-                    <i class="fa fa-sticky-note-o"></i> <span th:text="111"></span>
-                </a>
-            </div>
+            <table id="js-tree-table" class="table no-m">
+                <thead>
+                <tr>
+                    <th class="col-md-2 pd-l-lg">
+                        <span class="pd-l-sm ml20"></span>菜单名称
+                    </th>
+                    <th class="col-md-2">URL</th>
+                    <th class="col-md-1">权限类型</th>
+                    <th class="col-md-2">权限标识</th>
+                </tr>
+                </thead>
+                <tbody>
+                <th:block th:each="permission, i:${role.permissions}">
+                    <tr th:attr="data-tt-id=${permission.id}, data-tt-parent-id=${permission.parent}, data-tt-branch=${permission.hasChildren}">
+                        <td th:text="${permission.name}"></td>
+                        <td th:text="${permission.url}"></td>
+                        <td th:text="${permission.type}"></td>
+                        <td th:text="${permission.permission}"></td>
+                    </tr>
+                </th:block>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
 <!--<div class="modal-footer">-->
-    <!--<button class="btn btn-default pull-left" data-dismiss="modal" type="button">知道了</button>-->
+<!--<button class="btn btn-default pull-left" data-dismiss="modal" type="button">知道了</button>-->
 <!--</div>-->
+<script>
+    $(function () {
+        $("#js-tree-table").treetable({
+            expandable: true
+        });
+    });
+</script>
