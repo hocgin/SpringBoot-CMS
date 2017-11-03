@@ -12,6 +12,10 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 public class Application {
     
     public static void main(String[] args) {
+        // Enable MongoDB logging in general
+        System.setProperty("DEBUG.MONGO", "true");
+        // Enable DB operation tracing
+        System.setProperty("DB.TRACE", "true");
         new SpringApplicationBuilder()
                 .sources(Application.class)
                 .listeners(new ApplicationListener<ApplicationEvent>() {

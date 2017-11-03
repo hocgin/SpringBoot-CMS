@@ -30,3 +30,9 @@ a.button-next:hover
 {
     color: #fff;
 }
+.i-jstree {
+    cursor: pointer;
+}
+.i-jstree:hover {
+    background-color: #e7f4f9;
+}

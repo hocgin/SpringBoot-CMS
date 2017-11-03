@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta th:replace="/admin/fragments/meta::meta"/>
+    <title>分配用户</title>
+    <css th:replace="/admin/fragments/all-css :: all-css"></css>
+    <js th:replace="/admin/fragments/head-js :: head-js"></js>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+    <div th:replace="/admin/fragments/header::header"></div>
+    <div th:replace="/admin/fragments/left-menu::left-menu"></div>
+    <div id="pjax-container" class="content-wrapper">
+        <div class="modal fade in" id="js-select-model">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="pull-left">
+                            <input type="text" id="regexNicknameOrUsername" placeholder="请输入用户名或昵称..">
+                        </div>
+                        <div class="pull-right tool-button">
+                            <button class="btn btn-primary"
+                                    id="js-add-select">添加选中
+                            </button>
+                            <button
+                                    class="btn btn-info"
+                                    id="js-page-select">
+                                <i class="fa fa-thumb-tack"></i> 本页全选
+                            </button>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <table id="js-users-table" class="table table-bordered table-hover">
+                            <thead>
+                            <tr>
+                                <th>用户名</th>
+                                <th>昵称</th>
+                                <th>所属单位</th>
+                                <th>邮箱</th>
+                                <th>状态</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 内容区域 -->
+        <section class="content">
+            <!-- Small boxes (Stat box) -->
+            <div class="row">
+                <div class="col-xs-12 i-navbar">
+                    <a class="btn btn-primary" th:href="@{/admin/system/role/index.html}" data-pjax><i
+                            class="fa fa-arrow-left"></i> 返回
+                    </a>
+                </div>
+                <div class="col-xs-12">
+                    <div class="box box-primary">
+                        <div class="box-header">
+                            <header class="tool-bar">
+                                <h3 class="pull-left">分配用户<span class="label label-default"
+                                                                th:text="${role.name}"></span></h3>
+                                <div class="pull-right tool-button">
+                                    <button data-target="#js-select-model"
+                                            data-toggle="modal"
+                                            class="btn btn-primary">
+                                        <i class="fa fa-plus"></i> 加入用户到此角色
+                                    </button>
+                                    <button class="btn btn-danger" id="js-trash">
+                                        <i class="fa fa-trash-o"></i> 将选中用户从此角色移除
+                                    </button>
+                                </div>
+                            </header>
+                        </div>
+                        <div class="box-body">
+                            <table id="js-table" class="table table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <th>用户名</th>
+                                    <th>昵称</th>
+                                    <th>所属单位</th>
+                                    <th>邮箱</th>
+                                    <th>状态</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.row -->
+        </section>
+        <!-- /内容区域 -->
+        <script th:inline="javascript">
+            var tree;
+            var allRequest = {};
+            $(function () {
+                // 所有网络请求
+                allRequest = {
+                    deleteByIds: function (ids) {
+                        if (!!ids && !!ids.length) {
+                            layer.confirm('确定移除选中的 ' + ids.length + ' 行？', {
+                                btn: ['确定', '取消'] //按钮
+                            }, function () {
+                                $.post(/*[[@{'/admin/system/role/remove-user'}]]*/ '从用户中移除角色的授权', {
+                                    user: ids.toString(),
+                                    role: /*[[${role.id}]]*/ '角色ID'
+                                }, function (data) {
+                                    table.reloadPage();
+                                    layer.msg(data.message, {icon: 1});
+                                }, 'json');
+                            }, function () {
+                                layer.msg('取消移除');
+                            });
+                        } else {
+                            layer.msg('请先选中行');
+                        }
+                    },
+                    deleteById: function (id) {
+                        this.deleteByIds([id])
+                    },
+                    available: function (id, isAvailable) { // isAvailable 1:0
+                        var available = !!isAvailable;
+                        if (!!id
+                            && isAvailable !== undefined) {
+                            layer.confirm('确定要' + (available ? '开启' : '关闭') + '它？', {
+                                btn: ['确定', '取消'] //按钮
+                            }, function () {
+                                $.post('/admin/system/role/available/' + id.toString(), {available: available}, function (data) {
+                                    layer.msg(data.message, {icon: 1});
+                                    $('#js-' + id).attr('class', 'fa fa-circle ' + (available ? 'text-success' : 'text-danger'));
+                                }, 'json');
+                            }, function () {
+                                layer.msg('取消' + (available ? '开启' : '关闭'));
+                            });
+                        }
+                    }
+                };
+
+                const table = {
+                    $obj: $('#js-table'),
+                    dataTableObject: {},
+                    getSelectedRow: function () {
+                        return this.dataTableObject.rows('.selected').data();
+                    },
+                    init: function () {
+                        // 初始化
+                        this.dataTableObject = this.$obj.DataTable({
+                            dom: '<"toolbar">frtip',
+                            ordering: true,
+                            searching: false,
+                            select: true,
+                            autoWidth: true,
+                            processing: false,
+                            serverSide: true,
+                            deferRender: true,
+                            language: DATA_TABLE_CONFIG.language,
+                            preDrawCallback: DATA_TABLE_CONFIG.preDrawCallback,
+                            ajax: {
+                                url: '/admin/system/user/data',
+                                type: 'POST',
+                                contentType: 'application/json',
+                                data: function (params) {
+                                    params.role = [[${role.id}]];
+                                    // 携带参数
+                                    return JSON.stringify(params);
+                                }
+                            },
+                            columns: [
+                                {data: 'username', bSortable: true},
+                                {data: 'nickname', bSortable: true},
+                                {data: 'department.name', bSortable: true},
+                                {data: 'email', bSortable: true},
+                                {data: 'available', bSortable: true}
+                            ],
+                            order: [[0, "desc"]],
+                            columnDefs: [
+                                {
+                                    render: function (data, type, row) { // 状态
+                                        if (!!data) {
+                                            return '<i id="js-' + row.id + '" class="fa fa-circle text-success"></i>';
+                                        } else {
+                                            return '<i id="js-' + row.id + '" class="fa fa-circle text-danger"></i>';
+                                        }
+                                    },
+                                    targets: 4
+                                }
+                            ]
+                        });
+                        // 绑定多选
+                        this.$obj.children('tbody').on('click', 'tr', function () {
+                            $(this).toggleClass('selected');
+                        });
+
+                        var that = this;
+                        // ==========================自定义=============================
+                        // + 删除选中事件
+                        $('#js-trash').on('click', function () {
+                            var selectedRow = that.getSelectedRow();
+                            var ids = [];
+                            if (!!selectedRow.length) {
+                                $.each(selectedRow, function (i, obj) {
+                                    ids.push(obj.id);
+                                });
+                            }
+                            allRequest.deleteByIds(ids);
+                        });
+                    },
+                    reloadPage: function () {
+                        this.dataTableObject.ajax.reload(null, false);
+                    },
+                    reloadAll: function () {
+                        this.dataTableObject.ajax.reload();
+                    }
+                };
+                table.init();
+
+
+                var userTable;
+                $('#js-select-model').on('shown.bs.modal', function () {
+                    if (!userTable) {
+                        userTable = {
+                            $obj: $('#js-users-table'),
+                            dataTableObject: {},
+                            getSelectedRow: function () {
+                                return this.dataTableObject.rows('.selected').data();
+                            },
+                            init: function () {
+                                // 初始化
+                                this.dataTableObject = this.$obj.DataTable({
+                                    dom: '<"toolbar">frtip',
+                                    ordering: true,
+                                    searching: false,
+                                    select: true,
+                                    autoWidth: true,
+                                    processing: false,
+                                    serverSide: true,
+                                    deferRender: true,
+                                    language: DATA_TABLE_CONFIG.language,
+                                    preDrawCallback: DATA_TABLE_CONFIG.preDrawCallback,
+                                    ajax: {
+                                        url: '/admin/system/user/data',
+                                        type: 'POST',
+                                        contentType: 'application/json',
+                                        data: function (params) {
+                                            params.regexNicknameOrUsername = $('#regexNicknameOrUsername').val() || '';
+                                            params.notRole = /*[[${role.id}]]*/ '';
+                                            // 携带参数
+                                            return JSON.stringify(params);
+                                        }
+                                    },
+                                    columns: [
+                                        {data: 'username', bSortable: true},
+                                        {data: 'nickname', bSortable: true},
+                                        {data: 'department.name', bSortable: true},
+                                        {data: 'email', bSortable: true},
+                                        {data: 'available', bSortable: true}
+                                    ],
+                                    order: [[0, "desc"]],
+                                    columnDefs: [
+                                        {
+                                            render: function (data, type, row) { // 状态
+                                                if (!!data) {
+                                                    return '<i id="js-' + row.id + '" class="fa fa-circle text-success"></i>';
+                                                } else {
+                                                    return '<i id="js-' + row.id + '" class="fa fa-circle text-danger"></i>';
+                                                }
+                                            },
+                                            targets: 4
+                                        }
+                                    ]
+                                });
+                                // 绑定多选
+                                this.$obj.children('tbody').on('click', 'tr', function () {
+                                    $(this).toggleClass('selected');
+                                });
+
+                                var that = this;
+                                // ==========================自定义=============================
+                                // 本页全选
+                                $('#js-page-select').on('click', function () {
+                                    that.$obj.find("tbody tr").each(function () {
+                                        if (!$(this).hasClass('selected')) {
+                                            $(this).addClass('selected');
+                                        }
+                                    });
+                                });
+
+                                // 添加选中
+                                $('#js-add-select').on('click', function () {
+                                    var cks = that.dataTableObject.rows('.selected').data();
+                                    if (!!cks.length) {
+                                        var ids = [];
+                                        $.each(cks, function (i, o) {
+                                            ids.push(o.id);
+                                        });
+
+                                        $.post(/*[[@{/admin/system/role/add-user}]]*/ '授予用户角色权限', {
+                                            user: ids,
+                                            role: /*[[${role.id}]]*/ '角色ID'
+                                        }, function (data) {
+                                            table.reloadAll();
+                                            layer.msg(data.message, {icon: 1});
+                                            $('#js-select-model').modal('hide');
+                                        }, 'json')
+                                    }
+                                });
+
+                                // 搜索
+                                $('#regexNicknameOrUsername').on('keyup', function () {
+                                    that.reloadAll();
+                                });
+                            },
+                            reloadPage: function () {
+                                this.dataTableObject.ajax.reload(null, false);
+                            },
+                            reloadAll: function () {
+                                this.dataTableObject.ajax.reload();
+                            }
+                        };
+                        userTable.init();
+                    }
+                });
+
+                tree = {
+                    $el: $('#js-tree'),
+                    obj: null,
+                    init: function () {
+                        var that = this;
+                        this.$el.jstree({
+                            plugins: ['wholerow', 'json_data'],
+                            core: {
+                                dataType: 'json',
+                                data: {
+                                    url: function (node) {
+                                        return '/admin/system/department/tree/' + (node.id === '#' ? '' : node.id)
+                                    }
+                                }
+                            }
+                        }).on("dblclick.jstree", function (node) {
+                            that.selectParentMenu();
+                        });
+                    },
+                    selectParentMenu: function () { //选择父菜单
+                        var tree = $.jstree.reference("#js-tree");
+                        var node = tree.get_selected(true);
+                        $("#department").val(node[0].text);
+                        $("input[name='departmentId']").val(node[0].id);
+                        $("#js-select-model").modal("hide");
+                    }
+                };
+                tree.init();
+            });
+        </script>
+    </div>
+    <div th:replace="/admin/fragments/main-footer::main-footer"></div>
+    <div th:replace="/admin/fragments/right-setting::right-setting"></div>
+    <div class="control-sidebar-bg"></div>
+</div>
+<js th:replace="/admin/fragments/footer-js::footer-js"></js>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<div class="modal-header"
+     xmlns:th="http://www.thymeleaf.org">
+    <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+        <span aria-hidden="true">×</span></button>
+    <h4 class="modal-title" th:text="|用户信息 (${user.nickname?:user.username})|">用户信息</h4>
+</div>
+<div class="modal-body"
+     xmlns:th="http://www.thymeleaf.org">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="list-group">
+                <a href="javascript:;" class="list-group-item" title="昵称">
+                    <i class="fa fa-smile-o"></i> <span th:text="${user.nickname?:'暂未设置'}"></span>
+                </a>
+                <a href="javascript:;" class="list-group-item" title="邮箱">
+                    <i class="fa fa-envelope-o"></i> <span th:text="${user.email}"></span>
+                </a>
+                <a href="javascript:;" class="list-group-item" title="所属单位">
+                    <i class="fa fa-building"></i> <span th:text="${user.department.name}"></span>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <th:block th:if="${not #lists.isEmpty(user.role)}">
+            <th:block th:each="role, i:${user.role}">
+                <div class="col-xs-12">
+                    <table class="table js-tree-table">
+                        <caption th:text="${role.name}">权限名称</caption>
+                        <thead>
+                        <tr>
+                            <th class="col-md-2">权限名称</th>
+                            <th class="col-md-2">URL</th>
+                            <th class="col-md-1">权限类型</th>
+                            <th class="col-md-2">权限标识</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <th:block th:each="permission, i:${role.permissions}">
+                            <tr th:attr="data-tt-id=${permission.id}, data-tt-parent-id=${permission.parent}, data-tt-branch=${permission.hasChildren}">
+                                <td th:text="${permission.name}"></td>
+                                <td th:text="${permission.url}"></td>
+                                <td th:text="${permission.type}"></td>
+                                <td th:text="${permission.permission}"></td>
+                            </tr>
+                        </th:block>
+                        </tbody>
+                    </table>
+                </div>
+            </th:block>
+        </th:block>
+        <th:block th:if="${#lists.isEmpty(user.role)}">
+            <div class="col-xs-12">
+                <p class="text-danger text-center">暂未分配角色</p>
+            </div>
+        </th:block>
+    </div>
+</div>
+<!--<div class="modal-footer">-->
+<!--<button class="btn btn-default pull-left" data-dismiss="modal" type="button">知道了</button>-->
+<!--</div>-->
+<script>
+    $(function () {
+        $(".js-tree-table").treetable({
+            expandable: true
+        });
+    });
+</script>

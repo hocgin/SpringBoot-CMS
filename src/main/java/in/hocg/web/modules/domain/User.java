@@ -19,7 +19,11 @@ import java.util.Date;
 public class User implements Serializable {
     @Id
     private String id;
-    private String username; // 账号
+    private String username; // 账号 [必须, 唯一, 用于登陆]
+    
+    private String nickname; // 昵称 [用于显示]
+    
+    private String email;    // 邮箱 [必须, 用于重置密码]
     
     @JsonIgnore
     private String password; // 密码
@@ -27,11 +31,13 @@ public class User implements Serializable {
     @JsonIgnore
     private Date lastPasswordResetDate; // 最后一次重置密码时间
     
-    @JsonIgnore
-    private byte state; // 用户状态
+    private Boolean available = Boolean.FALSE; // 是否可用, 默认保留, 不分配。
     
     @DBRef
-    private Collection<Role> role;
+    private Department department; // 所属单位
+    
+    @DBRef
+    private Collection<Role> role; // 角色
     
     public User() {
     }

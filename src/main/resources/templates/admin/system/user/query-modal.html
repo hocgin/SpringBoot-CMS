@@ -5,22 +5,39 @@
 </div>
 <div class="modal-body">
     <div class="form-group">
+        <label for="regexNicknameOrUsername">用户名/昵称</label>
+        <input class="form-control" id="regexNicknameOrUsername" name="regexNicknameOrUsername"
+               placeholder="用户名/昵称"
+               required
+               type="text">
+    </div>
+    <div class="form-group">
         <label for="js-tree">选择单位</label>
+        <div class="jstree-default i-jstree">
+            <a class="jstree-anchor">
+                <i class="jstree-icon jstree-themeicon"></i>所有用户
+            </a>
+        </div>
         <input type="hidden" id="department">
         <div id="js-tree"></div>
     </div>
 </div>
 <div class="modal-footer">
     <button class="btn btn-default pull-left" data-dismiss="modal" type="button">取消</button>
-    <button class="btn btn-primary" onclick="tree.selectParentMenu()" type="submit">查询</button>
+    <button class="btn btn-primary" onclick="query()" type="submit">查询</button>
 </div>
 <script>
+    function query() {
+        table.reloadAll();
+        $('#js-query-modal').modal('hide');
+    }
+
     var tree = {
         $el: $('#js-tree'),
         obj: null,
         init: function () {
             var that = this;
-            this.$el.jstree({
+            this.obj = this.$el.jstree({
                 plugins: ['wholerow', 'json_data'],
                 core: {
                     dataType: 'json',
@@ -30,16 +47,21 @@
                         }
                     }
                 }
-            }).on("dblclick.jstree", function (node) {
+            }).on("click.jstree", function (node) {
                 that.selectParentMenu();
+                $('.i-jstree').css('background', '');
+            });
+
+            $('.i-jstree').on('click', function () {
+                $('#department').val('');
+                $(this).css('background', '#BDE7FF');
+                $.jstree.reference("#js-tree").deselect_all();
             });
         },
         selectParentMenu: function () { //选择父菜单
             var tree = $.jstree.reference("#js-tree");
             var node = tree.get_selected(true);
             $('#department').val(node[0].id);
-            $('#js-query-modal').modal("hide");
-            table.reloadAll();
         }
     };
     tree.init();

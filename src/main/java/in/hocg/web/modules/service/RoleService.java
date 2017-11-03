@@ -25,4 +25,5 @@ public interface RoleService {
     void save(RoleUpdateInfoFilter updateInfoFilter, CheckError checkError);
     
     void save(String id, String[] permissionIds, CheckError checkError);
+    
 }

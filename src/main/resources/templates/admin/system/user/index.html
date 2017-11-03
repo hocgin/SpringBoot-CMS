@@ -3,7 +3,7 @@
         xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta th:replace="/admin/fragments/meta::meta"/>
-    <title>角色管理</title>
+    <title>用户管理</title>
     <css th:replace="/admin/fragments/all-css :: all-css"></css>
     <js th:replace="/admin/fragments/head-js :: head-js"></js>
 </head>
@@ -32,12 +32,12 @@
             <!-- 位置提示 -->
             <section class="content-header">
                 <h1>
-                    角色管理
-                    <small>设置角色参数或配置</small>
+                    用户管理
+                    <small>管理用户</small>
                 </h1>
                 <ol class="breadcrumb">
                     <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                    <li class="active">角色管理</li>
+                    <li class="active">用户管理</li>
                 </ol>
             </section>
             <!-- 内容区域 -->
@@ -48,20 +48,20 @@
                         <div class="box">
                             <div class="box-header">
                                 <header class="tool-bar">
-                                    <h3 class="pull-left">角色管理</h3>
+                                    <h3 class="pull-left">用户管理</h3>
                                     <div class="pull-right tool-button">
-                                        <a th:href="@{/admin/system/role/add-view.html}"
+                                        <a th:href="@{/admin/system/user/add-view.html}"
                                            class="btn btn-primary" data-pjax>
-                                            <i class="fa fa-plus"></i> 新建角色
+                                            <i class="fa fa-plus"></i> 新建用户
                                         </a>
                                         <button class="btn btn-danger" id="js-trash">
                                             <i class="fa fa-trash-o"></i> 删除选中
                                         </button>
-                                        <a th:href="@{/admin/system/role/query-modal.html}"
+                                        <a th:href="@{/admin/system/user/query-modal.html}"
                                            class="btn btn-info"
                                            data-toggle="modal"
                                            data-target="#js-query-modal">
-                                            <i class="fa fa-thumb-tack"></i> 查询
+                                            <i class="fa fa-search"></i> 查询
                                         </a>
                                     </div>
                                 </header>
@@ -71,9 +71,10 @@
                                 <table id="js-system-var-table" class="table table-bordered table-hover">
                                     <thead>
                                     <tr>
-                                        <th>角色名称</th>
-                                        <th>角色标识</th>
+                                        <th>用户名</th>
+                                        <th>昵称</th>
                                         <th>所属单位</th>
+                                        <th>邮箱</th>
                                         <th>状态</th>
                                         <th>操作</th>
                                     </tr>
@@ -101,7 +102,7 @@
                             layer.confirm('确定删除选中的 ' + ids.length + ' 行？', {
                                 btn: ['确定', '取消'] //按钮
                             }, function () {
-                                $.post('/admin/system/role/delete', {id: ids.toString()}, function (data) {
+                                $.post('/admin/system/user/delete', {id: ids.toString()}, function (data) {
                                     table.reloadPage();
                                     layer.msg(data.message, {icon: 1});
                                 }, 'json');
@@ -122,7 +123,7 @@
                             layer.confirm('确定要' + (available ? '开启' : '关闭') + '它？', {
                                 btn: ['确定', '取消'] //按钮
                             }, function () {
-                                $.post('/admin/system/role/available/' + id.toString(), {available: available}, function (data) {
+                                $.post('/admin/system/user/available/' + id.toString(), {available: available}, function (data) {
                                     layer.msg(data.message, {icon: 1});
                                     $('#js-' + id).attr('class', 'fa fa-circle ' + (available ? 'text-success' : 'text-danger'));
                                 }, 'json');
@@ -154,19 +155,21 @@
                             language: DATA_TABLE_CONFIG.language,
                             preDrawCallback: DATA_TABLE_CONFIG.preDrawCallback,
                             ajax: {
-                                url: '/admin/system/role/data',
+                                url: '/admin/system/user/data',
                                 type: 'POST',
                                 contentType: 'application/json',
                                 data: function (params) {
                                     params.department = $('#department').val() || '';
+                                    params.regexNicknameOrUsername = $('#regexNicknameOrUsername').val() || '';
                                     // 携带参数
                                     return JSON.stringify(params);
                                 }
                             },
                             columns: [
-                                {data: 'name', bSortable: true},
-                                {data: 'role', bSortable: true},
+                                {data: 'username', bSortable: true},
+                                {data: 'nickname', bSortable: true},
                                 {data: 'department.name', bSortable: true},
+                                {data: 'email', bSortable: true},
                                 {data: 'available', bSortable: true}
                             ],
                             order: [[0, "desc"]],
@@ -179,7 +182,7 @@
                                             return '<i id="js-' + row.id + '" class="fa fa-circle text-danger"></i>';
                                         }
                                     },
-                                    targets: 3
+                                    targets: 4
                                 }, { // 操作
                                     render: function (data, type, row) {
                                         return '<div class="btn-group">' +
@@ -189,11 +192,10 @@
                                             '               <span class="sr-only">Toggle Dropdown</span>' +
                                             '         </button>' +
                                             '         <ul class="dropdown-menu" role="menu">' +
-                                            '             <li><a class="js-modal" href="/admin/system/role/detail/' + row.id + '" data-target="#js-detail-modal" data-toggle="modal">查看权限</a></li>' +
+                                            '             <li><a class="js-modal" href="/admin/system/user/detail/' + row.id + '" data-target="#js-detail-modal" data-toggle="modal">查看信息</a></li>' +
                                             '             <li class="divider"></li>' +
-                                            '             <li><a href="/admin/system/role/update-permission-view/' + row.id + '" pjax-data>分配权限</a></li>' +
-                                            '             <li><a href="/admin/system/role/select-user-view/' + row.id + '" pjax-data>分配用户</a></li>' +
-                                            '             <li><a href="/admin/system/role/update-info-view/' + row.id + '" pjax-data>修改信息</a></li>' +
+                                            '             <li><a href="/admin/system/user/" pjax-data>密码重置</a></li>' +
+                                            '             <li><a href="/admin/system/user/update-view/' + row.id + '" pjax-data>修改信息</a></li>' +
                                             '             <li class="divider"></li>' +
                                             '             <li><a href="javascript:;;" onclick="allRequest.deleteById(\'' + row.id + '\')">删除</a></li>' +
                                             '             <li class="divider"></li>' +
@@ -202,7 +204,7 @@
                                             '         </ul>' +
                                             '   </div>';
                                     },
-                                    targets: 4
+                                    targets: 5
                                 }
                             ]
                         });
@@ -222,7 +224,6 @@
                                     ids.push(obj.id);
                                 });
                             }
-                            // 添加选中
                             allRequest.deleteByIds(ids);
                         });
                     },
