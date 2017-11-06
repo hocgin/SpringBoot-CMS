@@ -6,8 +6,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
 
-import java.io.Serializable;
-
 /**
  * Created by hocgin on 2017/10/28.
  * email: hocgin@gmail.com
@@ -15,7 +13,7 @@ import java.io.Serializable;
  */
 @Data
 @Document(collection = "Department")
-public class Department implements Serializable {
+public class Department extends BaseDomain {
     @Id
     @JsonView(DataTablesOutput.View.class)
     private String id;

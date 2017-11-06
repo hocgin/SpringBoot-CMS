@@ -38,9 +38,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 // 由于使用的是JWT，我们这里不需要csrf
                 .csrf().disable()
-                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+                .exceptionHandling()
+                .authenticationEntryPoint(unauthorizedHandler)
+                .and()
                 // 基于token，所以不需要session
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                .formLogin()
+                .loginPage("/admin/login.html")
+                .permitAll().and()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 // 允许对于网站静态资源的无授权访问
@@ -48,23 +53,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         HttpMethod.GET,
                         "/",
                         // 静态资源
-                        "/*.html",
+                        "/admin/login.html",
                         "/favicon.ico",
-                        "/**/*.html",
                         "/**/*.css",
                         "/**/*.js",
                         "/**/*.woff",
                         "/**/*.ttf",
                         "/**/*.jpg",
                         "/**/*.woff2"
-                        ).permitAll()
+                ).permitAll()
                 // 对于获取token的rest api要允许匿名访问
-                .antMatchers("/auth/**").permitAll();
+                .antMatchers("/auth/**",
+                        "/admin/login")
+                .permitAll()
                 // 除上面外的所有请求全部需要鉴权认证
-//                .anyRequest().authenticated();
+                .anyRequest().authenticated();
         // 添加JWT filter
         http.addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
-    
+        
         // 禁用缓存
         http.headers().cacheControl();
     }

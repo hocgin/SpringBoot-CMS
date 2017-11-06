@@ -10,6 +10,7 @@ import in.hocg.web.modules.service.UserService;
 import in.hocg.web.modules.web.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -33,27 +34,32 @@ public class UserController extends BaseController {
     
     
     @GetMapping("/index.html")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String vIndex(Model model) {
         return String.format(BASE_TEMPLATES_PATH, "index");
     }
     
     @GetMapping("/query-modal.html")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String vQueryModal() {
         return String.format(BASE_TEMPLATES_PATH, "query-modal");
     }
     
     @PostMapping("/data")
     @ResponseBody
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public DataTablesOutput<User> data(@RequestBody UserQueryFilter input) {
         return userService.data(input);
     }
     
     @GetMapping("/add-view.html")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String vAdd(Model model) {
         return String.format(BASE_TEMPLATES_PATH, "add-view");
     }
     
     @GetMapping("/update-view/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String vUpdate(@PathVariable("id") String id, Model model) {
         User user = userService.find(id);
         model.addAttribute("user", user);
@@ -69,6 +75,7 @@ public class UserController extends BaseController {
      */
     @RequestMapping("/delete")
     @ResponseBody
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Results delete(@RequestParam("id") String[] id) {
         CheckError checkError = CheckError.get();
         userService.delete(id);
@@ -83,6 +90,7 @@ public class UserController extends BaseController {
      */
     @RequestMapping("/insert")
     @ResponseBody
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Results insert(@Valid UserInsertFilter filter) {
         CheckError checkError = CheckError.get();
         userService.insert(filter, checkError);
@@ -91,6 +99,7 @@ public class UserController extends BaseController {
     
     @PostMapping("/available/{id}")
     @ResponseBody
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Results startById(@PathVariable("id") String id, boolean available) {
         userService.updateAvailable(id, available);
         return Results.success()
@@ -99,6 +108,7 @@ public class UserController extends BaseController {
     
     
     @RequestMapping("/detail/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String vDetail(@PathVariable("id") String id, Model model) {
         User user = userService.find(id);
         
@@ -109,6 +119,7 @@ public class UserController extends BaseController {
     
     @RequestMapping("/update")
     @ResponseBody
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Results update(@Valid UserUpdateFilter filter) {
         CheckError checkError = CheckError.get();
         userService.update(filter, checkError);

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta th:replace="/admin/fragments/meta::meta"/>
+    <title>登陆</title>
+    <css th:replace="/admin/fragments/all-css :: all-css"></css>
+    <js th:replace="/admin/fragments/head-js :: head-js"></js>
+</head>
+<body class="hold-transition login-page">
+<div class="login-box">
+    <div class="login-logo">
+        <a th:href="@{/admin/index2.html}"><b>后台</b>管理</a>
+    </div>
+    <!-- /.login-logo -->
+    <div class="login-box-body">
+        <p class="login-box-msg">请登录你的账号</p>
+
+        <form id="js-form" th:action="@{/admin/login}" method="post">
+            <div class="form-group has-feedback">
+                <input type="text" class="form-control"
+                       name="username"
+                       required
+                       placeholder="用户名">
+                <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+            </div>
+            <div class="form-group has-feedback">
+                <input type="password" class="form-control"
+                       name="password"
+                       required
+                       placeholder="密码">
+                <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+            </div>
+            <div class="row">
+                <div class="col-xs-8">
+                    <div>
+                        <label>
+                            <input type="checkbox"> 记住我
+                        </label>
+                    </div>
+                </div>
+                <!-- /.col -->
+                <div class="col-xs-4">
+                    <button type="submit" class="btn btn-primary btn-block btn-flat">登陆</button>
+                </div>
+                <!-- /.col -->
+            </div>
+        </form>
+        <!-- /.social-auth-links -->
+    </div>
+    <!-- /.login-box-body -->
+</div>
+<js th:replace="/admin/fragments/footer-js::footer-js"></js>
+<script>
+    $('#js-form').ajaxForm({
+        dataType: 'json',
+        beforeSubmit: function (arr, form, option) {
+            form.find("button:submit").attr('disable', true);
+        },
+        success: function (data, statusText, xhr, form) {
+            if (data.code === 200) {
+                form.resetForm(); // 重置表单
+                layer.msg(data.message, {icon: 1});
+                window.location.href = data.data;
+            } else {
+                layer.msg(data.message, {icon: 2});
+            }
+            form.find("button:submit").attr('disable', false);
+        }
+    });
+</script>
+</body>
+</html>

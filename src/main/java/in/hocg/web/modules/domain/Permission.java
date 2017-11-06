@@ -4,15 +4,13 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.io.Serializable;
-
 /**
  * Created by hocgin on 2017/10/24.
  * email: hocgin@gmail.com
  */
 @Data
 @Document(collection = "Permission")
-public class Permission implements Serializable {
+public class Permission extends BaseDomain {
     @Id
     private String id;
     

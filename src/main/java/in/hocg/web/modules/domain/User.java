@@ -6,7 +6,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 
@@ -16,7 +15,7 @@ import java.util.Date;
  */
 @Data
 @Document(collection = "User")
-public class User implements Serializable {
+public class User extends BaseDomain {
     @Id
     private String id;
     private String username; // 账号 [必须, 唯一, 用于登陆]

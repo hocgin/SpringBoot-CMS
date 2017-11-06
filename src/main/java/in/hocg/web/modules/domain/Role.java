@@ -5,7 +5,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.io.Serializable;
 import java.util.Collection;
 
 /**
@@ -14,7 +13,7 @@ import java.util.Collection;
  */
 @Data
 @Document(collection = "Role")
-public class Role implements Serializable{
+public class Role extends BaseDomain{
     
     @Id
     private String id;

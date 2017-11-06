@@ -34,14 +34,17 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     private DepartmentService departmentService;
     private RoleService roleService;
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
     
     @Autowired
     UserServiceImpl(UserRepository userRepository,
                     RoleService roleService,
+                    BCryptPasswordEncoder bCryptPasswordEncoder,
                     DepartmentService departmentService) {
         this.userRepository = userRepository;
         this.departmentService = departmentService;
         this.roleService = roleService;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
     
     public List<User> findAll() {
@@ -84,9 +87,13 @@ public class UserServiceImpl implements UserService {
             checkError.putError("所属单位异常");
             return;
         }
+        User u = userRepository.findByUsername(filter.getUsername());
+        if (!ObjectUtils.isEmpty(u)) {
+            checkError.putError("用户名已存在");
+            return;
+        }
         User user = filter.getInsertUser();
-        user.setPassword(new BCryptPasswordEncoder()
-                .encode(user.getPassword()));
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         user.setDepartment(department);
         userRepository.save(user);
     }

@@ -1,6 +1,7 @@
 package in.hocg.web.modules.domain.repository;
 
 import in.hocg.web.modules.domain.User;
+import in.hocg.web.modules.domain.repository.custom.UserRepositoryCustom;
 import org.springframework.data.mongodb.datatables.repository.DataTablesRepository;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
@@ -12,6 +13,7 @@ import java.util.List;
  */
 public interface UserRepository
         extends MongoRepository<User, String>,
+        UserRepositoryCustom,
         DataTablesRepository<User, String> {
     
     User findByUsername(String username);

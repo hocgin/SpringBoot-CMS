@@ -1,5 +1,6 @@
 package in.hocg.web.modules.web;
 
+import in.hocg.web.SESSION;
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.lang.body.response.Results;
 import in.hocg.web.modules.domain.User;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.naming.AuthenticationException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 /**
  * Created by hocgin on 2017/10/24.
@@ -32,11 +34,12 @@ public class AuthController {
     private String tokenHeader;
     
     @RequestMapping(value = "${jwt.route.authentication.path}", method = RequestMethod.POST)
-    public ResponseEntity<?> createAuthenticationToken(JwtAuthenticationRequest authenticationRequest) throws AuthenticationException{
+    public Results createAuthenticationToken(JwtAuthenticationRequest authenticationRequest, HttpSession session) throws AuthenticationException{
         final String token = authService.login(authenticationRequest.getUsername(), authenticationRequest.getPassword());
-        
+        session.setAttribute(SESSION.TOKEN, token);
         // Return the token
-        return ResponseEntity.ok(new JwtAuthenticationResponse(token));
+        return Results.success(token)
+                .setMessage("申请 Token 成功");
     }
     
     @RequestMapping(value = "${jwt.route.authentication.refresh}", method = RequestMethod.GET)
@@ -44,7 +47,8 @@ public class AuthController {
         String token = request.getHeader(tokenHeader);
         String refreshedToken = authService.refresh(token);
         if(refreshedToken == null) {
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.badRequest()
+                    .body(null);
         } else {
             return ResponseEntity.ok(new JwtAuthenticationResponse(refreshedToken));
         }
@@ -54,6 +58,7 @@ public class AuthController {
     public Results register(User user) throws AuthenticationException{
         CheckError checkError = CheckError.get();
         User register = authService.register(user, checkError);
-        return Results.check(checkError).setData(register);
+        return Results.check(checkError)
+                .setData(register);
     }
 }

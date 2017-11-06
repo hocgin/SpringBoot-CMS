@@ -5,6 +5,7 @@ import in.hocg.web.modules.domain.Permission;
 import in.hocg.web.modules.service.PermissionService;
 import in.hocg.web.modules.web.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -28,6 +29,7 @@ public class PermissionController extends BaseController {
     }
     
     @RequestMapping("/index.html")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String vIndex(Model model) {
         Optional<String> html = permissionService.queryRoot()
                 .stream()
@@ -38,6 +40,7 @@ public class PermissionController extends BaseController {
     }
     
     @RequestMapping("/add-view.html")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String vAdd(@RequestParam(value = "parent-id", required = false) String parentId, Model model) {
         if (!StringUtils.isEmpty(parentId)) {
             Permission permission = permissionService.findById(parentId);
@@ -47,12 +50,14 @@ public class PermissionController extends BaseController {
     }
     
     @RequestMapping("/detail/{detail-id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String vDetail(@PathVariable("detail-id") String detailId, Model model) {
         model.addAttribute("o", permissionService.findById(detailId));
         return "/admin/system/permission/detail-modal";
     }
     
     @GetMapping("/{permission-id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String vUpdate(@PathVariable("permission-id") String permissionId, Model model) {
         Permission permission = permissionService.findById(permissionId);
         model.addAttribute("o", permission);
@@ -70,6 +75,7 @@ public class PermissionController extends BaseController {
      */
     @RequestMapping("/insert")
     @ResponseBody
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Results insert(Permission permission) {
         permissionService.insert(permission);
         return Results.success()
@@ -84,6 +90,7 @@ public class PermissionController extends BaseController {
      */
     @RequestMapping("/update")
     @ResponseBody
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Results update(Permission permission) {
         permissionService.update(permission);
         return Results.success()
@@ -98,6 +105,7 @@ public class PermissionController extends BaseController {
      */
     @RequestMapping("/delete")
     @ResponseBody
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Results delete(String id) {
         permissionService.delete(id);
         return Results.success("删除成功");
@@ -105,6 +113,7 @@ public class PermissionController extends BaseController {
     
     @PostMapping("/children/{parentId}")
     @ResponseBody
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Results children(@PathVariable("parentId") String parentId) {
         Optional<String> html = permissionService.queryChildren(parentId)
                 .stream()
@@ -115,6 +124,7 @@ public class PermissionController extends BaseController {
     
     @GetMapping("/tree")
     @ResponseBody
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Object root() {
         List<Object> result = new ArrayList<>();
         permissionService.queryRoot()
@@ -132,6 +142,7 @@ public class PermissionController extends BaseController {
     
     @GetMapping("/tree/{pid}")
     @ResponseBody
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Object root(@PathVariable("pid") String pid) {
         List<Object> result = new ArrayList<>();
         permissionService.queryChildren(pid)
@@ -149,6 +160,7 @@ public class PermissionController extends BaseController {
     
     @PostMapping("/available/{id}")
     @ResponseBody
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Results stopById(@PathVariable("id") String id, boolean available) {
         permissionService.updateAvailable(id, available);
         return Results.success()
