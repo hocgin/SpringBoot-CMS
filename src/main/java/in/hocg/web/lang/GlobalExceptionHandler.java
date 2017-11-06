@@ -3,6 +3,7 @@ package in.hocg.web.lang;
 import in.hocg.web.lang.body.response.Results;
 import in.hocg.web.lang.exception.VailException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -31,5 +32,17 @@ public class GlobalExceptionHandler {
     @ResponseBody
     public Results AccessDeniedExceptionHandle(AccessDeniedException exception) {
         return Results.error(HttpServletResponse.SC_UNAUTHORIZED, "权限不足");
+    }
+    
+    
+    /**
+     * 处理权限不足异常
+     * @param exception
+     * @return
+     */
+    @ExceptionHandler(value = UsernameNotFoundException.class)
+    @ResponseBody
+    public Results UsernameNotFoundExceptionHandle(AccessDeniedException exception) {
+        return Results.error(HttpServletResponse.SC_UNAUTHORIZED, "登陆失败");
     }
 }
