@@ -85,8 +85,12 @@
                                 btn: ['确定', '取消'] //按钮
                             }, function () {
                                 $.post('/admin/system/permission/delete', {id: ids.toString()}, function (data) {
-                                    layer.msg('删除成功', {icon: 1});
-                                    table.treetableObject.treetable("removeNode", ids);
+                                    if (data.code === 200) {
+                                        layer.msg(data.message, {icon: 1});
+                                        table.treetableObject.treetable("removeNode", ids);
+                                    } else {
+                                        layer.msg(data.message, {icon: 2});
+                                    }
                                 }, 'json');
                             }, function () {
                                 layer.msg('取消删除');
@@ -103,8 +107,12 @@
                                 btn: ['确定', '取消'] //按钮
                             }, function () {
                                 $.post('/admin/system/permission/available/' + id.toString(), {available: available}, function (data) {
-                                    layer.msg(data.message, {icon: 1});
-                                    $('#js-' + id).attr('class', 'fa fa-circle ' + (available ? 'text-success' : 'text-danger'));
+                                    if (data.code === 200) {
+                                        layer.msg(data.message, {icon: 1});
+                                        $('#js-' + id).attr('class', 'fa fa-circle ' + (available ? 'text-success' : 'text-danger'));
+                                    } else {
+                                        layer.msg(data.message, {icon: 2});
+                                    }
                                 }, 'json');
                             }, function () {
                                 layer.msg('取消' + (available ? '开启' : '关闭'));

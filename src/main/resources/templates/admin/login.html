@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.w3.org/1999/xhtml">
+<html
+        xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta th:replace="/admin/fragments/meta::meta"/>
     <title>登陆</title>
@@ -15,7 +16,7 @@
     <div class="login-box-body">
         <p class="login-box-msg">请登录你的账号</p>
 
-        <form id="js-form" th:action="@{/admin/login}" method="post">
+        <form id="js-form" th:action="@{/admin/login}" method="POST">
             <div class="form-group has-feedback">
                 <input type="text" class="form-control"
                        name="username"
@@ -50,7 +51,12 @@
     <!-- /.login-box-body -->
 </div>
 <js th:replace="/admin/fragments/footer-js::footer-js"></js>
-<script>
+<script th:inline="javascript">
+    var errorMessage = /*[[${session.SPRING_SECURITY_LAST_EXCEPTION}]]*/ '';
+    if (!!errorMessage) {
+        layer.message(errorMessage);
+    }
+
     $('#js-form').ajaxForm({
         dataType: 'json',
         beforeSubmit: function (arr, form, option) {

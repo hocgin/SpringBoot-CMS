@@ -36,32 +36,27 @@ public class RoleController extends BaseController {
     }
     
     @GetMapping("/index.html")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String vIndex(Model model) {
         return String.format(BASE_TEMPLATES_PATH, "index");
     }
     
     @GetMapping("/add-view.html")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String vAdd(Model model) {
         return String.format(BASE_TEMPLATES_PATH, "add-view");
     }
     
     @GetMapping("/query-modal.html")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String vQuery() {
         return String.format(BASE_TEMPLATES_PATH, "query-modal");
     }
     
     @GetMapping("/update-info-view/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String vUpdateInfo(@PathVariable("id") String id, Model model) {
         model.addAttribute("role", roleService.find(id));
         return String.format(BASE_TEMPLATES_PATH, "update-info-view");
     }
     
     @RequestMapping("/detail/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String vDetail(@PathVariable("id") String id, Model model) {
         Role role = roleService.find(id);
         
@@ -71,14 +66,12 @@ public class RoleController extends BaseController {
     }
     
     @GetMapping("/update-permission-view/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String vUpdatePermission(@PathVariable("id") String id, Model model) {
         model.addAttribute("role", roleService.find(id));
         return String.format(BASE_TEMPLATES_PATH, "update-permission-view");
     }
     
     @GetMapping("/select-user-view/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String vSelectUser(@PathVariable("id") String id, Model model) {
         Role role = roleService.find(id);
         model.addAttribute("role", role);
@@ -88,7 +81,6 @@ public class RoleController extends BaseController {
     
     @RequestMapping("/data")
     @ResponseBody
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public DataTablesOutput<Role> data(@RequestBody RoleQueryFilter input) {
         return roleService.data(input);
     }
@@ -101,7 +93,7 @@ public class RoleController extends BaseController {
      */
     @RequestMapping("/insert")
     @ResponseBody
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public Results insert(Role role,
                           @RequestParam("permissionIds") String[] permissionIds) {
         CheckError checkError = CheckError.get();
@@ -111,7 +103,7 @@ public class RoleController extends BaseController {
     
     @RequestMapping("/update")
     @ResponseBody
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public Results update(RoleUpdateInfoFilter updateInfoFilter) {
         CheckError checkError = CheckError.get();
         roleService.save(updateInfoFilter, checkError);
@@ -120,7 +112,7 @@ public class RoleController extends BaseController {
     
     @PostMapping("/update-permission")
     @ResponseBody
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public Results updatePermission(@RequestParam("id") String id,
                                     @RequestParam("permissionId[]") String[] permissionIds) {
         CheckError checkError = CheckError.get();
@@ -136,7 +128,7 @@ public class RoleController extends BaseController {
      */
     @RequestMapping("/delete")
     @ResponseBody
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public Results delete(@RequestParam("id") String[] id) {
         CheckError checkError = CheckError.get();
         roleService.delete(id);
@@ -145,8 +137,8 @@ public class RoleController extends BaseController {
     
     @PostMapping("/available/{id}")
     @ResponseBody
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public Results startById(@PathVariable("id") String id, boolean available) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public Results available(@PathVariable("id") String id, boolean available) {
         roleService.updateAvailable(id, available);
         return Results.success()
                 .setMessage(String.format("%s成功", available ? "开启" : "禁用"));
@@ -155,7 +147,7 @@ public class RoleController extends BaseController {
     
     @PostMapping("/add-user")
     @ResponseBody
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public Results addUser(@RequestParam("role") String roleId,
                            @RequestParam("user[]") String[] userIds) {
         if (StringUtils.isEmpty(roleId)
@@ -169,7 +161,7 @@ public class RoleController extends BaseController {
     
     @PostMapping("/remove-user")
     @ResponseBody
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public Results removeUser(@RequestParam("role") String roleId,
                            @RequestParam("user") String[] userIds) {
         if (StringUtils.isEmpty(roleId)

@@ -30,7 +30,6 @@ public class DepartmentController extends BaseController {
     }
     
     @RequestMapping("/index.html")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String vIndex(Model model) {
         Optional<String> html = departmentService.queryRoot()
                 .stream()
@@ -41,7 +40,6 @@ public class DepartmentController extends BaseController {
     }
     
     @RequestMapping("/add-view.html")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String vAdd(@RequestParam(value = "parent-id", required = false) String parentId, Model model) {
         if (!StringUtils.isEmpty(parentId)) {
             Department department = departmentService.findById(parentId);
@@ -51,14 +49,12 @@ public class DepartmentController extends BaseController {
     }
     
     @RequestMapping("/detail/{detail-id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String vDetail(@PathVariable("detail-id") String detailId, Model model) {
         model.addAttribute("o", departmentService.findById(detailId));
         return "/admin/system/department/detail-modal";
     }
     
     @GetMapping("/{department-id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String vUpdate(@PathVariable("department-id") String departmentId, Model model) {
         Department department = departmentService.findById(departmentId);
         model.addAttribute("o", department);
@@ -76,7 +72,7 @@ public class DepartmentController extends BaseController {
      */
     @RequestMapping("/insert")
     @ResponseBody
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public Results insert(Department department) {
         departmentService.insert(department);
         return Results.success()
@@ -91,7 +87,7 @@ public class DepartmentController extends BaseController {
      */
     @RequestMapping("/update")
     @ResponseBody
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public Results update(Department department) {
         departmentService.update(department);
         return Results.success()
@@ -106,7 +102,7 @@ public class DepartmentController extends BaseController {
      */
     @RequestMapping("/delete")
     @ResponseBody
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public Results delete(String id) {
         departmentService.delete(id);
         return Results.success("删除成功");
@@ -114,7 +110,6 @@ public class DepartmentController extends BaseController {
     
     @PostMapping("/children/{parentId}")
     @ResponseBody
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Results children(@PathVariable("parentId") String parentId) {
         Optional<String> html = departmentService.queryChildren(parentId)
                 .stream()
@@ -125,7 +120,6 @@ public class DepartmentController extends BaseController {
     
     @GetMapping("/tree")
     @ResponseBody
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Object root() {
         List<Object> result = new ArrayList<>();
         departmentService.queryRoot()
@@ -141,7 +135,6 @@ public class DepartmentController extends BaseController {
     
     @GetMapping("/tree/{pid}")
     @ResponseBody
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Object root(@PathVariable("pid") String pid) {
         List<Object> result = new ArrayList<>();
         departmentService.queryChildren(pid)

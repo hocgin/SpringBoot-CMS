@@ -4,10 +4,9 @@ import in.hocg.web.modules.domain.Role;
 import in.hocg.web.modules.domain.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.CollectionUtils;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -24,8 +23,8 @@ public class IUser implements UserDetails {
     public IUser(String username,
                  String password,
                  Collection<? extends GrantedAuthority> authorities,
-                  
-                  Date lastPasswordResetDate) {
+    
+                 Date lastPasswordResetDate) {
         this.username = username;
         this.password = password;
         this.authorities = authorities;
@@ -79,7 +78,7 @@ public class IUser implements UserDetails {
     }
     
     private static List<? extends GrantedAuthority> getGrantedAuthority(Collection<Role> roles) {
-        return roles.stream()
+        return CollectionUtils.isEmpty(roles) ? Collections.emptyList() : roles.stream()
                 .map(IGrantedAuthority::new)
                 .collect(Collectors.toList());
     }

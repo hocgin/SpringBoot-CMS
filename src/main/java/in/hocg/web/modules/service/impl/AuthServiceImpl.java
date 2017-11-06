@@ -68,8 +68,8 @@ public class AuthServiceImpl implements AuthService {
     
     @Override
     public String login(String username, String password) {
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(username, password);
-        final Authentication authentication = authenticationManager.authenticate(token);
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
+        final Authentication authentication = authenticationManager.authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
     
         final UserDetails userDetails = userDetailsService.loadUserByUsername(username);

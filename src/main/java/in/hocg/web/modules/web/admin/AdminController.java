@@ -43,7 +43,6 @@ public class AdminController extends BaseController {
         session.setAttribute(SESSION.TOKEN, token);
         return Results.success()
                 .setMessage(!StringUtils.isEmpty(token) ? "登陆成功" : "登陆失败")
-//                .setData("/admin/index.html");
                 .setData("/admin/system/department/index.html");
     }
 }

@@ -93,7 +93,6 @@
         </div>
         <script>
             var allRequest = {};
-            var systemTable;
             $(function () {
                 // 所有网络请求
                 allRequest = {
@@ -103,8 +102,12 @@
                                 btn: ['确定', '取消'] //按钮
                             }, function () {
                                 $.post('/admin/system/user/delete', {id: ids.toString()}, function (data) {
-                                    table.reloadPage();
-                                    layer.msg(data.message, {icon: 1});
+                                    if (data.code === 200) {
+                                        layer.msg(data.message, {icon: 1});
+                                        table.reloadPage();
+                                    } else {
+                                        layer.msg(data.message, {icon: 2});
+                                    }
                                 }, 'json');
                             }, function () {
                                 layer.msg('取消删除');
@@ -124,8 +127,12 @@
                                 btn: ['确定', '取消'] //按钮
                             }, function () {
                                 $.post('/admin/system/user/available/' + id.toString(), {available: available}, function (data) {
-                                    layer.msg(data.message, {icon: 1});
-                                    $('#js-' + id).attr('class', 'fa fa-circle ' + (available ? 'text-success' : 'text-danger'));
+                                    if (data.code === 200) {
+                                        layer.msg(data.message, {icon: 1});
+                                        $('#js-' + id).attr('class', 'fa fa-circle ' + (available ? 'text-success' : 'text-danger'));
+                                    } else {
+                                        layer.msg(data.message, {icon: 2});
+                                    }
                                 }, 'json');
                             }, function () {
                                 layer.msg('取消' + (available ? '开启' : '关闭'));

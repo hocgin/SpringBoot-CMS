@@ -1,5 +1,6 @@
 <aside th:fragment="left-menu" class="main-sidebar"
-       xmlns:th="http://www.thymeleaf.org">
+       xmlns:th="http://www.thymeleaf.org"
+       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
     <!-- sidebar: style can be found in sidebar.less -->
     <section class="sidebar">
         <!-- Sidebar user panel -->
@@ -8,7 +9,7 @@
                 <img th:src="@{/admin-lte/dist/img/user2-160x160.jpg}" class="img-circle" alt="User Image">
             </div>
             <div class="pull-left info">
-                <p>Alexander Pierce</p>
+                <p sec:authentication="name">用户名</p>
                 <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
             </div>
         </div>
@@ -35,7 +36,7 @@
                 </a>
                 <ul class="treeview-menu">
                     <li>
-                        <a th:href="@{/admin/system/var/index.html}" data-pjax><i class="fa fa-circle-o"></i> 系统参数</a>
+                        <a th:href="@{/admin/system/variable/index.html}" data-pjax><i class="fa fa-circle-o"></i> 系统参数</a>
                     </li>
                     <li>
                         <a th:href="@{/admin/system/department/index.html}" data-pjax><i class="fa fa-circle-o"></i> 单位管理</a>
