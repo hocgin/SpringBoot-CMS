@@ -8,7 +8,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,7 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     
     @Autowired
-    private JwtAuthenticationEntryPoint unauthorizedHandler;
+    private IAuthenticationEntryPoint unauthorizedHandler;
     @Autowired
     private UserDetailsService userDetailsService;
     
@@ -38,22 +37,27 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 // 由于使用的是JWT，我们这里不需要csrf
                 .csrf().disable()
-                .exceptionHandling()
-                .authenticationEntryPoint(unauthorizedHandler)
-                .and()
+                
+                // 所有请求进行拦截处理
+                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+                
                 // 基于token，所以不需要session
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .formLogin()
-                .loginPage("/admin/login.html")
-                .permitAll().and()
+//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                
                 .authorizeRequests()
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                
+                // 允许匿名访问 Token 操作
+                .antMatchers("/auth/**").permitAll()
+                // 允许匿名访问 后台登陆
+                .antMatchers("/admin/login",
+                        "/admin/login.html").permitAll()
+                
                 // 允许对于网站静态资源的无授权访问
                 .antMatchers(
                         HttpMethod.GET,
                         "/",
                         // 静态资源
-                        "/admin/login.html",
                         "/favicon.ico",
                         "/**/*.css",
                         "/**/*.js",
@@ -62,12 +66,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/**/*.jpg",
                         "/**/*.woff2"
                 ).permitAll()
-                // 对于获取token的rest api要允许匿名访问
-                .antMatchers("/auth/**",
-                        "/admin/login")
-                .permitAll()
+                
+                .and().exceptionHandling().authenticationEntryPoint(new ILoginUrlAuthenticationEntryPoint("/admin/login.html")).and()
+                
+                .authorizeRequests()
                 // 除上面外的所有请求全部需要鉴权认证
                 .anyRequest().authenticated();
+        
         // 添加JWT filter
         http.addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
         
