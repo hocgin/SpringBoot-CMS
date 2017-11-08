@@ -2,6 +2,7 @@ package in.hocg.web.lang.body.response;
 
 import in.hocg.web.lang.CheckError;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.BindingResult;
 
 import java.io.Serializable;
 
@@ -77,6 +78,10 @@ public class Results<T> implements Serializable {
         } else {
             return Results.error(CheckError.CODE, checkError.getFirstErrorMessage());
         }
+    }
+    
+    public static Results check(BindingResult bindingResult) {
+        return Results.error(999, bindingResult.getFieldError().getDefaultMessage());
     }
     
     public static Results check(CheckError checkError) {

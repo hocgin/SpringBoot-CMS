@@ -64,7 +64,8 @@ public class VariableController extends BaseController {
     public Results insert(VariableInsertFilter filter) {
         CheckError checkError = CheckError.get();
         variableService.insert(filter, checkError);
-        return Results.check(checkError);
+        return Results.check(checkError)
+                .setMessage(checkError.isPass()? "新增成功": "新增失败");
     }
     
     @PostMapping("/update")
@@ -73,7 +74,8 @@ public class VariableController extends BaseController {
     public Results update(VariableUpdateFilter filter) {
         CheckError checkError = CheckError.get();
         variableService.update(filter, checkError);
-        return Results.check(checkError);
+        return Results.check(checkError)
+                .setMessage(checkError.isPass()? "更新成功": "更新失败");
     }
     
     @PostMapping("/delete")

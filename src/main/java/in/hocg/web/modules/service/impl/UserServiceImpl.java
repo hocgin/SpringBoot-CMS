@@ -179,4 +179,9 @@ public class UserServiceImpl implements UserService {
                     });
         }
     }
+    
+    @Override
+    public void removeDepartmentField(String... DepartmentId) {
+        userRepository.removeDepartmentField(DepartmentId);
+    }
 }

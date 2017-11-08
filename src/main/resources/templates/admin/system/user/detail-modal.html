@@ -16,7 +16,7 @@
                     <i class="fa fa-envelope-o"></i> <span th:text="${user.email}"></span>
                 </a>
                 <a href="javascript:;" class="list-group-item" title="所属单位">
-                    <i class="fa fa-building"></i> <span th:text="${user.department.name}"></span>
+                    <i class="fa fa-building"></i> <span th:text="${user.department?.name}"></span>
                 </a>
             </div>
         </div>

@@ -4,6 +4,7 @@ import in.hocg.web.modules.domain.User;
 import in.hocg.web.modules.domain.repository.custom.UserRepositoryCustom;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 
 /**
  * Created by hocgin on 2017/11/6.
@@ -18,5 +19,12 @@ public class UserRepositoryImpl
         Query query = Query.query(Criteria.where("username").is(username)
                 .and("available").is(true));
         return findOne(query);
+    }
+    
+    @Override
+    public void removeDepartmentField(String... departmentId) {
+        Query query = Query.query(Criteria.where("department").in(departmentId));
+        Update update = new Update().set("department", null);
+        updateMulti(query, update);
     }
 }

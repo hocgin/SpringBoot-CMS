@@ -20,11 +20,11 @@ public class IUser implements UserDetails {
     private final Collection<? extends GrantedAuthority> authorities;
     private final Date lastPasswordResetDate;
     
-    public IUser(String username,
-                 String password,
-                 Collection<? extends GrantedAuthority> authorities,
-    
-                 Date lastPasswordResetDate) {
+    private IUser(String username,
+                  String password,
+                  Collection<? extends GrantedAuthority> authorities,
+
+                  Date lastPasswordResetDate) {
         this.username = username;
         this.password = password;
         this.authorities = authorities;

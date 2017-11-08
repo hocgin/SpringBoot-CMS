@@ -4,6 +4,7 @@ import in.hocg.web.modules.domain.User;
 import in.hocg.web.modules.domain.repository.custom.UserRepositoryCustom;
 import org.springframework.data.mongodb.datatables.repository.DataTablesRepository;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -11,6 +12,7 @@ import java.util.List;
  * Created by hocgin on 2017/10/25.
  * email: hocgin@gmail.com
  */
+@Component
 public interface UserRepository
         extends MongoRepository<User, String>,
         UserRepositoryCustom,

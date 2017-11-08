@@ -1,10 +1,16 @@
 package in.hocg.web.modules.service.impl;
 
+import in.hocg.web.filter.DepartmentInsertFilter;
+import in.hocg.web.lang.CheckError;
 import in.hocg.web.modules.domain.Department;
 import in.hocg.web.modules.domain.repository.DepartmentRepository;
 import in.hocg.web.modules.service.DepartmentService;
+import in.hocg.web.modules.service.RoleService;
+import in.hocg.web.modules.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
@@ -16,19 +22,31 @@ import java.util.List;
 @Service
 public class DepartmentServiceImpl extends BaseService implements DepartmentService {
     private DepartmentRepository departmentRepository;
+    private UserService userService;
+    private RoleService roleService;
     
     @Autowired
-    public DepartmentServiceImpl(DepartmentRepository departmentRepository) {
+    @Lazy
+    public DepartmentServiceImpl(DepartmentRepository departmentRepository,
+                                 UserService userService,
+                                 RoleService roleService) {
         this.departmentRepository = departmentRepository;
+        this.userService = userService;
+        this.roleService = roleService;
     }
     
     @Override
-    public void insert(Department department) {
+    public void insert(DepartmentInsertFilter filter, CheckError checkError) {
+        Department department = filter.get();
         String path = "";
         String parentId = department.getParent();
         if (!StringUtils.isEmpty(parentId)) {
             Department parentDepartment = departmentRepository.findOne(parentId);
-            path = parentDepartment.getPath();
+            if (ObjectUtils.isEmpty(parentDepartment)) {
+                checkError.putError("所选的上级单位不存在");
+                return;
+            }
+            path = StringUtils.isEmpty(parentDepartment.getPath()) ? "" : parentDepartment.getPath();
             parentDepartment.setHasChildren(true);
             departmentRepository.save(parentDepartment);
         }
@@ -44,25 +62,25 @@ public class DepartmentServiceImpl extends BaseService implements DepartmentServ
     @Override
     public void delete(String id) {
         Department department = departmentRepository.findOne(id);
-        // 删除此单位 及 子类单位
-        List<Department> all = departmentRepository.findAllByPathRegex(String.format("%s.*", (StringUtils.isEmpty(department.getPath()) ? "" : department.getPath())));
-        if (all.size() > 1) {
+        if (ObjectUtils.isEmpty(department)) {
             return;
         }
+        List<Department> all = departmentRepository.findAllByPathRegex(String.format("%s.*", (StringUtils.isEmpty(department.getPath()) ? "" : department.getPath())));
         String[] ids = all
                 .stream()
                 .map(Department::getId)
                 .toArray(String[]::new);
         
+        // 删除此单位 及 子类单位
         departmentRepository.deleteAllByIdIn(ids);
         if (!StringUtils.isEmpty(department.getParent())
                 && departmentRepository.countByParent(department.getParent()) < 1) { // 判断是否把父节点设置为根结点
             departmentRepository.updateHasChildren(department.getParent(), false);
         }
-        // 删除此用户 和 单位及子单位之间的关联 todo 上面的先查出id
-        
-        // 删除角色 和 单位及子单位之间的关联 todo 上面的先查出id
-        
+        // 删除用户 和 此单位及子单位之间的关联(这些单位的用户所属单位设置为null)
+        userService.removeDepartmentField(ids);
+        // 删除角色 和 此单位及子单位之间的关联(直接删除掉这些角色)
+        roleService.deleteAllByDepartmentIn(ids);
     }
     
     @Override

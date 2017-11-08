@@ -1,5 +1,7 @@
 package in.hocg.web.modules.service;
 
+import in.hocg.web.filter.DepartmentInsertFilter;
+import in.hocg.web.lang.CheckError;
 import in.hocg.web.modules.domain.Department;
 
 import java.util.List;
@@ -9,7 +11,7 @@ import java.util.List;
  * email: hocgin@gmail.com
  */
 public interface DepartmentService {
-    void insert(Department department);
+    void insert(DepartmentInsertFilter filter, CheckError checkError);
     void delete(String id);
     void update(Department department);
     List<Department> queryChildren(String parentId);

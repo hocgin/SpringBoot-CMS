@@ -144,4 +144,9 @@ public class RoleServiceImpl implements RoleService {
         roleRepository.save(role);
     }
     
+    @Override
+    public void deleteAllByDepartmentIn(String... departmentId) {
+        roleRepository.deleteAllByDepartmentIn(departmentId);
+    }
+    
 }

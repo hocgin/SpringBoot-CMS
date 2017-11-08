@@ -8,4 +8,6 @@ import in.hocg.web.modules.domain.User;
  */
 public interface UserRepositoryCustom {
     User findByUserNameAvailableTrue(String username);
+    
+    void removeDepartmentField(String... departmentId);
 }

@@ -175,12 +175,18 @@
                             columns: [
                                 {data: 'username', bSortable: true},
                                 {data: 'nickname', bSortable: true},
-                                {data: 'department.name', bSortable: true},
+                                {bSortable: true},
                                 {data: 'email', bSortable: true},
                                 {data: 'available', bSortable: true}
                             ],
                             order: [[0, "desc"]],
-                            columnDefs: [
+                            columnDefs: [{
+                                render: function (data, type, row) {
+                                    console.log(data, type, row);
+                                    return !!row.department ? row.department.name : '暂未分配单位';
+                                },
+                                targets: 2
+                            },
                                 {
                                     render: function (data, type, row) { // 状态
                                         if (!!data) {

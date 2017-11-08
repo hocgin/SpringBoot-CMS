@@ -125,7 +125,6 @@
                             //展开
                             onNodeExpand: function () {
                                 var that = this;
-                                console.log("loading node", that.id);
                                 //是否已经加载
                                 var rows = "<tr data-tt-id=\"loading\" data-tt-parent-id=\"" + that.id + "\" data-tt-branch=\"false\"><td colspan='5'>loading</td></tr>";
                                 table.treetableObject.treetable("loadBranch", that, rows);

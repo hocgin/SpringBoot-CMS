@@ -1,5 +1,8 @@
 package in.hocg.web.modules.web.admin.system;
 
+import in.hocg.web.filter.DepartmentInsertFilter;
+import in.hocg.web.filter.IdFilter;
+import in.hocg.web.lang.CheckError;
 import in.hocg.web.lang.body.response.Results;
 import in.hocg.web.modules.domain.Department;
 import in.hocg.web.modules.service.DepartmentService;
@@ -10,6 +13,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -65,18 +70,22 @@ public class DepartmentController extends BaseController {
     }
     
     /**
-     * 增加一个部门
+     * 增加一个单位/部门
      *
-     * @param department
+     * @param filter
      * @return
      */
     @RequestMapping("/insert")
     @ResponseBody
     @PreAuthorize("hasRole('ADMIN')")
-    public Results insert(Department department) {
-        departmentService.insert(department);
-        return Results.success()
-                .setMessage("增加成功");
+    public Results insert(@Validated DepartmentInsertFilter filter,
+                          BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return Results.check(bindingResult);
+        }
+        CheckError checkError = CheckError.get();
+        departmentService.insert(filter, checkError);
+        return Results.check(checkError, "增加成功");
     }
     
     /**
@@ -97,20 +106,24 @@ public class DepartmentController extends BaseController {
     /**
      * 删除
      *
-     * @param id 数组
+     * @param filter
      * @return
      */
     @RequestMapping("/delete")
     @ResponseBody
     @PreAuthorize("hasRole('ADMIN')")
-    public Results delete(String id) {
-        departmentService.delete(id);
+    public Results delete(@Validated IdFilter filter,
+                          BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return Results.check(bindingResult);
+        }
+        departmentService.delete(filter.getId());
         return Results.success("删除成功");
     }
     
-    @PostMapping("/children/{parentId}")
+    @PostMapping("/children/{id}")
     @ResponseBody
-    public Results children(@PathVariable("parentId") String parentId) {
+    public Results children(@PathVariable("id") String parentId) {
         Optional<String> html = departmentService.queryChildren(parentId)
                 .stream()
                 .map(this::tr)
@@ -133,9 +146,9 @@ public class DepartmentController extends BaseController {
         return result;
     }
     
-    @GetMapping("/tree/{pid}")
+    @GetMapping("/tree/{id}")
     @ResponseBody
-    public Object root(@PathVariable("pid") String pid) {
+    public Object root(@PathVariable("id") String pid) {
         List<Object> result = new ArrayList<>();
         departmentService.queryChildren(pid)
                 .forEach((o) -> {
@@ -170,19 +183,19 @@ public class DepartmentController extends BaseController {
                 department.getDescription() == null ? "暂无描述" : department.getDescription(),
                 department.getPhone() == null ? "暂无联系方式" : department.getPhone(),
                 String.format("<div class=\"btn-group\">\n" +
-                        "                  <button type=\"button\" class=\"btn btn-default btn-flat\">操作</button>\n" +
-                        "                  <button type=\"button\" class=\"btn btn-default btn-flat dropdown-toggle\" data-toggle=\"dropdown\">\n" +
-                        "                    <span class=\"caret\"></span>\n" +
-                        "                    <span class=\"sr-only\">Toggle Dropdown</span>\n" +
-                        "                  </button>\n" +
-                        "                  <ul class=\"dropdown-menu\" role=\"menu\">\n" +
-                        "                    <li><a class=\"js-modal\" href=\"/admin/system/department/detail/%s\" data-target=\"#js-detail-modal\" data-toggle=\"modal\">查看</a></li>\n" +
-                        "                    <li><a href=\"/admin/system/department/%s\" pjax-data>修改</a></li>\n" +
-                        "                    <li><a href=\"javascript:;;\" onclick=\"allRequest.deleteSystemVars(%s)\">删除</a></li>\n" +
-                        "                    <li class=\"divider\"></li>\n" +
-                        "                    <li><a href=\"/admin/system/department/%s\" data-pjax>添加子单位</a></li>\n" +
-                        "                  </ul>\n" +
-                        "                </div>",
+                                "                  <button type=\"button\" class=\"btn btn-default btn-flat\">操作</button>\n" +
+                                "                  <button type=\"button\" class=\"btn btn-default btn-flat dropdown-toggle\" data-toggle=\"dropdown\">\n" +
+                                "                    <span class=\"caret\"></span>\n" +
+                                "                    <span class=\"sr-only\">Toggle Dropdown</span>\n" +
+                                "                  </button>\n" +
+                                "                  <ul class=\"dropdown-menu\" role=\"menu\">\n" +
+                                "                    <li><a class=\"js-modal\" href=\"/admin/system/department/detail/%s\" data-target=\"#js-detail-modal\" data-toggle=\"modal\">查看</a></li>\n" +
+                                "                    <li><a href=\"/admin/system/department/%s\" pjax-data>修改</a></li>\n" +
+                                "                    <li><a href=\"javascript:;;\" onclick=\"allRequest.deleteSystemVars(%s)\">删除</a></li>\n" +
+                                "                    <li class=\"divider\"></li>\n" +
+                                "                    <li><a href=\"/admin/system/department/%s\" data-pjax>添加子单位</a></li>\n" +
+                                "                  </ul>\n" +
+                                "                </div>",
                         department.getId(),
                         department.getId(),
                         String.format("['%s']", department.getId()),

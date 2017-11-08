@@ -1,5 +1,6 @@
 package in.hocg.web.modules.domain;
 
+import lombok.Data;
 import org.springframework.data.annotation.Transient;
 
 import java.io.Serializable;
@@ -10,6 +11,7 @@ import java.util.Map;
  * Created by hocgin on 2017/10/28.
  * email: hocgin@gmail.com
  */
+@Data
 public abstract class BaseDomain implements Serializable {
     protected Date createdAt;
     protected String createBy;

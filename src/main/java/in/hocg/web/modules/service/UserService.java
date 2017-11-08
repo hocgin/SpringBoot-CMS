@@ -35,4 +35,6 @@ public interface UserService {
     void addRoleToUser(String roleId, String... userIds);
     
     void removeRoleFormUser(String roleId, String... userIds);
+    
+    void removeDepartmentField(String... ids);
 }

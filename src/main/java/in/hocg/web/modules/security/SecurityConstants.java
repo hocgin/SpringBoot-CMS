@@ -5,5 +5,9 @@ package in.hocg.web.modules.security;
  * email: hocgin@gmail.com
  */
 public interface SecurityConstants {
-    String SIGN_UP_URL = "/admin/login.html";
+    
+    /**
+     * 登陆页面 及 登陆的入口(即 form[action="此处地址"])
+     */
+    String ADMIN_SIGN_UP_PAGE = "/admin/login.html";
 }

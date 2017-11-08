@@ -57,11 +57,11 @@
                                     <div class="input-group">
                                         <input type="text" class="form-control" id="departmentId"
                                                placeholder="选择单位"
-                                               th:value="${user.department.name}"
+                                               th:value="${user.department?.name}"
                                                disabled="disabled">
                                         <input type="hidden"
                                                name="departmentId"
-                                               th:value="${user.department.id}">
+                                               th:value="${user.department?.id}">
                                         <span class="input-group-btn">
                                             <button type="button" class="btn btn-info btn-flat"
                                                     data-target="#js-select-model" data-toggle="modal">选择</button>
@@ -113,7 +113,6 @@
                     },
                     success: function (data, statusText, xhr, form) {
                         if (data.code === 200) {
-                            form.resetForm(); // 重置表单
                             layer.msg(data.message, {icon: 1});
                         } else {
                             layer.msg(data.message, {icon: 2});

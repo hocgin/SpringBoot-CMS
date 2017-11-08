@@ -16,7 +16,7 @@ import org.springframework.util.ObjectUtils;
  */
 @Service
 public class IUserDetailsService implements UserDetailsService{
-    UserRepository userRepository;
+    private UserRepository userRepository;
     
     @Autowired
     public IUserDetailsService(UserRepository userRepository) {

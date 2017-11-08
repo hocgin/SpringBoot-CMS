@@ -119,7 +119,6 @@
                     },
                     success: function (data, statusText, xhr, form) {
                         if (data.code === 200) {
-                            form.resetForm(); // 重置表单
                             layer.msg(data.message, {icon: 1});
                         } else {
                             layer.msg(data.message, {icon: 2});

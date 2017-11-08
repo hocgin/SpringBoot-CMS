@@ -13,5 +13,16 @@
     <!-- Bootstrap 3.3.7 -->
     <script th:src="@{/admin-lte/bower_components/bootstrap/dist/js/bootstrap.min.js}"></script>
     <script th:src="@{/i-js/app-config.js}"></script>
-
+    <script>
+        $(function () {
+            // 添加 CSRF 头
+            var token = $("meta[name='_csrf']").attr("content");
+            var header = $("meta[name='_csrf_header']").attr("content");
+            $.ajaxSetup({
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader(header, token);
+                }
+            });
+        });
+    </script>
 </head>
