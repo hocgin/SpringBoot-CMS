@@ -1,5 +1,10 @@
 package in.hocg.web.modules.web.admin.system;
 
+import in.hocg.web.filter.PermissionFilter;
+import in.hocg.web.filter.group.Insert;
+import in.hocg.web.filter.group.Update;
+import in.hocg.web.lang.CheckError;
+import in.hocg.web.lang.HtmlUtils;
 import in.hocg.web.lang.body.response.Results;
 import in.hocg.web.modules.domain.Permission;
 import in.hocg.web.modules.service.PermissionService;
@@ -9,6 +14,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -20,12 +27,16 @@ import java.util.*;
 @Controller
 @RequestMapping("/admin/system/permission")
 public class PermissionController extends BaseController {
+    public final String BASE_TEMPLATES_PATH = "/admin/system/permission/%s";
     
     private PermissionService permissionService;
+    private HtmlUtils htmlUtils;
     
     @Autowired
-    public PermissionController(PermissionService permissionService) {
+    public PermissionController(PermissionService permissionService,
+                                HtmlUtils htmlUtils) {
         this.permissionService = permissionService;
+        this.htmlUtils = htmlUtils;
     }
     
     @RequestMapping("/index.html")
@@ -34,63 +45,71 @@ public class PermissionController extends BaseController {
                 .stream()
                 .map(this::tr)
                 .reduce((a, b) -> a + b);
-        model.addAttribute("root", html.orElse(""));
-        return "/admin/system/permission/index";
+        model.addAttribute("root", html.orElse(htmlUtils.trCenter(6, "暂无数据")));
+        return String.format(BASE_TEMPLATES_PATH, "index");
     }
     
     @RequestMapping("/add-view.html")
-    public String vAdd(@RequestParam(value = "parent-id", required = false) String parentId, Model model) {
+    public String vAdd(@RequestParam(value = "id", required = false) String parentId, Model model) {
         if (!StringUtils.isEmpty(parentId)) {
             Permission permission = permissionService.findById(parentId);
-            model.addAttribute("o", permission);
+            model.addAttribute("permission", permission);
         }
-        return "/admin/system/permission/add-view";
+        return String.format(BASE_TEMPLATES_PATH, "add-view");
     }
     
-    @RequestMapping("/detail/{detail-id}")
-    public String vDetail(@PathVariable("detail-id") String detailId, Model model) {
+    @RequestMapping("/detail/{id}")
+    public String vDetail(@PathVariable("id") String detailId, Model model) {
         model.addAttribute("o", permissionService.findById(detailId));
-        return "/admin/system/permission/detail-modal";
+        return String.format(BASE_TEMPLATES_PATH, "detail-modal");
     }
     
-    @GetMapping("/{permission-id}")
-    public String vUpdate(@PathVariable("permission-id") String permissionId, Model model) {
+    @GetMapping("/{id}")
+    public String vUpdate(@PathVariable("id") String permissionId, Model model) {
         Permission permission = permissionService.findById(permissionId);
-        model.addAttribute("o", permission);
+        model.addAttribute("permission", permission);
         if (!StringUtils.isEmpty(permission.getParent())) {
             model.addAttribute("parent", permissionService.findById(permission.getParent()));
         }
-        return "/admin/system/permission/update-view";
+        return String.format(BASE_TEMPLATES_PATH, "update-view");
     }
     
     /**
      * 增加一个权限
      *
-     * @param permission
+     * @param filter
      * @return
      */
     @RequestMapping("/insert")
     @ResponseBody
     @PreAuthorize("hasRole('ADMIN')")
-    public Results insert(Permission permission) {
-        permissionService.insert(permission);
-        return Results.success()
-                .setMessage("增加成功");
+    public Results insert(@Validated({Insert.class}) PermissionFilter filter,
+                          BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return Results.check(bindingResult);
+        }
+        CheckError checkError = CheckError.get();
+        permissionService.insert(filter, checkError);
+        return Results.check(checkError, "增加成功");
     }
     
     /**
      * 更新
      *
-     * @param permission
+     * @param filter
      * @return
      */
     @RequestMapping("/update")
     @ResponseBody
     @PreAuthorize("hasRole('ADMIN')")
-    public Results update(Permission permission) {
-        permissionService.update(permission);
-        return Results.success()
-                .setMessage("更新成功");
+    public Results update(@Validated({Update.class}) PermissionFilter filter,
+                          BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return Results.check(bindingResult);
+        }
+        CheckError checkError = CheckError.get();
+        permissionService.update(filter, checkError);
+        return Results.check(checkError, "更新成功");
     }
     
     /**
@@ -107,9 +126,9 @@ public class PermissionController extends BaseController {
         return Results.success("删除成功");
     }
     
-    @PostMapping("/children/{parentId}")
+    @PostMapping("/children/{id}")
     @ResponseBody
-    public Results children(@PathVariable("parentId") String parentId) {
+    public Results children(@PathVariable("id") String parentId) {
         Optional<String> html = permissionService.queryChildren(parentId)
                 .stream()
                 .map(this::tr)
@@ -134,9 +153,9 @@ public class PermissionController extends BaseController {
         return result;
     }
     
-    @GetMapping("/tree/{pid}")
+    @GetMapping("/tree/{id}")
     @ResponseBody
-    public Object root(@PathVariable("pid") String pid) {
+    public Object root(@PathVariable("id") String pid) {
         List<Object> result = new ArrayList<>();
         permissionService.queryChildren(pid)
                 .forEach((o) -> {
@@ -157,7 +176,7 @@ public class PermissionController extends BaseController {
     public Results available(@PathVariable("id") String id, boolean available) {
         permissionService.updateAvailable(id, available);
         return Results.success()
-                .setMessage(String.format("%s成功", available? "开启": "禁用"));
+                .setMessage(String.format("%s成功", available ? "开启" : "禁用"));
     }
     
     /**
@@ -178,13 +197,13 @@ public class PermissionController extends BaseController {
                 "     </tr>";
         return String.format(html,
                 permission.getId(),
-                permission.getParent() == null ? "" : permission.getParent(),
+                StringUtils.isEmpty(permission.getParent()) ? "" : permission.getParent(),
                 String.valueOf(permission.isHasChildren()),
                 
                 permission.getName(),
-                permission.getUrl() == null ? "无路径" : permission.getUrl(),
-                permission.getType() == null ? "暂无类型" : permission.getType(),
-                permission.getPermission() == null ? "暂无权限标示" : permission.getPermission(),
+                StringUtils.isEmpty(permission.getUrl()) ? htmlUtils.danger("暂无") : permission.getUrl(),
+                StringUtils.isEmpty(permission.getType()) ? htmlUtils.danger("暂无") : Permission.type(permission.getType()),
+                StringUtils.isEmpty(permission.getPermission()) ? htmlUtils.danger("暂无") : permission.getPermission(),
                 String.format("<i id=\"js-%s\" class=\"fa fa-circle %s\"></i>",
                         permission.getId(),
                         permission.getAvailable() ? "text-success" : "text-danger"),
@@ -194,7 +213,7 @@ public class PermissionController extends BaseController {
                                 "                    <span class=\"caret\"></span>\n" +
                                 "                    <span class=\"sr-only\">Toggle Dropdown</span>\n" +
                                 "                  </button>\n" +
-                        
+                                
                                 "                  <ul class=\"dropdown-menu\" role=\"menu\">\n" +
                                 "                    <li><a href=\"/admin/system/permission/%s\" pjax-data>修改</a></li>\n" +
                                 "                    <li><a href=\"javascript:;;\" onclick=\"allRequest.deleteById(%s)\">删除</a></li>\n" +
@@ -207,7 +226,7 @@ public class PermissionController extends BaseController {
                                 "                </div>",
                         permission.getId(),
                         String.format("['%s']", permission.getId()),
-                        String.format("add-view.html?parent-id=%s", permission.getId()),
+                        String.format("add-view.html?id=%s", permission.getId()),
                         permission.getId(),
                         permission.getId()
                 )

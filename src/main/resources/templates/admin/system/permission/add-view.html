@@ -62,10 +62,10 @@
                                     <div class="input-group">
                                         <input type="text" class="form-control" id="parent"
                                                placeholder="不选择默认为顶级菜单"
-                                               th:value="${o}?${o.name}:''"
+                                               th:value="${permission?.name}?:''"
                                                disabled="disabled">
                                         <input type="hidden" name="parent"
-                                               th:value="${o}?${o.id}:''">
+                                               th:value="${permission?.id}?:''">
                                         <span class="input-group-btn">
                                             <button type="button" class="btn btn-info btn-flat"
                                                     data-target="#js-select-model" data-toggle="modal">选择</button>
@@ -82,8 +82,8 @@
                                 <div class="form-group">
                                     <label for="type">权限类型</label>
                                     <select class="form-control" id="type" name="type">
-                                        <option value="menu" selected>菜单</option>
-                                        <option value="data">数据</option>
+                                        <option value="0" selected>菜单</option>
+                                        <option value="1">数据</option>
                                     </select>
                                 </div>
                                 <div class="form-group">
@@ -92,6 +92,7 @@
                                            placeholder="请输入权限标识"
                                            required
                                            type="text">
+                                    <p class="help-block">例如：sys.manager.unit</p>
                                 </div>
 
                                 <div id="divId">
@@ -112,7 +113,7 @@
                                         <input class="form-control" id="icon" name="icon"
                                                placeholder="请输入图标"
                                                type="text">
-                                        <p>图标预览: <i id="js-show-icon"></i></p>
+                                        <p class="help-block">图标预览: <i id="js-show-icon"></i></p>
                                     </div>
                                 </div>
                                 <div class="form-group">

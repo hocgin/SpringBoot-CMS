@@ -1,7 +1,6 @@
 package in.hocg.web.modules.service.impl;
 
-import in.hocg.web.filter.VariableInsertFilter;
-import in.hocg.web.filter.VariableUpdateFilter;
+import in.hocg.web.filter.VariableFilter;
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.modules.domain.Variable;
 import in.hocg.web.modules.domain.repository.VariableRepository;
@@ -32,7 +31,7 @@ public class VariableServiceImpl implements VariableService {
     }
     
     @Override
-    public void insert(VariableInsertFilter filter, CheckError checkError) {
+    public void insert(VariableFilter filter, CheckError checkError) {
         Variable variable = filter.get();
         if (variableRepository.countAllByKey(variable.getKey()) > 0) {
             checkError.putError("Key 已经存在");
@@ -42,15 +41,14 @@ public class VariableServiceImpl implements VariableService {
     }
     
     @Override
-    public void update(VariableUpdateFilter filter, CheckError checkError) {
+    public void update(VariableFilter filter, CheckError checkError) {
         Variable variable = variableRepository.findVariableByIdAndKey(filter.getId(), filter.getKey());
         if (ObjectUtils.isEmpty(variable)) {
             checkError.putError("该系统变量不存在");
             return;
         }
-        variable.setNote(filter.getNote());
-        variable.setValue(filter.getValue());
-        variableRepository.save(variable);
+        
+        variableRepository.save(filter.update(variable));
     }
     
     @Override

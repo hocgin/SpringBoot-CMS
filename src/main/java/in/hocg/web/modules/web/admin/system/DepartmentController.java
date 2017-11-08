@@ -1,17 +1,20 @@
 package in.hocg.web.modules.web.admin.system;
 
-import in.hocg.web.filter.DepartmentInsertFilter;
-import in.hocg.web.filter.IdFilter;
+import in.hocg.web.filter.DepartmentFilter;
+import in.hocg.web.filter.group.Insert;
+import in.hocg.web.filter.group.Update;
+import in.hocg.web.filter.lang.IdFilter;
 import in.hocg.web.lang.CheckError;
+import in.hocg.web.lang.HtmlUtils;
 import in.hocg.web.lang.body.response.Results;
 import in.hocg.web.modules.domain.Department;
 import in.hocg.web.modules.service.DepartmentService;
-import in.hocg.web.modules.service.impl.DepartmentServiceImpl;
 import in.hocg.web.modules.web.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -26,12 +29,16 @@ import java.util.*;
 @Controller
 @RequestMapping("/admin/system/department")
 public class DepartmentController extends BaseController {
+    public final String BASE_TEMPLATES_PATH = "/admin/system/department/%s";
     
     private DepartmentService departmentService;
+    private HtmlUtils htmlUtils;
     
     @Autowired
-    public DepartmentController(DepartmentServiceImpl departmentService) {
+    public DepartmentController(DepartmentService departmentService,
+                                HtmlUtils htmlUtils) {
         this.departmentService = departmentService;
+        this.htmlUtils = htmlUtils;
     }
     
     @RequestMapping("/index.html")
@@ -40,33 +47,34 @@ public class DepartmentController extends BaseController {
                 .stream()
                 .map(this::tr)
                 .reduce((a, b) -> a + b);
-        model.addAttribute("root", html.orElse(""));
-        return "/admin/system/department/index";
+        
+        model.addAttribute("root", html.orElse(htmlUtils.trCenter(4, "暂无数据")));
+        return String.format(BASE_TEMPLATES_PATH, "index");
     }
     
     @RequestMapping("/add-view.html")
-    public String vAdd(@RequestParam(value = "parent-id", required = false) String parentId, Model model) {
+    public String vAdd(@RequestParam(value = "id", required = false) String parentId, Model model) {
         if (!StringUtils.isEmpty(parentId)) {
             Department department = departmentService.findById(parentId);
-            model.addAttribute("o", department);
+            model.addAttribute("department", department);
         }
-        return "/admin/system/department/add-view";
+        return String.format(BASE_TEMPLATES_PATH, "add-view");
     }
     
-    @RequestMapping("/detail/{detail-id}")
-    public String vDetail(@PathVariable("detail-id") String detailId, Model model) {
-        model.addAttribute("o", departmentService.findById(detailId));
-        return "/admin/system/department/detail-modal";
+    @RequestMapping("/detail/{id}")
+    public String vDetail(@PathVariable("id") String departmentId, Model model) {
+        model.addAttribute("department", departmentService.findById(departmentId));
+        return String.format(BASE_TEMPLATES_PATH, "detail-modal");
     }
     
-    @GetMapping("/{department-id}")
-    public String vUpdate(@PathVariable("department-id") String departmentId, Model model) {
+    @GetMapping("/{id}")
+    public String vUpdate(@PathVariable("id") String departmentId, Model model) {
         Department department = departmentService.findById(departmentId);
-        model.addAttribute("o", department);
+        model.addAttribute("department", department);
         if (!StringUtils.isEmpty(department.getParent())) {
             model.addAttribute("parent", departmentService.findById(department.getParent()));
         }
-        return "/admin/system/department/update-view";
+        return String.format(BASE_TEMPLATES_PATH, "update-view");
     }
     
     /**
@@ -78,7 +86,7 @@ public class DepartmentController extends BaseController {
     @RequestMapping("/insert")
     @ResponseBody
     @PreAuthorize("hasRole('ADMIN')")
-    public Results insert(@Validated DepartmentInsertFilter filter,
+    public Results insert(@Validated(value = Insert.class) DepartmentFilter filter,
                           BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return Results.check(bindingResult);
@@ -91,16 +99,20 @@ public class DepartmentController extends BaseController {
     /**
      * 更新
      *
-     * @param department
+     * @param filter
      * @return
      */
     @RequestMapping("/update")
     @ResponseBody
     @PreAuthorize("hasRole('ADMIN')")
-    public Results update(Department department) {
-        departmentService.update(department);
-        return Results.success()
-                .setMessage("更新成功");
+    public Results update(@Validated(value = Update.class) DepartmentFilter filter,
+                          BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return Results.check(bindingResult);
+        }
+        CheckError checkError = CheckError.get();
+        departmentService.update(filter, checkError);
+        return Results.check(checkError, "更新成功");
     }
     
     /**
@@ -163,7 +175,7 @@ public class DepartmentController extends BaseController {
     
     /**
      * 渲染树形表格
-     * todo 后续优化 。。。
+     * todo 后续优化(丑陋, 但是因为不想前端也写一遍..)
      *
      * @param department
      * @return
@@ -177,11 +189,11 @@ public class DepartmentController extends BaseController {
                 "     </tr>";
         return String.format(html,
                 department.getId(),
-                department.getParent() == null ? "" : department.getParent(),
+                ObjectUtils.isEmpty(department.getParent()) ? "" : department.getParent(),
                 String.valueOf(department.isHasChildren()),
                 department.getName(),
-                department.getDescription() == null ? "暂无描述" : department.getDescription(),
-                department.getPhone() == null ? "暂无联系方式" : department.getPhone(),
+                ObjectUtils.isEmpty(department.getDescription()) ? htmlUtils.danger("暂无") : department.getDescription(),
+                ObjectUtils.isEmpty(department.getPhone()) ? htmlUtils.danger("暂无") : department.getPhone(),
                 String.format("<div class=\"btn-group\">\n" +
                                 "                  <button type=\"button\" class=\"btn btn-default btn-flat\">操作</button>\n" +
                                 "                  <button type=\"button\" class=\"btn btn-default btn-flat dropdown-toggle\" data-toggle=\"dropdown\">\n" +
@@ -199,7 +211,7 @@ public class DepartmentController extends BaseController {
                         department.getId(),
                         department.getId(),
                         String.format("['%s']", department.getId()),
-                        String.format("add-view.html?parent-id=%s", department.getId())
+                        String.format("add-view.html?id=%s", department.getId())
                 )
         );
     }

@@ -61,10 +61,10 @@
                                     <div class="input-group">
                                         <input type="text" class="form-control" id="parent"
                                                placeholder="不选择默认为顶级单位"
-                                               th:value="${o}?${o.name}:''"
+                                               th:value="${department?.name}?:''"
                                                disabled="disabled">
                                         <input type="hidden" name="parent"
-                                               th:value="${o}?${o.id}:''">
+                                               th:value="${department?.id}?:''">
                                         <span class="input-group-btn">
                                             <button type="button" class="btn btn-info btn-flat"
                                                     data-target="#js-select-model" data-toggle="modal">选择</button>

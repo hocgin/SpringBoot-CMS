@@ -183,7 +183,7 @@
                             columnDefs: [{
                                 render: function (data, type, row) {
                                     console.log(data, type, row);
-                                    return !!row.department ? row.department.name : '暂未分配单位';
+                                    return !!row.department ? row.department.name : '<span class="text-danger">暂未分配</span>';
                                 },
                                 targets: 2
                             },

@@ -56,42 +56,35 @@
                               th:action="@{/admin/system/department/update}"
                               method="POST">
                             <input type="hidden" name="id"
-                                   th:value="${o.id}">
+                                   th:value="${department.id}">
                             <div class="box-body">
                                 <div class="form-group">
                                     <label for="parent">上级单位</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" id="parent"
-                                               placeholder="不选择默认为顶级单位"
-                                               th:value="${parent}?${parent.name}:'顶级单位'"
-                                               disabled="disabled">
-                                        <input type="hidden" name="parent"
-                                               th:value="${o.parent}">
-                                        <span class="input-group-btn">
-                                            <button type="button" class="btn btn-info btn-flat"
-                                                    data-target="#js-select-model" data-toggle="modal">选择</button>
-                                        </span>
-                                    </div>
+                                    <input type="text" class="form-control" id="parent"
+                                           placeholder="不选择默认为顶级单位"
+                                           th:value="${parent?.name}?:'顶级单位'"
+                                           disabled="disabled">
                                 </div>
                                 <div class="form-group">
                                     <label for="name">单位名称</label>
                                     <input class="form-control" id="name" name="name"
                                            placeholder="请输入单位名称"
-                                           th:value="${o.name}"
+                                           required
+                                           th:value="${department.name}"
                                            type="text">
                                 </div>
                                 <div class="form-group">
                                     <label for="phone">联系电话</label>
                                     <input class="form-control" id="phone" name="phone"
                                            placeholder="请输入联系电话"
-                                           th:value="${o.phone}"
+                                           th:value="${department.phone}"
                                            type="text">
                                 </div>
                                 <div class="form-group">
                                     <label for="address">单位地址</label>
                                     <input class="form-control" id="address" name="address"
                                            placeholder="请输入单位地址"
-                                           th:value="${o.address}"
+                                           th:value="${department.address}"
                                            type="text">
                                 </div>
                                 <div class="form-group">
@@ -99,7 +92,7 @@
                                     <textarea class="form-control" id="description" name="description"
                                               placeholder="请输入 ..."
                                               style="resize:none"
-                                              th:text="${o.description}"
+                                              th:text="${department.description}"
                                               rows="3"></textarea>
                                 </div>
                             </div>

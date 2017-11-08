@@ -1,17 +1,20 @@
 package in.hocg.web.modules.service.impl;
 
+import in.hocg.web.filter.PermissionFilter;
+import in.hocg.web.lang.CheckError;
 import in.hocg.web.modules.domain.Permission;
 import in.hocg.web.modules.domain.repository.PermissionRepository;
 import in.hocg.web.modules.service.PermissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
 
 @Service
 public class PermissionServiceImpl extends BaseService implements PermissionService {
-    PermissionRepository permissionRepository;
+    private PermissionRepository permissionRepository;
     
     @Autowired
     public PermissionServiceImpl(PermissionRepository permissionRepository) {
@@ -19,12 +22,17 @@ public class PermissionServiceImpl extends BaseService implements PermissionServ
     }
     
     @Override
-    public void insert(Permission permission) {
+    public void insert(PermissionFilter filter, CheckError checkError) {
+        Permission permission = filter.get();
         String parentId = permission.getParent();
         String path = "";
         if (!StringUtils.isEmpty(parentId)) {
             Permission parent = permissionRepository.findOne(parentId);
-            path = parent.getPath();
+            if (ObjectUtils.isEmpty(parent)) {
+                checkError.putError("上级权限不存在");
+                return;
+            }
+            path = StringUtils.isEmpty(parent.getPath()) ? "" : parent.getPath();
             parent.setHasChildren(true);
             permissionRepository.save(parent);
         }
@@ -52,8 +60,13 @@ public class PermissionServiceImpl extends BaseService implements PermissionServ
     }
     
     @Override
-    public void update(Permission permission) {
-        permissionRepository.save(permission);
+    public void update(PermissionFilter filter, CheckError checkError) {
+        Permission permission = permissionRepository.findOne(filter.getId());
+        if (ObjectUtils.isEmpty(permission)) {
+            checkError.putError("更新的权限不存在");
+            return;
+        }
+        permissionRepository.save(filter.update(permission));
     }
     
     @Override

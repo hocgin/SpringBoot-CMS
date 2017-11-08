@@ -1,7 +1,7 @@
 package in.hocg.web.modules.web.admin.system;
 
-import in.hocg.web.filter.VariableInsertFilter;
-import in.hocg.web.filter.VariableUpdateFilter;
+import in.hocg.web.filter.VariableFilter;
+import in.hocg.web.filter.lang.IdsFilter;
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.lang.body.response.Results;
 import in.hocg.web.modules.domain.Variable;
@@ -13,6 +13,8 @@ import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -61,28 +63,34 @@ public class VariableController extends BaseController {
     @PostMapping("/insert")
     @ResponseBody
     @PreAuthorize("hasRole('ADMIN')")
-    public Results insert(VariableInsertFilter filter) {
+    public Results insert(@Validated VariableFilter filter,
+                          BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return Results.check(bindingResult);
+        }
         CheckError checkError = CheckError.get();
         variableService.insert(filter, checkError);
-        return Results.check(checkError)
-                .setMessage(checkError.isPass()? "新增成功": "新增失败");
+        return Results.check(checkError, "新增成功");
     }
     
     @PostMapping("/update")
     @ResponseBody
     @PreAuthorize("hasRole('ADMIN')")
-    public Results update(VariableUpdateFilter filter) {
+    public Results update(@Validated VariableFilter filter,
+                          BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return Results.check(bindingResult);
+        }
         CheckError checkError = CheckError.get();
         variableService.update(filter, checkError);
-        return Results.check(checkError)
-                .setMessage(checkError.isPass()? "更新成功": "更新失败");
+        return Results.check(checkError, "更新成功");
     }
     
     @PostMapping("/delete")
     @ResponseBody
     @PreAuthorize("hasRole('ADMIN')")
-    public Results delete(@RequestParam("id") String[] id) {
-        variableService.delete(id);
+    public Results delete(@Validated IdsFilter filter) {
+        variableService.delete(filter.getId());
         return Results.success().setMessage("删除成功");
     }
 }

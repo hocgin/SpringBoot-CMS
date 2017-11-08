@@ -1,5 +1,7 @@
 package in.hocg.web.modules.service;
 
+import in.hocg.web.filter.PermissionFilter;
+import in.hocg.web.lang.CheckError;
 import in.hocg.web.modules.domain.Permission;
 
 import java.util.List;
@@ -9,9 +11,9 @@ import java.util.List;
  * email: hocgin@gmail.com
  */
 public interface PermissionService {
-    void insert(Permission permission);
+    void insert(PermissionFilter filter, CheckError checkError);
     void delete(String id);
-    void update(Permission permission);
+    void update(PermissionFilter filter, CheckError checkError);
     
     List<Permission> queryChildren(String parentId);
     

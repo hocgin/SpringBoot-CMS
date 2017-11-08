@@ -52,3 +52,6 @@
         });
     </script>
 ```
+
+#
+- 更新`Department`/`Permission`/`Variable`

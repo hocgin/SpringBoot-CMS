@@ -15,7 +15,7 @@ public class Permission extends BaseDomain {
     private String id;
     
     private String name; // 名称: 用户添加
-    private String type; // 资源类型，[menu|button]
+    private Integer type; // 资源类型，0 菜单 1 按钮
     private String url;  // 资源路径.
     private String permission; // 权限字符串,menu例子：role:*，button例子：role:create,role:update,role:delete,role:view
     private String parent;   // 父ID
@@ -25,4 +25,15 @@ public class Permission extends BaseDomain {
     private Boolean available = Boolean.FALSE;// 是否可用, 默认保留, 不分配。
     private boolean hasChildren = Boolean.FALSE; // 是否有子节点
     
+    
+    public static String type(Integer type) {
+        switch (type) {
+            case 0:
+                return "菜单";
+            case 1:
+                return "数据";
+            default:
+                return "未知";
+        }
+    }
 }

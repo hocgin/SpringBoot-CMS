@@ -2,16 +2,14 @@
      xmlns:th="http://www.thymeleaf.org">
     <button aria-label="Close" class="close" data-dismiss="modal" type="button">
         <span aria-hidden="true">×</span></button>
-    <h4 class="modal-title" th:text="|用户信息 (${user.nickname?:user.username})|">用户信息</h4>
+    <h4 class="modal-title" th:text="|${user.username}|">用户名</h4>
+    <small th:text="|${user.nickname?:'暂未设置'} [${user.id}]|"></small>
 </div>
 <div class="modal-body"
      xmlns:th="http://www.thymeleaf.org">
     <div class="row">
         <div class="col-xs-12">
             <div class="list-group">
-                <a href="javascript:;" class="list-group-item" title="昵称">
-                    <i class="fa fa-smile-o"></i> <span th:text="${user.nickname?:'暂未设置'}"></span>
-                </a>
                 <a href="javascript:;" class="list-group-item" title="邮箱">
                     <i class="fa fa-envelope-o"></i> <span th:text="${user.email}"></span>
                 </a>

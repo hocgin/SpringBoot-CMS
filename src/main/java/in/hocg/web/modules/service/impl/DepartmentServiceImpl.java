@@ -1,6 +1,6 @@
 package in.hocg.web.modules.service.impl;
 
-import in.hocg.web.filter.DepartmentInsertFilter;
+import in.hocg.web.filter.DepartmentFilter;
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.modules.domain.Department;
 import in.hocg.web.modules.domain.repository.DepartmentRepository;
@@ -36,7 +36,7 @@ public class DepartmentServiceImpl extends BaseService implements DepartmentServ
     }
     
     @Override
-    public void insert(DepartmentInsertFilter filter, CheckError checkError) {
+    public void insert(DepartmentFilter filter, CheckError checkError) {
         Department department = filter.get();
         String path = "";
         String parentId = department.getParent();
@@ -84,9 +84,30 @@ public class DepartmentServiceImpl extends BaseService implements DepartmentServ
     }
     
     @Override
-    public void update(Department department) {
-        departmentRepository.save(department);
+    public void update(DepartmentFilter filter, CheckError checkError) {
+        String id = filter.getId();
+        Department department = departmentRepository.findOne(id);
+        if (ObjectUtils.isEmpty(department)) {
+            checkError.putError("更新的单位不存在");
+            return;
+        }
+        departmentRepository.save(filter.update(department));
     }
+    
+    /**
+     * 刷新 Department 的 HasChildren 状态
+     * @param id
+     */
+    public void refreshHasChildren(String id) {
+        if (!StringUtils.isEmpty(id)) {
+            Department department = departmentRepository.findOne(id);
+            if (!ObjectUtils.isEmpty(department)) {
+                department.setHasChildren(departmentRepository.countByParent(department.getId()) > 0);
+                departmentRepository.save(department);
+            }
+        }
+    }
+    
     
     @Override
     public List<Department> queryChildren(String parentId) {
