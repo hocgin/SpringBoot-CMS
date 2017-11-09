@@ -27,4 +27,7 @@ public interface PermissionRepository
      * @return
      */
     List<Permission> findAllByPathRegex(String path);
+    
+    
+    Permission findByPermission(String permission);
 }

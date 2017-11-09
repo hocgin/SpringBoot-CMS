@@ -3,6 +3,7 @@ package in.hocg.web.modules.web.admin.system;
 import in.hocg.web.filter.PermissionFilter;
 import in.hocg.web.filter.group.Insert;
 import in.hocg.web.filter.group.Update;
+import in.hocg.web.filter.lang.IdFilter;
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.lang.HtmlUtils;
 import in.hocg.web.lang.body.response.Results;
@@ -115,15 +116,20 @@ public class PermissionController extends BaseController {
     /**
      * 删除
      *
-     * @param id 数组
+     * @param filter
      * @return
      */
     @RequestMapping("/delete")
     @ResponseBody
     @PreAuthorize("hasRole('ADMIN')")
-    public Results delete(String id) {
-        permissionService.delete(id);
-        return Results.success("删除成功");
+    public Results delete(IdFilter filter,
+                          BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return Results.check(bindingResult);
+        }
+        permissionService.delete(filter.getId());
+        return Results.success()
+                .setMessage("删除成功");
     }
     
     @PostMapping("/children/{id}")

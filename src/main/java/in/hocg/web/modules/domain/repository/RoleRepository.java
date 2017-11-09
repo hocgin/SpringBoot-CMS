@@ -1,6 +1,7 @@
 package in.hocg.web.modules.domain.repository;
 
 import in.hocg.web.modules.domain.Role;
+import in.hocg.web.modules.domain.repository.custom.RoleRepositoryCustom;
 import org.springframework.data.mongodb.datatables.repository.DataTablesRepository;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
@@ -11,7 +12,8 @@ import java.util.List;
  * email: hocgin@gmail.com
  */
 public interface RoleRepository extends DataTablesRepository<Role, String>,
-        MongoRepository<Role, String> {
+        MongoRepository<Role, String>,
+        RoleRepositoryCustom {
     
     List<Role> findAllByRole(String role);
     Role findTopByRole(String role);

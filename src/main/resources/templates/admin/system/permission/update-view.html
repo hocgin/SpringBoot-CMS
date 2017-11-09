@@ -12,31 +12,6 @@
     <div th:replace="/admin/fragments/header::header"></div>
     <div th:replace="/admin/fragments/left-menu::left-menu"></div>
     <div id="pjax-container" class="content-wrapper">
-        <div class="modal fade in" id="js-select-model">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
-                            <span aria-hidden="true">×</span></button>
-                        <h4 class="modal-title">选择上级单位</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div id="js-tree"></div>
-                    </div>
-                    <div class="modal-footer">
-                        <div class="pull-left">
-                            <button type="button" class="btn btn-success" data-dismiss="modal"
-                                    onclick="tree.selectFirstMenu()">设为顶级单位
-                            </button>
-                        </div>
-                        <button class="btn btn-default" data-dismiss="modal" type="button">取消</button>
-                        <button class="btn btn-primary" type="submit"
-                                onclick="tree.selectParentMenu()">确定
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
         <!-- 内容区域 -->
         <section class="content">
             <!-- Small boxes (Stat box) -->
@@ -60,16 +35,16 @@
                                    th:value="${permission.id}">
                             <div class="box-body">
                                 <div class="form-group">
-                                    <label for="parent">上级菜单</label>
+                                    <label for="parent">上级权限</label>
                                     <input type="text" class="form-control" id="parent"
-                                           placeholder="不选择默认为顶级菜单"
-                                           th:value="${parent?.name}?:'顶级菜单'"
+                                           placeholder="不选择默认为顶级权限"
+                                           th:value="${parent?.name}?:'顶级权限'"
                                            disabled="disabled">
                                 </div>
                                 <div class="form-group">
-                                    <label for="name">名称</label>
+                                    <label for="name">权限名称</label>
                                     <input class="form-control" id="name" name="name"
-                                           placeholder="请输入名称"
+                                           placeholder="请输入权限名称"
                                            required
                                            th:value="${permission.name}"
                                            type="text">
@@ -91,7 +66,7 @@
                                     <p class="help-block">例如：sys.manager.unit</p>
                                 </div>
 
-                                <div id="divId">
+                                <div id="divId" th:style="${permission.type==0?'':'display:none'}">
                                     <div class="form-group">
                                         <label for="url">URL</label>
                                         <input class="form-control" id="url" name="url"
@@ -118,7 +93,8 @@
                                 <div class="form-group">
                                     <div class="checkbox">
                                         <label>
-                                            <input type="checkbox" name="available" th:checked="${permission.available}"> 是否启用
+                                            <input type="checkbox" name="available"
+                                                   th:checked="${permission.available}"> 是否启用
                                         </label>
                                     </div>
                                 </div>
@@ -136,7 +112,6 @@
         </section>
         <!-- /内容区域 -->
         <script>
-            var tree;
             $(function () {
                 $('#systemVariableForm').ajaxForm({
                     dataType: 'json',
@@ -152,46 +127,12 @@
                         form.find("button:submit").attr('disable', false);
                     }
                 });
-
-                tree = {
-                    $el: $('#js-tree'),
-                    obj: null,
-                    init: function () {
-                        var that = this;
-                        this.$el.jstree({
-                            plugins: ['wholerow', 'json_data'],
-                            core: {
-                                dataType: 'json',
-                                data: {
-                                    url: function (node) {
-                                        return node.id === '#' ? '/admin/system/permission/tree' : ('/admin/system/department/tree/' + node.id)
-                                    }
-                                }
-                            }
-                        }).on("dblclick.jstree", function (node) {
-                            that.selectParentMenu();
-                        });
-                    },
-                    selectParentMenu: function () { //选择父菜单
-                        var tree = $.jstree.reference("#js-tree");
-                        var node = tree.get_selected(true);
-                        $("#parent").val(node[0].text);
-                        $("input[name='parent']").val(node[0].id);
-                        $("#js-select-model").modal("hide");
-                    },
-                    selectFirstMenu: function () { // 选择顶级菜单
-                        $("#parent").val("顶级单位");
-                        $("input[name='parent']").val("");
-                        $("#js-select-model").modal("hide");
-                    }
-                };
-                tree.init();
                 // 图标实时预览
                 $('#icon').on('keyup', function () {
                     $('#js-show-icon').attr('class', $(this).val());
                 });
                 $("#type").on("change", function () {
-                    if ($(this).val() === 'menu') {
+                    if ($(this).val() === '0') {
                         $("#divId").show();
                     } else {
                         $("#url").val("");

@@ -27,4 +27,6 @@ public interface RoleService {
     void save(String id, String[] permissionIds, CheckError checkError);
     
     void deleteAllByDepartmentIn(String... DepartmentId);
+    
+    void removePermissionForAllRole(String... id);
 }

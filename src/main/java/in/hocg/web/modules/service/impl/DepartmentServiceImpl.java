@@ -77,8 +77,10 @@ public class DepartmentServiceImpl extends BaseService implements DepartmentServ
                 && departmentRepository.countByParent(department.getParent()) < 1) { // 判断是否把父节点设置为根结点
             departmentRepository.updateHasChildren(department.getParent(), false);
         }
+        
         // 删除用户 和 此单位及子单位之间的关联(这些单位的用户所属单位设置为null)
         userService.removeDepartmentField(ids);
+        
         // 删除角色 和 此单位及子单位之间的关联(直接删除掉这些角色)
         roleService.deleteAllByDepartmentIn(ids);
     }

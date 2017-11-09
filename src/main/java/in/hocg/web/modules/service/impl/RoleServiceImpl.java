@@ -149,4 +149,9 @@ public class RoleServiceImpl implements RoleService {
         roleRepository.deleteAllByDepartmentIn(departmentId);
     }
     
+    @Override
+    public void removePermissionForAllRole(String... id) {
+        roleRepository.removePermissionForAllRole(id);
+    }
+    
 }
