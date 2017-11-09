@@ -12,26 +12,6 @@
     <div th:replace="/admin/fragments/header::header"></div>
     <div th:replace="/admin/fragments/left-menu::left-menu"></div>
     <div id="pjax-container" class="content-wrapper">
-        <div class="modal fade in" id="js-select-model">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
-                            <span aria-hidden="true">×</span></button>
-                        <h4 class="modal-title">选择所属单位</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div id="js-tree"></div>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-default" data-dismiss="modal" type="button">取消</button>
-                        <button class="btn btn-primary" type="submit"
-                                onclick="tree.selectParentMenu()">确定
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
         <!-- 内容区域 -->
         <section class="content">
             <!-- Small boxes (Stat box) -->
@@ -55,27 +35,19 @@
                                 <div class="box-body">
                                     <div class="form-group">
                                         <label for="department">所属单位</label>
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" id="department"
-                                                   placeholder="请选择单位或系统角色"
-                                                   th:value="${role.department.name}"
-                                                   disabled="disabled">
-                                            <input type="hidden"
-                                                   th:value="${role.department.id}"
-                                                   name="departmentId">
-                                            <span class="input-group-btn">
-                                            <button type="button" class="btn btn-info btn-flat"
-                                                    data-target="#js-select-model" data-toggle="modal">选择</button>
-                                        </span>
-                                        </div>
+                                        <input type="text" class="form-control" id="department"
+                                               placeholder="请选择单位或系统角色"
+                                               th:value="${role.department?.name}"
+                                               readonly/>
                                     </div>
                                     <div class="form-group">
                                         <label for="name">角色名称</label>
                                         <input class="form-control" id="name" name="name"
                                                placeholder="请输入角色名称"
                                                required
+                                               readonly
                                                th:value="${role.name}"
-                                               type="text">
+                                               type="text"/>
                                     </div>
                                     <div class="form-group">
                                         <label for="role">权限标识</label>
@@ -83,6 +55,7 @@
                                                placeholder="请输入权限标识"
                                                th:value="${role.role}"
                                                required
+                                               readonly
                                                type="text">
                                     </div>
                                     <div class="form-group">
@@ -126,35 +99,6 @@
                         form.find("button:submit").attr('disable', false);
                     }
                 });
-
-                tree = {
-                    $el: $('#js-tree'),
-                    obj: null,
-                    init: function () {
-                        var that = this;
-                        this.$el.jstree({
-                            plugins: ['wholerow', 'json_data'],
-                            core: {
-                                dataType: 'json',
-                                data: {
-                                    url: function (node) {
-                                        return '/admin/system/department/tree/' + (node.id === '#' ? '' : node.id)
-                                    }
-                                }
-                            }
-                        }).on("dblclick.jstree", function (node) {
-                            that.selectParentMenu();
-                        });
-                    },
-                    selectParentMenu: function () { //选择父菜单
-                        var tree = $.jstree.reference("#js-tree");
-                        var node = tree.get_selected(true);
-                        $("#department").val(node[0].text);
-                        $("input[name='departmentId']").val(node[0].id);
-                        $("#js-select-model").modal("hide");
-                    }
-                };
-                tree.init();
             });
         </script>
     </div>

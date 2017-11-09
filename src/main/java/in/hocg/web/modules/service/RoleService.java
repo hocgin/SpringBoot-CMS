@@ -1,7 +1,7 @@
 package in.hocg.web.modules.service;
 
-import in.hocg.web.filter.RoleQueryFilter;
-import in.hocg.web.filter.RoleUpdateInfoFilter;
+import in.hocg.web.filter.RoleFilter;
+import in.hocg.web.filter.RoleDataTablesInputFilter;
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.modules.domain.Role;
 import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
@@ -12,9 +12,9 @@ import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
  */
 public interface RoleService {
     
-    DataTablesOutput<Role> data(RoleQueryFilter input);
+    DataTablesOutput<Role> data(RoleDataTablesInputFilter input);
     
-    void insert(Role role, String[] permissionIds, CheckError checkError);
+    void insert(RoleFilter filter, CheckError checkError);
     
     void delete(String... id);
     
@@ -22,9 +22,9 @@ public interface RoleService {
     
     Role find(String id);
     
-    void save(RoleUpdateInfoFilter updateInfoFilter, CheckError checkError);
+    void updateDescription(RoleFilter filter, CheckError checkError);
     
-    void save(String id, String[] permissionIds, CheckError checkError);
+    void updatePermission(RoleFilter filter, CheckError checkError);
     
     void deleteAllByDepartmentIn(String... DepartmentId);
     

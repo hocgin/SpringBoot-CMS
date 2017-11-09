@@ -34,7 +34,7 @@ public class VariableServiceImpl implements VariableService {
     public void insert(VariableFilter filter, CheckError checkError) {
         Variable variable = filter.get();
         if (variableRepository.countAllByKey(variable.getKey()) > 0) {
-            checkError.putError("Key 已经存在");
+            checkError.putError("字段名已经存在");
             return;
         }
         variableRepository.insert(variable);

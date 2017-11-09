@@ -13,6 +13,6 @@ import java.io.Serializable;
 @Data
 public class IdsFilter implements Serializable {
     @Size(min = 1, message = "异常值")
-    @NotBlank
+    @NotBlank(message = "异常值")
     private String[] id;
 }

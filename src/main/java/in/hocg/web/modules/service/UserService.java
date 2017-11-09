@@ -1,8 +1,7 @@
 package in.hocg.web.modules.service;
 
-import in.hocg.web.filter.UserInsertFilter;
-import in.hocg.web.filter.UserQueryFilter;
-import in.hocg.web.filter.UserUpdateFilter;
+import in.hocg.web.filter.UserDataTablesInputFilter;
+import in.hocg.web.filter.UserFilter;
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.modules.domain.User;
 import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
@@ -16,11 +15,11 @@ import java.util.List;
 public interface UserService {
     List<User> findAll();
     
-    DataTablesOutput<User> data(UserQueryFilter input);
+    DataTablesOutput<User> data(UserDataTablesInputFilter input);
     
     void delete(String... id);
     
-    void insert(UserInsertFilter user, CheckError checkError);
+    void insert(UserFilter user, CheckError checkError);
     
     void updateAvailable(String id, boolean available);
     
@@ -28,7 +27,7 @@ public interface UserService {
     
     List<User> findAllById(String... ids);
     
-    void update(UserUpdateFilter filter, CheckError checkError);
+    void update(UserFilter filter, CheckError checkError);
     
     void update(User user);
     

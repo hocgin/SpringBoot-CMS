@@ -72,7 +72,7 @@
                             && nodes.length > 0) {
                             $.post('/admin/system/role/update-permission', {
                                 id: $('#id').val(),
-                                permissionId: nodes
+                                permissionIds: nodes.toString()
                             }, function (data) {
                                 layer.msg(data.message, {icon: 1});
                             }, 'json');

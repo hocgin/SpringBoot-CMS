@@ -22,4 +22,19 @@ public abstract class BaseDomain implements Serializable {
     
     @Transient
     protected Map<String, Object> exposed; // 扩展字段
+    
+    public BaseDomain updatedAt() {
+        this.setUpdatedAt(new Date());
+        return this;
+    }
+    
+    public BaseDomain deletedAt() {
+        this.setDeletedAt(new Date());
+        return this;
+    }
+    
+    public BaseDomain createdAt() {
+        this.setCreatedAt(new Date());
+        return this;
+    }
 }

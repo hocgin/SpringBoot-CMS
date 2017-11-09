@@ -89,7 +89,11 @@ public class VariableController extends BaseController {
     @PostMapping("/delete")
     @ResponseBody
     @PreAuthorize("hasRole('ADMIN')")
-    public Results delete(@Validated IdsFilter filter) {
+    public Results delete(@Validated IdsFilter filter,
+                          BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return Results.check(bindingResult);
+        }
         variableService.delete(filter.getId());
         return Results.success().setMessage("删除成功");
     }

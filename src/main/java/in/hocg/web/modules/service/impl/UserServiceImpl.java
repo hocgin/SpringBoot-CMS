@@ -1,8 +1,7 @@
 package in.hocg.web.modules.service.impl;
 
-import in.hocg.web.filter.UserInsertFilter;
-import in.hocg.web.filter.UserQueryFilter;
-import in.hocg.web.filter.UserUpdateFilter;
+import in.hocg.web.filter.UserDataTablesInputFilter;
+import in.hocg.web.filter.UserFilter;
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.modules.domain.Department;
 import in.hocg.web.modules.domain.Role;
@@ -52,7 +51,7 @@ public class UserServiceImpl implements UserService {
     }
     
     @Override
-    public DataTablesOutput<User> data(UserQueryFilter input) {
+    public DataTablesOutput<User> data(UserDataTablesInputFilter input) {
         Criteria criteria = new Criteria();
         if (!StringUtils.isEmpty(input.getDepartment())) {
             criteria.andOperator(Criteria.where("department.$id").is(new ObjectId(input.getDepartment())));
@@ -67,7 +66,7 @@ public class UserServiceImpl implements UserService {
             criteria.orOperator(
                     Criteria.where("username").regex(String.format("%s.*", input.getRegexNicknameOrUsername())),
                     Criteria.where("nickname").regex(String.format("%s.*", input.getRegexNicknameOrUsername()))
-                    );
+            );
         }
         DataTablesOutput<User> all = userRepository.findAll(input, criteria);
         all.setDraw(0);
@@ -80,21 +79,26 @@ public class UserServiceImpl implements UserService {
     }
     
     @Override
-    public void insert(UserInsertFilter filter, CheckError checkError) {
-        String id = filter.getDepartmentId();
-        Department department = departmentService.findById(id);
+    public void insert(UserFilter filter, CheckError checkError) {
+        User user = filter.get();
+        
+        // 检测单位是否存在
+        Department department = departmentService.findById(filter.getDepartmentId());
         if (ObjectUtils.isEmpty(department)) {
             checkError.putError("所属单位异常");
             return;
         }
-        User u = userRepository.findByUsername(filter.getUsername());
-        if (!ObjectUtils.isEmpty(u)) {
-            checkError.putError("用户名已存在");
+        user.setDepartment(department);
+        
+        // 检测用户名是否已被使用
+        if (!ObjectUtils.isEmpty(userRepository.findByUsername(filter.getUsername()))) {
+            checkError.putError("用户名已被使用, 请更换");
             return;
         }
-        User user = filter.getInsertUser();
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        user.setDepartment(department);
+        user.setUsername(filter.getUsername());
+        
+        // 密码加密
+        user.setPassword(bCryptPasswordEncoder.encode(filter.getPassword()));
         userRepository.save(user);
     }
     
@@ -118,23 +122,23 @@ public class UserServiceImpl implements UserService {
     }
     
     @Override
-    public void update(UserUpdateFilter filter, CheckError checkError) {
-        String id = filter.getId();
-        User user = userRepository.findOne(id);
+    public void update(UserFilter filter, CheckError checkError) {
+        
+        User user = userRepository.findOne(filter.getId());
         if (ObjectUtils.isEmpty(user)) {
             checkError.putError("用户异常");
             return;
         }
+        
+        // 检测所属单位是否存在
         Department department = departmentService.findById(filter.getDepartmentId());
         if (ObjectUtils.isEmpty(department)) {
             checkError.putError("所属单位异常");
             return;
         }
-        user.setEmail(filter.getEmail());
-        user.setNickname(filter.getNickname());
-        user.setAvailable(filter.isAvailable());
         user.setDepartment(department);
-        userRepository.save(user);
+        
+        userRepository.save(filter.update(user));
     }
     
     @Override

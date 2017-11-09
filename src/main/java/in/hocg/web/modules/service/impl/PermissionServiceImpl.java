@@ -127,8 +127,9 @@ public class PermissionServiceImpl extends BaseService implements PermissionServ
     @Override
     public void updateAvailable(String id, boolean b) {
         Permission permission = permissionRepository.findOne(id);
-        if (permission != null) {
+        if (!ObjectUtils.isEmpty(permission)) {
             permission.setAvailable(b);
+            permission.updatedAt();
             permissionRepository.save(permission);
         }
     }

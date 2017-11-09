@@ -4,18 +4,20 @@ import in.hocg.web.filter.group.Insert;
 import in.hocg.web.filter.group.Update;
 import in.hocg.web.modules.domain.Department;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.Pattern;
-import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by hocgin on 2017/11/8.
  * email: hocgin@gmail.com
+ * Department 增加与更新相关
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class DepartmentFilter implements Serializable {
+public class DepartmentFilter extends BaseFilter {
     
     /**
      * 仅更新拥有

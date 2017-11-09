@@ -122,7 +122,7 @@ public class PermissionController extends BaseController {
     @RequestMapping("/delete")
     @ResponseBody
     @PreAuthorize("hasRole('ADMIN')")
-    public Results delete(IdFilter filter,
+    public Results delete(@Validated IdFilter filter,
                           BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return Results.check(bindingResult);

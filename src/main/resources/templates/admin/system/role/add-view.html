@@ -62,7 +62,7 @@
                                                        placeholder="请选择单位或系统角色"
                                                        disabled="disabled">
                                                 <input type="hidden"
-                                                       name="department.id">
+                                                       name="departmentId">
                                                 <span class="input-group-btn">
                                             <button type="button" class="btn btn-info btn-flat"
                                                     data-target="#js-select-model" data-toggle="modal">选择</button>
@@ -186,7 +186,7 @@
                         var tree = $.jstree.reference("#js-tree");
                         var node = tree.get_selected(true);
                         $("#department").val(node[0].text);
-                        $("input[name='department.id']").val(node[0].id);
+                        $("input[name='departmentId']").val(node[0].id);
                         $("#js-select-model").modal("hide");
                     }
                 };

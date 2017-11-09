@@ -1,8 +1,10 @@
 package in.hocg.web.modules.web.admin.system;
 
-import in.hocg.web.filter.UserInsertFilter;
-import in.hocg.web.filter.UserQueryFilter;
-import in.hocg.web.filter.UserUpdateFilter;
+import in.hocg.web.filter.UserDataTablesInputFilter;
+import in.hocg.web.filter.UserFilter;
+import in.hocg.web.filter.group.Insert;
+import in.hocg.web.filter.group.Update;
+import in.hocg.web.filter.lang.IdsFilter;
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.lang.body.response.Results;
 import in.hocg.web.modules.domain.User;
@@ -13,9 +15,9 @@ import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 
 /**
  * Created by hocgin on 2017/11/2.
@@ -45,7 +47,7 @@ public class UserController extends BaseController {
     
     @PostMapping("/data")
     @ResponseBody
-    public DataTablesOutput<User> data(@RequestBody UserQueryFilter input) {
+    public DataTablesOutput<User> data(@RequestBody UserDataTablesInputFilter input) {
         return userService.data(input);
     }
     
@@ -65,15 +67,19 @@ public class UserController extends BaseController {
     /**
      * 删除角色
      *
-     * @param id
+     * @param filter
      * @return
      */
     @RequestMapping("/delete")
     @ResponseBody
     @PreAuthorize("hasRole('ADMIN')")
-    public Results delete(@RequestParam("id") String[] id) {
+    public Results delete(@Validated IdsFilter filter,
+                          BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return Results.check(bindingResult);
+        }
         CheckError checkError = CheckError.get();
-        userService.delete(id);
+        userService.delete(filter.getId());
         return Results.check(checkError, "删除成功");
     }
     
@@ -86,7 +92,11 @@ public class UserController extends BaseController {
     @RequestMapping("/insert")
     @ResponseBody
     @PreAuthorize("hasRole('ADMIN')")
-    public Results insert(@Valid UserInsertFilter filter) {
+    public Results insert(@Validated({Insert.class}) UserFilter filter,
+                          BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return Results.check(bindingResult);
+        }
         CheckError checkError = CheckError.get();
         userService.insert(filter, checkError);
         return Results.check(checkError, "增加成功");
@@ -106,7 +116,6 @@ public class UserController extends BaseController {
     public String vDetail(@PathVariable("id") String id, Model model) {
         User user = userService.find(id);
         
-        
         model.addAttribute("user", user);
         return String.format(BASE_TEMPLATES_PATH, "detail-modal");
     }
@@ -114,7 +123,11 @@ public class UserController extends BaseController {
     @RequestMapping("/update")
     @ResponseBody
     @PreAuthorize("hasRole('ADMIN')")
-    public Results update(@Valid UserUpdateFilter filter) {
+    public Results update(@Validated({Update.class}) UserFilter filter,
+                          BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return Results.check(bindingResult);
+        }
         CheckError checkError = CheckError.get();
         userService.update(filter, checkError);
         return Results.check(checkError, "修改信息成功");

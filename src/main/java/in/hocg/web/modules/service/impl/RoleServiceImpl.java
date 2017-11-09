@@ -1,7 +1,7 @@
 package in.hocg.web.modules.service.impl;
 
-import in.hocg.web.filter.RoleQueryFilter;
-import in.hocg.web.filter.RoleUpdateInfoFilter;
+import in.hocg.web.filter.RoleFilter;
+import in.hocg.web.filter.RoleDataTablesInputFilter;
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.modules.domain.Department;
 import in.hocg.web.modules.domain.Permission;
@@ -15,11 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Created by hocgin on 2017/10/29.
@@ -41,7 +41,7 @@ public class RoleServiceImpl implements RoleService {
     }
     
     @Override
-    public DataTablesOutput<Role> data(RoleQueryFilter input) {
+    public DataTablesOutput<Role> data(RoleDataTablesInputFilter input) {
         Criteria criteria = null;
         if (!StringUtils.isEmpty(input.getDepartment())) {
             criteria = Criteria.where("department.$id").is(new ObjectId(input.getDepartment()));
@@ -52,24 +52,30 @@ public class RoleServiceImpl implements RoleService {
     }
     
     @Override
-    public void insert(Role role, String[] permissionIds, CheckError checkError) {
-        if (permissionIds != null
-                && permissionIds.length > 0) {
-            List<Permission> permissions = permissionService.queryAllByIdOrderByPathAes(permissionIds);
-            role.setPermissions(permissions);
-        }
-        if (StringUtils.isEmpty(role.getDepartment().getId())) {
-            checkError.putError("单位不能为空");
-            return;
-        }
-        Department department = departmentService.findById(role.getDepartment().getId());
-        if (department == null) {
+    public void insert(RoleFilter filter, CheckError checkError) {
+        Role role = filter.get();
+        
+        // 检测单位是否存在
+        Department department = departmentService.findById(filter.getDepartmentId());
+        if (ObjectUtils.isEmpty(department)) {
             checkError.putError("所选择单位不存在");
             return;
         }
-        
-        
         role.setDepartment(department);
+    
+        // 检测角色标识是否已经存在
+        if (!CollectionUtils.isEmpty(roleRepository.findAllByRole(role.getRole()))) {
+            checkError.putError("该角色标识已存在");
+            return;
+        }
+        
+        // 过滤非法权限
+        if (!ObjectUtils.isEmpty(filter.getPermissionIds())
+                && filter.getPermissionIds().length > 0) {
+            List<Permission> permissions = permissionService.queryAllByIdOrderByPathAes(filter.getPermissionIds());
+            role.setPermissions(permissions);
+        }
+        
         roleRepository.insert(role);
     }
     
@@ -81,8 +87,9 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public void updateAvailable(String id, boolean b) {
         Role role = roleRepository.findOne(id);
-        if (role != null) {
+        if (!ObjectUtils.isEmpty(role)) {
             role.setAvailable(b);
+            role.updatedAt();
             roleRepository.save(role);
         }
     }
@@ -93,54 +100,27 @@ public class RoleServiceImpl implements RoleService {
     }
     
     @Override
-    public void save(RoleUpdateInfoFilter updateInfoFilter,
-                     CheckError checkError) {
-    
-        if (StringUtils.isEmpty(updateInfoFilter.getName())
-                || StringUtils.isEmpty(updateInfoFilter.getId())
-                || StringUtils.isEmpty(updateInfoFilter.getRole())) {
-            checkError.putError("角色标识符/名称不能为空");
-            return;
-        }
-        List<Role> all = roleRepository.findAllByRole(updateInfoFilter.getRole());
-        if (all.size() >= 2
-                || (all.size() == 1 && !Objects.equals(all.get(0).getId(), updateInfoFilter.getId()))) {
-            checkError.putError("角色标识符已经存在");
-            return;
-        }
-        
-        Role role = roleRepository.findOne(updateInfoFilter.getId());
+    public void updateDescription(RoleFilter filter,
+                                  CheckError checkError) {
+        Role role = roleRepository.findOne(filter.getId());
         if (ObjectUtils.isEmpty(role)) {
-            checkError.putError("角色不存在");
+            checkError.putError("角色异常");
             return;
         }
-        Department department = departmentService.findById(updateInfoFilter.getDepartmentId());
-        if (ObjectUtils.isEmpty(department)) {
-            checkError.putError("所属单位异常");
-            return;
-        }
-        role.setName(updateInfoFilter.getName());
-        role.setRole(updateInfoFilter.getRole());
-        role.setDescription(updateInfoFilter.getDescription());
-        role.setDepartment(department);
-        roleRepository.save(role);
+        roleRepository.save(filter.update1(role));
     }
     
     @Override
-    public void save(String id,
-                     String[] permissionIds,
-                     CheckError checkError) {
-        if (StringUtils.isEmpty(id)) {
-            checkError.putError("ID 异常");
-            return;
-        }
-        Role role = roleRepository.findOne(id);
+    public void updatePermission(RoleFilter filter,
+                                 CheckError checkError) {
+        Role role = roleRepository.findOne(filter.getId());
         if (ObjectUtils.isEmpty(role)) {
-            checkError.putError("角色不存在");
+            checkError.putError("角色异常");
             return;
         }
-        List<Permission> permissions = permissionService.queryAllByIdOrderByPathAes(permissionIds);
+        List<Permission> permissions = permissionService.queryAllByIdOrderByPathAes(filter.getPermissionIds());
         role.setPermissions(permissions);
+        role.updatedAt();
         roleRepository.save(role);
     }
     

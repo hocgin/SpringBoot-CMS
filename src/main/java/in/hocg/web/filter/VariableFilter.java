@@ -4,19 +4,20 @@ import in.hocg.web.filter.group.Insert;
 import in.hocg.web.filter.group.Update;
 import in.hocg.web.modules.domain.Variable;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.Pattern;
-import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by hocgin on 2017/11/6.
  * email: hocgin@gmail.com
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class VariableFilter implements Serializable {
+public class VariableFilter  extends BaseFilter {
     /**
      * 仅更新拥有
      */

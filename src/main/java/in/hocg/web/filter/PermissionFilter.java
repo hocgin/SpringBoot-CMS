@@ -4,19 +4,21 @@ import in.hocg.web.filter.group.Insert;
 import in.hocg.web.filter.group.Update;
 import in.hocg.web.modules.domain.Permission;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by hocgin on 2017/11/8.
  * email: hocgin@gmail.com
+ * Permission 增加与更新相关
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class PermissionFilter implements Serializable {
+public class PermissionFilter extends BaseFilter {
     /**
      * 仅更新拥有
      */

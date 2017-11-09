@@ -10,6 +10,6 @@ import org.springframework.data.mongodb.datatables.mapping.DataTablesInput;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class RoleQueryFilter extends DataTablesInput{
+public class RoleDataTablesInputFilter extends DataTablesInput{
     private String department;
 }

@@ -108,7 +108,7 @@
                                 btn: ['确定', '取消'] //按钮
                             }, function () {
                                 $.post(/*[[@{'/admin/system/role/remove-user'}]]*/ '从用户中移除角色的授权', {
-                                    user: ids.toString(),
+                                    users: ids.toString(),
                                     role: /*[[${role.id}]]*/ '角色ID'
                                 }, function (data) {
                                     table.reloadPage();
@@ -301,7 +301,7 @@
                                         });
 
                                         $.post(/*[[@{/admin/system/role/add-user}]]*/ '授予用户角色权限', {
-                                            user: ids,
+                                            users: ids.toString(),
                                             role: /*[[${role.id}]]*/ '角色ID'
                                         }, function (data) {
                                             table.reloadAll();

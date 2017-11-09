@@ -1,7 +1,12 @@
 package in.hocg.web.modules.web.admin.system;
 
-import in.hocg.web.filter.RoleQueryFilter;
-import in.hocg.web.filter.RoleUpdateInfoFilter;
+import in.hocg.web.filter.UserToRoleFilter;
+import in.hocg.web.filter.RoleFilter;
+import in.hocg.web.filter.RoleDataTablesInputFilter;
+import in.hocg.web.filter.group.Insert;
+import in.hocg.web.filter.group.Update1;
+import in.hocg.web.filter.group.Update2;
+import in.hocg.web.filter.lang.IdsFilter;
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.lang.body.response.Results;
 import in.hocg.web.modules.domain.Role;
@@ -13,9 +18,9 @@ import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.thymeleaf.util.ArrayUtils;
 
 /**
  * Created by hocgin on 2017/10/29.
@@ -60,7 +65,6 @@ public class RoleController extends BaseController {
     public String vDetail(@PathVariable("id") String id, Model model) {
         Role role = roleService.find(id);
         
-        
         model.addAttribute("role", role);
         return "/admin/system/role/detail-modal";
     }
@@ -81,57 +85,71 @@ public class RoleController extends BaseController {
     
     @RequestMapping("/data")
     @ResponseBody
-    public DataTablesOutput<Role> data(@RequestBody RoleQueryFilter input) {
+    public DataTablesOutput<Role> data(@RequestBody RoleDataTablesInputFilter input) {
         return roleService.data(input);
     }
     
     /**
      * 增加一个角色
      *
-     * @param role
+     * @param filter
      * @return
      */
     @RequestMapping("/insert")
     @ResponseBody
     @PreAuthorize("hasRole('ADMIN')")
-    public Results insert(Role role,
-                          @RequestParam("permissionIds") String[] permissionIds) {
+    public Results insert(@Validated({Insert.class}) RoleFilter filter,
+                          BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return Results.check(bindingResult);
+        }
         CheckError checkError = CheckError.get();
-        roleService.insert(role, permissionIds, checkError);
-        return Results.check(checkError, "增加成功");
+        roleService.insert(filter, checkError);
+        return Results.check(checkError, "新建角色成功");
     }
     
     @RequestMapping("/update")
     @ResponseBody
     @PreAuthorize("hasRole('ADMIN')")
-    public Results update(RoleUpdateInfoFilter updateInfoFilter) {
+    public Results update(@Validated({Update1.class}) RoleFilter filter,
+                          BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return Results.check(bindingResult);
+        }
         CheckError checkError = CheckError.get();
-        roleService.save(updateInfoFilter, checkError);
+        roleService.updateDescription(filter, checkError);
         return Results.check(checkError, "修改信息成功");
     }
     
     @PostMapping("/update-permission")
     @ResponseBody
     @PreAuthorize("hasRole('ADMIN')")
-    public Results updatePermission(@RequestParam("id") String id,
-                                    @RequestParam("permissionId[]") String[] permissionIds) {
+    public Results updatePermission(@Validated({Update2.class}) RoleFilter filter,
+                                    BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return Results.check(bindingResult);
+        }
         CheckError checkError = CheckError.get();
-        roleService.save(id, permissionIds, checkError);
-        return Results.check(checkError, "分配权限成功");
+        roleService.updatePermission(filter, checkError);
+        return Results.check(checkError, "更新权限成功");
     }
     
     /**
      * 删除
      *
-     * @param id
+     * @param filter
      * @return
      */
     @RequestMapping("/delete")
     @ResponseBody
     @PreAuthorize("hasRole('ADMIN')")
-    public Results delete(@RequestParam("id") String[] id) {
+    public Results delete(@Validated IdsFilter filter,
+                          BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return Results.check(bindingResult);
+        }
         CheckError checkError = CheckError.get();
-        roleService.delete(id);
+        roleService.delete(filter.getId());
         return Results.check(checkError, "删除成功");
     }
     
@@ -148,27 +166,27 @@ public class RoleController extends BaseController {
     @PostMapping("/add-user")
     @ResponseBody
     @PreAuthorize("hasRole('ADMIN')")
-    public Results addUser(@RequestParam("role") String roleId,
-                           @RequestParam("user[]") String[] userIds) {
-        if (StringUtils.isEmpty(roleId)
-                || ArrayUtils.isEmpty(userIds)) {
-            return Results.error(CheckError.CODE, "数据异常");
+    public Results addUser(@Validated UserToRoleFilter filter,
+                           BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return Results.check(bindingResult);
         }
-        userService.addRoleToUser(roleId, userIds);
-        return Results.success().setMessage("分配用户成功");
+        userService.addRoleToUser(filter.getRole(), filter.getUsers());
+        return Results.success()
+                .setMessage("分配用户成功");
     }
     
     
     @PostMapping("/remove-user")
     @ResponseBody
     @PreAuthorize("hasRole('ADMIN')")
-    public Results removeUser(@RequestParam("role") String roleId,
-                           @RequestParam("user") String[] userIds) {
-        if (StringUtils.isEmpty(roleId)
-                || ArrayUtils.isEmpty(userIds)) {
-            return Results.error(CheckError.CODE, "数据异常");
+    public Results removeUser(@Validated UserToRoleFilter filter,
+                              BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return Results.check(bindingResult);
         }
-        userService.removeRoleFormUser(roleId, userIds);
-        return Results.success().setMessage("分配用户成功");
+        userService.removeRoleFormUser(filter.getRole(), filter.getUsers());
+        return Results.success()
+                .setMessage("分配用户成功");
     }
 }
