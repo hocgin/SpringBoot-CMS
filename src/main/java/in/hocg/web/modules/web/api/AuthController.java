@@ -1,4 +1,4 @@
-package in.hocg.web.modules.web;
+package in.hocg.web.modules.web.api;
 
 import in.hocg.web.SESSION;
 import in.hocg.web.lang.CheckError;
@@ -23,6 +23,7 @@ import javax.servlet.http.HttpSession;
  * email: hocgin@gmail.com
  */
 @RestController
+@RequestMapping("/api")
 public class AuthController {
     private final AuthService authService;
     @Autowired

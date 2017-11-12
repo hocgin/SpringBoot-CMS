@@ -12,7 +12,7 @@ import org.springframework.util.ObjectUtils;
 /**
  * Created by hocgin on 2017/10/25.
  * email: hocgin@gmail.com
- * 获取用户详细信息
+ * 获取 后台用户 详细信息
  */
 @Service
 public class IUserDetailsService implements UserDetailsService{
