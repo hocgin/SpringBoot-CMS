@@ -1,5 +1,6 @@
 package in.hocg.web.modules.security;
 
+import in.hocg.web.modules.security.handler.IAuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

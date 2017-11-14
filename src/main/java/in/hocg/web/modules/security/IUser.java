@@ -2,6 +2,7 @@ package in.hocg.web.modules.security;
 
 import in.hocg.web.modules.domain.Role;
 import in.hocg.web.modules.domain.User;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.CollectionUtils;
@@ -14,17 +15,22 @@ import java.util.stream.Collectors;
  * email: hocgin@gmail.com
  * 用户细节信息
  */
+@Data
 public class IUser implements UserDetails {
     private final String username;
     private final String password;
     private final Collection<? extends GrantedAuthority> authorities;
     private final Date lastPasswordResetDate;
+    private String id;
     
-    private IUser(String username,
-                  String password,
-                  Collection<? extends GrantedAuthority> authorities,
-
-                  Date lastPasswordResetDate) {
+    private IUser(
+            String id,
+            String username,
+            String password,
+            Collection<? extends GrantedAuthority> authorities,
+            
+            Date lastPasswordResetDate) {
+        this.id = id;
         this.username = username;
         this.password = password;
         this.authorities = authorities;
@@ -34,16 +40,6 @@ public class IUser implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
-    }
-    
-    @Override
-    public String getPassword() {
-        return password;
-    }
-    
-    @Override
-    public String getUsername() {
-        return username;
     }
     
     @Override
@@ -71,7 +67,8 @@ public class IUser implements UserDetails {
     }
     
     public static IUser toIUser(User user) {
-        return new IUser(user.getUsername(),
+        return new IUser(user.getId(),
+                user.getUsername(),
                 user.getPassword(),
                 getGrantedAuthority(user.getRole()),
                 user.getLastPasswordResetAt());

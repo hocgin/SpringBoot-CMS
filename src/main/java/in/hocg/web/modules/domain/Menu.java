@@ -9,8 +9,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * email: hocgin@gmail.com
  */
 @Data
-@Document(collection = "Permission")
-public class Permission extends BaseDomain {
+@Document(collection = "Menu")
+public class Menu extends BaseDomain {
     @Id
     private String id;
     
@@ -23,7 +23,8 @@ public class Permission extends BaseDomain {
     private String target;
     private String icon;  // 图标 class
     private Boolean available = Boolean.FALSE;// 是否可用, 默认保留, 不分配。
-    private boolean hasChildren = Boolean.FALSE; // 是否有子节点
+    private Boolean hasChildren = Boolean.FALSE; // 是否有子节点
+    private Boolean builtIn = Boolean.FALSE; // 是否为内置, 默认False
     
     
     public static String type(Integer type) {

@@ -1,4 +1,4 @@
-package in.hocg.web.modules.security;
+package in.hocg.web.modules.security.handler;
 
 import com.google.gson.Gson;
 import in.hocg.web.lang.body.response.Results;
@@ -14,6 +14,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
 
+/**
+ * 处理登陆问题
+ */
 @Component
 public class IAuthenticationEntryPoint implements AuthenticationEntryPoint, Serializable {
     

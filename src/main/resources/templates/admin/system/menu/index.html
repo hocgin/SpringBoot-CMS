@@ -41,7 +41,7 @@
                             <header class="tool-bar">
                                 <h3 class="pull-left">权限管理</h3>
                                 <div class="pull-right tool-button">
-                                    <a th:href="@{/admin/system/permission/add-view.html}"
+                                    <a th:href="@{/admin/system/menu/add-view.html}"
                                        class="btn btn-primary" data-pjax>
                                         <i class="fa fa-plus"></i> 新建权限
                                     </a>
@@ -84,7 +84,7 @@
                                 + '确定要删除吗？', {
                                 btn: ['确定', '取消'] //按钮
                             }, function () {
-                                $.post('/admin/system/permission/delete', {id: ids.toString()}, function (data) {
+                                $.post('/admin/system/menu/delete', {id: ids.toString()}, function (data) {
                                     if (data.code === 200) {
                                         layer.msg(data.message, {icon: 1});
                                         table.treetableObject.treetable("removeNode", ids);
@@ -106,7 +106,7 @@
                             layer.confirm('确定要' + (available ? '开启' : '关闭') + '它？', {
                                 btn: ['确定', '取消'] //按钮
                             }, function () {
-                                $.post('/admin/system/permission/available/' + id.toString(), {available: available}, function (data) {
+                                $.post('/admin/system/menu/available/' + id.toString(), {available: available}, function (data) {
                                     if (data.code === 200) {
                                         layer.msg(data.message, {icon: 1});
                                         $('#js-' + id).attr('class', 'fa fa-circle ' + (available ? 'text-success' : 'text-danger'));
@@ -147,7 +147,7 @@
                                 //是否已经加载
                                 var rows = "<tr data-tt-id=\"loading\" data-tt-parent-id=\"" + that.id + "\" data-tt-branch=\"false\"><td colspan='5'>loading</td></tr>";
                                 table.treetableObject.treetable("loadBranch", that, rows);
-                                $.post("/admin/system/permission/children/" + that.id, {}, function (result) {
+                                $.post("/admin/system/menu/children/" + that.id, {}, function (result) {
                                     table.treetableObject.treetable("unloadBranch", that);
                                     table.treetableObject.treetable("loadBranch", that, result.data);
                                 });

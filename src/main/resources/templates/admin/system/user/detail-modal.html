@@ -53,7 +53,7 @@
                             <tr th:attr="data-tt-id=${permission.id}, data-tt-parent-id=${permission.parent}, data-tt-branch=${permission.hasChildren}">
                                 <td th:text="${permission.name}"></td>
                                 <td th:text="${permission.url}"></td>
-                                <td th:text="${permission.type}"></td>
+                                <td th:text="${permission.type(permission.type)}"></td>
                                 <td th:text="${permission.permission}"></td>
                             </tr>
                         </th:block>

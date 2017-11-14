@@ -3,7 +3,7 @@ package in.hocg.web;
 import in.hocg.web.modules.domain.Department;
 import in.hocg.web.modules.domain.Role;
 import in.hocg.web.modules.domain.repository.DepartmentRepository;
-import in.hocg.web.modules.domain.repository.PermissionRepository;
+import in.hocg.web.modules.domain.repository.MenuRepository;
 import in.hocg.web.modules.domain.repository.RoleRepository;
 import in.hocg.web.modules.domain.repository.UserRepository;
 import org.junit.Test;
@@ -27,7 +27,7 @@ public class InitDB {
     @Autowired
     private RoleRepository roleRepository;
     @Autowired
-    private PermissionRepository permissionRepository;
+    private MenuRepository permissionRepository;
     @Autowired
     private DepartmentRepository departmentRepository;
     

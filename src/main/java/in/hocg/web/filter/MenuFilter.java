@@ -2,7 +2,7 @@ package in.hocg.web.filter;
 
 import in.hocg.web.filter.group.Insert;
 import in.hocg.web.filter.group.Update;
-import in.hocg.web.modules.domain.Permission;
+import in.hocg.web.modules.domain.Menu;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.validator.constraints.NotBlank;
@@ -17,7 +17,7 @@ import java.util.Date;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class PermissionFilter extends BaseFilter {
+public class MenuFilter extends BaseFilter {
     /**
      * 仅更新拥有
      */
@@ -35,7 +35,7 @@ public class PermissionFilter extends BaseFilter {
     private String type; // 资源类型 0 菜单 1 按钮
     private String url;  // 资源路径.
     @NotBlank(message = "权限标识为必填", groups = {Update.class, Insert.class})
-    @Pattern(regexp = "^[a-zA-Z._]+", message = "权限标识只允许由英文、点、下划线组成", groups = {Update.class, Insert.class})
+    @Pattern(regexp = "^[a-z.]+", message = "权限标识只允许由小写英文、点组成", groups = {Update.class, Insert.class})
     private String permission; // 权限字符串,menu例子：role:*，button例子：role:create,role:update,role:delete,role:view
     private String target;
     private String icon;  // 图标 class
@@ -46,8 +46,8 @@ public class PermissionFilter extends BaseFilter {
      */
     private String parent;   // 父ID
     
-    public Permission get() {
-        Permission permissionObject = new Permission();
+    public Menu get() {
+        Menu permissionObject = new Menu();
         permissionObject.setAvailable(available);
         permissionObject.setParent(parent);
         permissionObject.setPermission(permission);
@@ -61,7 +61,7 @@ public class PermissionFilter extends BaseFilter {
         return permissionObject;
     }
     
-    public Permission update(Permission permissionObject) {
+    public Menu update(Menu permissionObject) {
         permissionObject.setAvailable(available);
         permissionObject.setPermission(permission);
         permissionObject.setTarget(target);

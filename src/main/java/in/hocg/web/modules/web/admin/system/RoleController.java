@@ -97,7 +97,7 @@ public class RoleController extends BaseController {
      */
     @RequestMapping("/insert")
     @ResponseBody
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasPermission(null, 'sys.role.add')")
     public Results insert(@Validated({Insert.class}) RoleFilter filter,
                           BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -110,7 +110,7 @@ public class RoleController extends BaseController {
     
     @RequestMapping("/update")
     @ResponseBody
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasPermission(null, 'sys.role.edit')")
     public Results update(@Validated({Update1.class}) RoleFilter filter,
                           BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -123,7 +123,7 @@ public class RoleController extends BaseController {
     
     @PostMapping("/update-permission")
     @ResponseBody
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasPermission(null, 'sys.role.edit')")
     public Results updatePermission(@Validated({Update2.class}) RoleFilter filter,
                                     BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -142,7 +142,7 @@ public class RoleController extends BaseController {
      */
     @RequestMapping("/delete")
     @ResponseBody
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasPermission(null, 'sys.role.delete')")
     public Results delete(@Validated IdsFilter filter,
                           BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -155,7 +155,7 @@ public class RoleController extends BaseController {
     
     @PostMapping("/available/{id}")
     @ResponseBody
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasPermission(null, 'sys.role.edit')")
     public Results available(@PathVariable("id") String id, boolean available) {
         roleService.updateAvailable(id, available);
         return Results.success()
@@ -165,7 +165,7 @@ public class RoleController extends BaseController {
     
     @PostMapping("/add-user")
     @ResponseBody
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasPermission(null, 'sys.role.edit')")
     public Results addUser(@Validated UserToRoleFilter filter,
                            BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -179,7 +179,7 @@ public class RoleController extends BaseController {
     
     @PostMapping("/remove-user")
     @ResponseBody
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasPermission(null, 'sys.role.edit')")
     public Results removeUser(@Validated UserToRoleFilter filter,
                               BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {

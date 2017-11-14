@@ -62,7 +62,7 @@ public class VariableController extends BaseController {
     
     @PostMapping("/insert")
     @ResponseBody
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasPermission(null, 'sys.variable.add')")
     public Results insert(@Validated VariableFilter filter,
                           BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -75,7 +75,7 @@ public class VariableController extends BaseController {
     
     @PostMapping("/update")
     @ResponseBody
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasPermission(null, 'sys.variable.edit')")
     public Results update(@Validated VariableFilter filter,
                           BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -88,7 +88,7 @@ public class VariableController extends BaseController {
     
     @PostMapping("/delete")
     @ResponseBody
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasPermission(null, 'sys.variable.delete')")
     public Results delete(@Validated IdsFilter filter,
                           BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {

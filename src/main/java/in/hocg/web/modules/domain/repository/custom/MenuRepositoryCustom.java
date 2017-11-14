@@ -1,6 +1,6 @@
 package in.hocg.web.modules.domain.repository.custom;
 
-import in.hocg.web.modules.domain.Permission;
+import in.hocg.web.modules.domain.Menu;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import java.util.List;
  * email: hocgin@gmail.com
  * 自定义接口 与 JPA 区分
  */
-public interface PermissionRepositoryCustom {
+public interface MenuRepositoryCustom {
     void updateHasChildren(String id, boolean hasChildren);
     
     /**
@@ -24,8 +24,8 @@ public interface PermissionRepositoryCustom {
      * @param regexPath
      * @return
      */
-    List<Permission> findAllByPathRegexOrderByPathDesc(String regexPath);
+    List<Menu> findAllByPathRegexOrderByPathDesc(String regexPath);
     
     
-    List<Permission> findAllByIdOrderByPathAes(String... id);
+    List<Menu> findAllByIdOrderByPathAes(String... id);
 }

@@ -72,7 +72,7 @@ public class UserController extends BaseController {
      */
     @RequestMapping("/delete")
     @ResponseBody
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasPermission(null, 'sys.user.delete')")
     public Results delete(@Validated IdsFilter filter,
                           BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -91,7 +91,7 @@ public class UserController extends BaseController {
      */
     @RequestMapping("/insert")
     @ResponseBody
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasPermission(null, 'sys.user.add')")
     public Results insert(@Validated({Insert.class}) UserFilter filter,
                           BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -104,7 +104,7 @@ public class UserController extends BaseController {
     
     @PostMapping("/available/{id}")
     @ResponseBody
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasPermission(null, 'sys.user.edit')")
     public Results available(@PathVariable("id") String id, boolean available) {
         userService.updateAvailable(id, available);
         return Results.success()
@@ -122,7 +122,7 @@ public class UserController extends BaseController {
     
     @RequestMapping("/update")
     @ResponseBody
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasPermission(null, 'sys.user.edit')")
     public Results update(@Validated({Update.class}) UserFilter filter,
                           BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {

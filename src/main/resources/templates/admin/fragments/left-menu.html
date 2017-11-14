@@ -27,31 +27,24 @@
         <!-- sidebar menu: : style can be found in sidebar.less -->
         <ul class="sidebar-menu" data-widget="tree">
             <li class="header">操作面板</li>
-            <li class="treeview">
-                <a href="#">
-                    <i class="fa fa-dashboard"></i> <span>系统配置</span>
-                    <span class="pull-right-container">
-                      <i class="fa fa-angle-left pull-right"></i>
-                    </span>
-                </a>
-                <ul class="treeview-menu">
-                    <li>
-                        <a th:href="@{/admin/system/variable/index.html}" data-pjax><i class="fa fa-circle-o"></i> 系统参数</a>
-                    </li>
-                    <li>
-                        <a th:href="@{/admin/system/department/index.html}" data-pjax><i class="fa fa-circle-o"></i> 单位管理</a>
-                    </li>
-                    <li>
-                        <a th:href="@{/admin/system/permission/index.html}" data-pjax><i class="fa fa-circle-o"></i> 权限管理</a>
-                    </li>
-                    <li>
-                        <a th:href="@{/admin/system/role/index.html}" data-pjax><i class="fa fa-circle-o"></i> 角色管理</a>
-                    </li>
-                    <li>
-                        <a th:href="@{/admin/system/user/index.html}" data-pjax><i class="fa fa-circle-o"></i> 用户管理</a>
-                    </li>
-                </ul>
-            </li>
+            <th:block th:with="leftMenu=${@langService.getLeftMenu()}">
+                <li class="treeview"
+                    th:each="root, i: ${leftMenu.root}">
+                    <a th:href="${root.url?:'#'}">
+                        <i class="fa fa-dashboard"></i> <span th:text="${root.name}">系统配置</span>
+                        <span class="pull-right-container">
+                          <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li th:each="children, i: ${leftMenu.children.get(root.path)}">
+                            <a th:href="${children.url}" data-pjax th:inline="text"><i
+                                    th:class="${children.icon}"></i>
+                                [[${children.name}]]</a>
+                        </li>
+                    </ul>
+                </li>
+            </th:block>
             <li class="header">标签</li>
             <li><a href="#"><i class="fa fa-circle-o text-red"></i> <span>Important</span></a></li>
             <li><a href="#"><i class="fa fa-circle-o text-yellow"></i> <span>Warning</span></a></li>

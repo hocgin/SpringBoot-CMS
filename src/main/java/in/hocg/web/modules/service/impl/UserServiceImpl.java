@@ -3,8 +3,11 @@ package in.hocg.web.modules.service.impl;
 import in.hocg.web.filter.UserDataTablesInputFilter;
 import in.hocg.web.filter.UserFilter;
 import in.hocg.web.lang.CheckError;
+import in.hocg.web.lang.body.response.LeftMenu;
+import in.hocg.web.lang.utils.DocumentKit;
 import in.hocg.web.lang.utils.RequestKit;
 import in.hocg.web.modules.domain.Department;
+import in.hocg.web.modules.domain.Menu;
 import in.hocg.web.modules.domain.Role;
 import in.hocg.web.modules.domain.User;
 import in.hocg.web.modules.domain.repository.UserRepository;
@@ -12,6 +15,7 @@ import in.hocg.web.modules.service.DepartmentService;
 import in.hocg.web.modules.service.RoleService;
 import in.hocg.web.modules.service.UserService;
 import org.bson.types.ObjectId;
+import org.codehaus.groovy.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
@@ -22,9 +26,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by hocgin on 2017/10/25.
@@ -51,8 +53,58 @@ public class UserServiceImpl implements UserService {
         this.request = request;
     }
     
+    @Override
     public List<User> findAll() {
         return userRepository.findAll();
+    }
+    
+    @Override
+    public Collection<Role> findRoleByUser(String id) {
+        User user = userRepository.findOne(id);
+        if (ObjectUtils.isEmpty(user)) {
+            return Collections.emptyList();
+        }
+        return user.getRole();
+    }
+    
+    @Override
+    public Collection<Menu> findMenuByUser(String id) {
+        Collection<Role> roles = findRoleByUser(id);
+        // 一般角色处理
+        HashSet<Menu> menus = new HashSet<>();
+        roles.forEach(role -> {
+            Collection<Menu> menuCollection = role.getPermissions();
+            if (!CollectionUtils.isEmpty(menuCollection)) {
+                menus.addAll(menuCollection);
+            }
+        });
+        return menus;
+    }
+    
+    /**
+     * 获取左侧用户权限内的菜单
+     * @param id
+     * @return
+     */
+    @Override
+    public LeftMenu getLeftMenu(String id) {
+        Collection<Menu> menus = findMenuByUser(id);
+        List<Menu> root = new ArrayList<>();
+        Map<String, List<Menu>> childMenus = new HashMap<>();
+        for (Menu menu : menus) {
+            if (menu.getPath().length() > 4) {
+                List<Menu> s = childMenus.get(DocumentKit.getParentId(menu.getPath()));
+                if (s == null) s = new ArrayList<>();
+                s.add(menu);
+                childMenus.put(DocumentKit.getParentId(menu.getPath()), s);
+            } else if (menu.getPath().length() == 4) {
+                root.add(menu);
+            }
+        }
+        LeftMenu leftMenu = new LeftMenu();
+        leftMenu.setRoot(root);
+        leftMenu.setChildren(childMenus);
+        return leftMenu;
     }
     
     @Override

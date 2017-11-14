@@ -14,7 +14,7 @@ import java.util.Map;
 @Data
 public abstract class BaseDomain implements Serializable {
     public Date createdAt;
-    public String createBy;
+    public String createdBy;
     public Date updatedAt;
     public String updatedBy;
     public Date deletedAt;

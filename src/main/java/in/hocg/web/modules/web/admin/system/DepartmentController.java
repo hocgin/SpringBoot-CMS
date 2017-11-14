@@ -85,7 +85,7 @@ public class DepartmentController extends BaseController {
      */
     @RequestMapping("/insert")
     @ResponseBody
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasPermission(null, 'sys.department.add')")
     public Results insert(@Validated(value = Insert.class) DepartmentFilter filter,
                           BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -104,7 +104,7 @@ public class DepartmentController extends BaseController {
      */
     @RequestMapping("/update")
     @ResponseBody
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasPermission(null, 'sys.department.edit')")
     public Results update(@Validated(value = Update.class) DepartmentFilter filter,
                           BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -123,7 +123,7 @@ public class DepartmentController extends BaseController {
      */
     @RequestMapping("/delete")
     @ResponseBody
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasPermission(null, 'sys.department.delete')")
     public Results delete(@Validated IdFilter filter,
                           BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {

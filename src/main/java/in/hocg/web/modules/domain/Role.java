@@ -32,7 +32,7 @@ public class Role extends BaseDomain{
     private Department department;
     
     @DBRef
-    private Collection<Permission> permissions;
+    private Collection<Menu> permissions;
     
     public Role() {
     }
@@ -40,8 +40,6 @@ public class Role extends BaseDomain{
     
     // 用户
     public static final String ROLE_USER = "ROLE_USER";
-    // 超级管理员
-    public static final String ROLE_SUPER_ADMIN = "ROLE_SUPER_ADMIN";
     // 管理员
     public static final String ROLE_ADMIN = "ROLE_ADMIN";
 }
