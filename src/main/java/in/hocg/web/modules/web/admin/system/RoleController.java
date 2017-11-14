@@ -149,7 +149,7 @@ public class RoleController extends BaseController {
             return Results.check(bindingResult);
         }
         CheckError checkError = CheckError.get();
-        roleService.delete(filter.getId());
+        roleService.delete(checkError, filter.getId());
         return Results.check(checkError, "删除成功");
     }
     

@@ -16,7 +16,7 @@ public interface RoleService {
     
     void insert(RoleFilter filter, CheckError checkError);
     
-    void delete(String... id);
+    void delete(CheckError checkError,String... id);
     
     void updateAvailable(String id, boolean b);
     

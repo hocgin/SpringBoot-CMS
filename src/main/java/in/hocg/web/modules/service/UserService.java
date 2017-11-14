@@ -17,7 +17,7 @@ public interface UserService {
     
     DataTablesOutput<User> data(UserDataTablesInputFilter input);
     
-    void delete(String... id);
+    void delete(CheckError checkError, String... id);
     
     void insert(UserFilter user, CheckError checkError);
     

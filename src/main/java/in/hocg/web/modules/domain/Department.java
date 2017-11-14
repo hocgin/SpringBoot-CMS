@@ -42,6 +42,8 @@ public class Department extends BaseDomain {
      */
     private String path;
     
+    private Boolean builtIn = Boolean.FALSE; // 是否为内置, 默认False
+    
     @JsonView(DataTablesOutput.View.class)
     private boolean hasChildren = Boolean.FALSE; // 是否有子节点
 }

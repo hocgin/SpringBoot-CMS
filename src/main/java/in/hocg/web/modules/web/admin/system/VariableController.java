@@ -94,7 +94,8 @@ public class VariableController extends BaseController {
         if (bindingResult.hasErrors()) {
             return Results.check(bindingResult);
         }
-        variableService.delete(filter.getId());
-        return Results.success().setMessage("删除成功");
+        CheckError checkError = CheckError.get();
+        variableService.delete(checkError, filter.getId());
+        return Results.check(checkError, "删除成功");
     }
 }

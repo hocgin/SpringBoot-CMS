@@ -60,11 +60,16 @@ public class DepartmentServiceImpl extends BaseService implements DepartmentServ
      * @param id
      */
     @Override
-    public void delete(String id) {
+    public void delete(String id, CheckError checkError) {
         Department department = departmentRepository.findOne(id);
         if (ObjectUtils.isEmpty(department)) {
             return;
         }
+        if (department.getBuiltIn()) {
+            checkError.putError("内置分组, 不可删除");
+            return;
+        }
+        
         List<Department> all = departmentRepository.findAllByPathRegex(String.format("%s.*", (StringUtils.isEmpty(department.getPath()) ? "" : department.getPath())));
         String[] ids = all
                 .stream()

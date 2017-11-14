@@ -1,7 +1,7 @@
 package in.hocg.web.modules.service.impl;
 
-import in.hocg.web.filter.RoleFilter;
 import in.hocg.web.filter.RoleDataTablesInputFilter;
+import in.hocg.web.filter.RoleFilter;
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.modules.domain.Department;
 import in.hocg.web.modules.domain.Permission;
@@ -80,7 +80,13 @@ public class RoleServiceImpl implements RoleService {
     }
     
     @Override
-    public void delete(String... id) {
+    public void delete(CheckError checkError, String... id) {
+        for (Role role : roleRepository.findAllByIdIn(id)) {
+            if (role.getBuiltIn()) {
+                checkError.putError("删除失败, 含有内置对象");
+                return;
+            }
+        }
         roleRepository.deleteAllByIdIn(id);
     }
     

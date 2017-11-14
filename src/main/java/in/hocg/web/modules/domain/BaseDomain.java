@@ -13,12 +13,12 @@ import java.util.Map;
  */
 @Data
 public abstract class BaseDomain implements Serializable {
-    protected Date createdAt;
-    protected String createBy;
-    protected Date updatedAt;
-    protected String updatedBy;
-    protected Date deletedAt;
-    protected String deletedBy;
+    public Date createdAt;
+    public String createBy;
+    public Date updatedAt;
+    public String updatedBy;
+    public Date deletedAt;
+    public String deletedBy;
     
     @Transient
     protected Map<String, Object> exposed; // 扩展字段

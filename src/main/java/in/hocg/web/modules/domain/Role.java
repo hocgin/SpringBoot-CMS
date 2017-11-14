@@ -24,7 +24,9 @@ public class Role extends BaseDomain{
     
     private String description; // 角色描述
     
-    private Boolean available = Boolean.FALSE; // 是否可用, 默认保留, 不分配。
+    private Boolean available = Boolean.FALSE; // 是否启用, 默认保留, 不分配。
+    
+    private Boolean builtIn = Boolean.FALSE; // 是否为内置, 默认False
     
     @DBRef
     private Department department;
@@ -36,5 +38,10 @@ public class Role extends BaseDomain{
     }
     
     
+    // 用户
     public static final String ROLE_USER = "ROLE_USER";
+    // 超级管理员
+    public static final String ROLE_SUPER_ADMIN = "ROLE_SUPER_ADMIN";
+    // 管理员
+    public static final String ROLE_ADMIN = "ROLE_ADMIN";
 }

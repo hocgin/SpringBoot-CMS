@@ -16,7 +16,7 @@ public interface VariableService {
     void insert(VariableFilter filter, CheckError checkError);
     
     void update(VariableFilter filter, CheckError checkError);
-    void delete(String... id);
+    void delete(CheckError checkError, String... id);
     
     Variable findById(String id);
 }

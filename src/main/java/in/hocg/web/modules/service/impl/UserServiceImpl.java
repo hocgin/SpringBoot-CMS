@@ -3,6 +3,7 @@ package in.hocg.web.modules.service.impl;
 import in.hocg.web.filter.UserDataTablesInputFilter;
 import in.hocg.web.filter.UserFilter;
 import in.hocg.web.lang.CheckError;
+import in.hocg.web.lang.utils.RequestKit;
 import in.hocg.web.modules.domain.Department;
 import in.hocg.web.modules.domain.Role;
 import in.hocg.web.modules.domain.User;
@@ -20,6 +21,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -34,16 +36,19 @@ public class UserServiceImpl implements UserService {
     private DepartmentService departmentService;
     private RoleService roleService;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private HttpServletRequest request;
     
     @Autowired
     UserServiceImpl(UserRepository userRepository,
                     RoleService roleService,
                     BCryptPasswordEncoder bCryptPasswordEncoder,
-                    DepartmentService departmentService) {
+                    DepartmentService departmentService,
+                    HttpServletRequest request) {
         this.userRepository = userRepository;
         this.departmentService = departmentService;
         this.roleService = roleService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.request = request;
     }
     
     public List<User> findAll() {
@@ -74,7 +79,13 @@ public class UserServiceImpl implements UserService {
     }
     
     @Override
-    public void delete(String... id) {
+    public void delete(CheckError checkError, String... id) {
+        for (User user : userRepository.findAllByIdIn(id)) {
+            if (user.getBuiltIn()) {
+                checkError.putError("删除失败, 含有内置对象");
+                return;
+            }
+        }
         userRepository.deleteAllByIdIn(id);
     }
     
@@ -96,7 +107,7 @@ public class UserServiceImpl implements UserService {
             return;
         }
         user.setUsername(filter.getUsername());
-        
+        user.setSignUpIP(RequestKit.getClientIP(request));
         // 密码加密
         user.setPassword(bCryptPasswordEncoder.encode(filter.getPassword()));
         userRepository.save(user);

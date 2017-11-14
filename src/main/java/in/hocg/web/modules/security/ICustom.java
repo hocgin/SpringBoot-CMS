@@ -1,12 +1,15 @@
 package in.hocg.web.modules.security;
 
+import in.hocg.web.modules.domain.Custom;
 import in.hocg.web.modules.domain.Role;
-import in.hocg.web.modules.domain.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -14,21 +17,20 @@ import java.util.stream.Collectors;
  * email: hocgin@gmail.com
  * 用户细节信息
  */
-public class IUser implements UserDetails {
+public class ICustom implements UserDetails {
     private final String username;
     private final String password;
     private final Collection<? extends GrantedAuthority> authorities;
-    private final Date lastPasswordResetDate;
+    private final Date lastPasswordResetAt;
     
-    private IUser(String username,
-                  String password,
-                  Collection<? extends GrantedAuthority> authorities,
-
-                  Date lastPasswordResetDate) {
+    private ICustom(String username,
+                    String password,
+                    Collection<? extends GrantedAuthority> authorities,
+                    Date lastPasswordResetAt) {
         this.username = username;
         this.password = password;
         this.authorities = authorities;
-        this.lastPasswordResetDate = lastPasswordResetDate;
+        this.lastPasswordResetAt = lastPasswordResetAt;
     }
     
     @Override
@@ -66,15 +68,15 @@ public class IUser implements UserDetails {
         return true;
     }
     
-    public Date getLastPasswordResetDate() {
-        return lastPasswordResetDate;
+    public Date getLastPasswordResetAt() {
+        return lastPasswordResetAt;
     }
     
-    public static IUser toIUser(User user) {
-        return new IUser(user.getUsername(),
-                user.getPassword(),
-                getGrantedAuthority(user.getRole()),
-                user.getLastPasswordResetAt());
+    public static ICustom toICustom(Custom custom) {
+        return new ICustom(custom.getEmail(),
+                custom.getPassword(),
+                getGrantedAuthority(custom.getRole()),
+                custom.getLastPasswordResetAt());
     }
     
     private static List<? extends GrantedAuthority> getGrantedAuthority(Collection<Role> roles) {

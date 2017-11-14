@@ -71,17 +71,16 @@ spring:
 server:
   port: 8080
 
-# JWT
-jwt:
-  header: Authorization
-  secret: mySecret
-  expiration: 604800
-  token-head: "Bearer "
-  route:
-    authentication:
-      path: auth
-      refresh: refresh
-      register: "auth/register"
+
 logging:
   level:
     org.springframework.data.mongodb.core.MongoTemplate: DEBUG
+
+# JWT
+jwt:
+  secret: mySecret
+  expiration: 604800
+
+i:
+  mongo:
+    init: true

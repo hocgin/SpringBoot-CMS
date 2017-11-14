@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface DepartmentService {
     void insert(DepartmentFilter filter, CheckError checkError);
-    void delete(String id);
+    void delete(String id, CheckError checkError);
     void update(DepartmentFilter department, CheckError checkError);
     List<Department> queryChildren(String parentId);
     List<Department> queryRoot();

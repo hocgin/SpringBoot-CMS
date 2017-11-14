@@ -52,7 +52,13 @@ public class VariableServiceImpl implements VariableService {
     }
     
     @Override
-    public void delete(String... id) {
+    public void delete(CheckError checkError, String... id) {
+        for (Variable variable : variableRepository.findAllByIdIn(id)) {
+            if (variable.getBuiltIn()) {
+                checkError.putError("删除失败, 含有内置对象");
+                return;
+            }
+        }
         variableRepository.deleteAllByIdIn(id);
     }
     

@@ -18,7 +18,13 @@
                 </a>
                 <a href="javascript:;" class="list-group-item" title="描述">
                     <i class="fa fa-sticky-note-o i-mr10"></i> <span
-                        th:utext="${department.description?:@iText.danger('暂未填写')}"></span>
+                        th:utext="${department.description?:@iText.danger('暂未')}"></span>
+                </a>
+                <a href="javascript:;" class="list-group-item" title="创建时间">
+                    <span class="i-mr10 i-bold">创建时间</span><span th:utext="${@iText.format(department.createdAt)}"></span>
+                </a>
+                <a href="javascript:;" class="list-group-item" title="创建时间">
+                    <span class="i-mr10 i-bold">更新时间</span><span th:utext="${@iText.format(department.updatedAt)}"></span>
                 </a>
             </div>
         </div>

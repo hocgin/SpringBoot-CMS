@@ -1,7 +1,6 @@
 package in.hocg.web.filter.lang;
 
 import lombok.Data;
-import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.Size;
 import java.io.Serializable;
@@ -13,6 +12,5 @@ import java.io.Serializable;
 @Data
 public class IdsFilter implements Serializable {
     @Size(min = 1, message = "异常值")
-    @NotBlank(message = "异常值")
     private String[] id;
 }

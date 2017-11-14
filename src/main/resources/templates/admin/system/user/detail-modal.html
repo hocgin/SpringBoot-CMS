@@ -11,10 +11,25 @@
         <div class="col-xs-12">
             <div class="list-group">
                 <a href="javascript:;" class="list-group-item" title="邮箱">
-                    <i class="fa fa-envelope-o"></i> <span th:text="${user.email}"></span>
+                    <i class="fa fa-envelope-o i-mr10"></i><span th:text="${user.email}"></span>
                 </a>
                 <a href="javascript:;" class="list-group-item" title="所属单位">
-                    <i class="fa fa-building"></i> <span th:text="${user.department?.name}"></span>
+                    <i class="fa fa-building i-mr10"></i><span th:utext="${user.department?.name?:@iText.danger('暂无')}"></span>
+                </a>
+                <a href="javascript:;" class="list-group-item" title="User-Agent">
+                    <span class="i-mr10 i-bold">User-Agent</span><span th:utext="${user.userAgent?:@iText.danger('暂无')}"></span>
+                </a>
+                <a href="javascript:;" class="list-group-item" title="注册IP">
+                    <span class="i-mr10 i-bold">注册 IP</span><span th:text="${user.signUpIP}"></span>
+                </a>
+                <a href="javascript:;" class="list-group-item" title="最近登陆IP">
+                    <span class="i-mr10 i-bold">最近登陆 IP</span><span th:utext="${user.logInIP?:@iText.danger('暂无')}"></span>
+                </a>
+                <a href="javascript:;" class="list-group-item" title="注册时间">
+                    <span class="i-mr10 i-bold">注册时间</span><span th:utext="${@iText.format(user.createdAt)}"></span>
+                </a>
+                <a href="javascript:;" class="list-group-item" title="最近登陆时间">
+                    <span class="i-mr10 i-bold">最近登陆时间</span><span th:utext="${@iText.format(user.logInAt)}"></span>
                 </a>
             </div>
         </div>

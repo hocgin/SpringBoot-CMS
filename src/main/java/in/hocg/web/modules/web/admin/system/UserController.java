@@ -79,7 +79,7 @@ public class UserController extends BaseController {
             return Results.check(bindingResult);
         }
         CheckError checkError = CheckError.get();
-        userService.delete(filter.getId());
+        userService.delete(checkError, filter.getId());
         return Results.check(checkError, "删除成功");
     }
     

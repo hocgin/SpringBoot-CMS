@@ -1,7 +1,6 @@
 package in.hocg.web.modules.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,23 +28,16 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     @Autowired
     private JwtTokenUtil tokenUtil;
     
-    
-    @Value("${jwt.header}")
-    private String tokenHeader;
-    
-    @Value("${jwt.token-head}")
-    private String tokenHead;
-    
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain chain) throws ServletException, IOException {
-        String authHeader = request.getHeader(this.tokenHeader);
+        String authHeader = request.getHeader("Authorization");
         
         if (!StringUtils.isEmpty(authHeader)
-                && authHeader.startsWith(tokenHead)) {
-            final String authToken = authHeader.substring(tokenHead.length()); // The part after "Bearer "
+                && authHeader.startsWith("Bearer ")) {
+            final String authToken = authHeader.substring("Bearer ".length()); // The part after "Bearer "
             String username = tokenUtil.getUsernameFromToken(authToken);
             
             logger.info("checking authentication " + username);

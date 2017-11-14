@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.validator.constraints.NotBlank;
 
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.Date;
 
@@ -31,9 +30,9 @@ public class PermissionFilter extends BaseFilter {
     @NotBlank(message = "权限名称为必填", groups = {Update.class, Insert.class})
     @Pattern(regexp = "^[0-9a-zA-Z\\u4e00-\\u9fa5._]+", message = "权限名称只允许由中文、英文、点、下划线组成", groups = {Update.class, Insert.class})
     private String name; // 名称: 用户添加
-    @NotNull(message = "权限类型为必填", groups = {Update.class, Insert.class})
-    @Pattern(regexp = "^[0-1]+", message = "权限类型错误", groups = {Update.class, Insert.class})
-    private Integer type; // 资源类型 0 菜单 1 按钮
+    @NotBlank(message = "权限类型为必填", groups = {Update.class, Insert.class})
+    @Pattern(regexp = "[01]", message = "权限类型错误", groups = {Update.class, Insert.class})
+    private String type; // 资源类型 0 菜单 1 按钮
     private String url;  // 资源路径.
     @NotBlank(message = "权限标识为必填", groups = {Update.class, Insert.class})
     @Pattern(regexp = "^[a-zA-Z._]+", message = "权限标识只允许由英文、点、下划线组成", groups = {Update.class, Insert.class})
@@ -56,7 +55,7 @@ public class PermissionFilter extends BaseFilter {
         permissionObject.setIcon(icon);
         permissionObject.setName(name);
         permissionObject.setUrl(url);
-        permissionObject.setType(type);
+        permissionObject.setType(Integer.valueOf(type));
         
         permissionObject.setCreatedAt(new Date());
         return permissionObject;
@@ -69,7 +68,7 @@ public class PermissionFilter extends BaseFilter {
         permissionObject.setIcon(icon);
         permissionObject.setName(name);
         permissionObject.setUrl(url);
-        permissionObject.setType(type);
+        permissionObject.setType(Integer.valueOf(type));
         
         permissionObject.setUpdatedAt(new Date());
         return permissionObject;

@@ -16,4 +16,6 @@ public class Variable extends BaseDomain {
     private String key;
     private String value;
     private String note;
+    
+    private Boolean builtIn = Boolean.FALSE; // 是否为内置, 默认False
 }

@@ -5,7 +5,7 @@ import in.hocg.web.filter.group.Insert;
 import in.hocg.web.filter.group.Update;
 import in.hocg.web.filter.lang.IdFilter;
 import in.hocg.web.lang.CheckError;
-import in.hocg.web.lang.HtmlUtils;
+import in.hocg.web.lang.iText;
 import in.hocg.web.lang.body.response.Results;
 import in.hocg.web.modules.domain.Permission;
 import in.hocg.web.modules.service.PermissionService;
@@ -31,11 +31,11 @@ public class PermissionController extends BaseController {
     public final String BASE_TEMPLATES_PATH = "/admin/system/permission/%s";
     
     private PermissionService permissionService;
-    private HtmlUtils htmlUtils;
+    private iText htmlUtils;
     
     @Autowired
     public PermissionController(PermissionService permissionService,
-                                HtmlUtils htmlUtils) {
+                                iText htmlUtils) {
         this.permissionService = permissionService;
         this.htmlUtils = htmlUtils;
     }

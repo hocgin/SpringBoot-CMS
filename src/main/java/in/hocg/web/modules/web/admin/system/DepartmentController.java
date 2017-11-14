@@ -5,7 +5,7 @@ import in.hocg.web.filter.group.Insert;
 import in.hocg.web.filter.group.Update;
 import in.hocg.web.filter.lang.IdFilter;
 import in.hocg.web.lang.CheckError;
-import in.hocg.web.lang.HtmlUtils;
+import in.hocg.web.lang.iText;
 import in.hocg.web.lang.body.response.Results;
 import in.hocg.web.modules.domain.Department;
 import in.hocg.web.modules.service.DepartmentService;
@@ -32,11 +32,11 @@ public class DepartmentController extends BaseController {
     public final String BASE_TEMPLATES_PATH = "/admin/system/department/%s";
     
     private DepartmentService departmentService;
-    private HtmlUtils htmlUtils;
+    private iText htmlUtils;
     
     @Autowired
     public DepartmentController(DepartmentService departmentService,
-                                HtmlUtils htmlUtils) {
+                                iText htmlUtils) {
         this.departmentService = departmentService;
         this.htmlUtils = htmlUtils;
     }
@@ -129,8 +129,9 @@ public class DepartmentController extends BaseController {
         if (bindingResult.hasErrors()) {
             return Results.check(bindingResult);
         }
-        departmentService.delete(filter.getId());
-        return Results.success("删除成功");
+        CheckError checkError = CheckError.get();
+        departmentService.delete(filter.getId(), checkError);
+        return Results.check(checkError, "删除成功");
     }
     
     @PostMapping("/children/{id}")

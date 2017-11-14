@@ -50,29 +50,29 @@ public class AdminWebSecurityConfig extends WebSecurityConfigurerAdapter {
                 
                 // 允许匿名访问(后台登陆)
                 .antMatchers("/admin/login",
-                        SecurityConstants.ADMIN_SIGN_UP_PAGE).permitAll()
+                        "/admin/login.html").permitAll()
                 
                 // 除以上连接, 其余都要认证
                 .anyRequest().authenticated().and()
                 
                 // 后台登陆页面
                 .formLogin()
-                    // 拦截表单登陆的action
-                    .loginProcessingUrl("/admin/login")
-                    // 登陆页面
-                    .loginPage(SecurityConstants.ADMIN_SIGN_UP_PAGE)
-                    .usernameParameter("username")
-                    .passwordParameter("password")
-                    // false 为登陆后跳转至之前访问的界面
-                    .defaultSuccessUrl("/admin/index.html", false)
-                    // 登陆失败跳转
-                    .failureUrl(String.format("%s?error=true", SecurityConstants.ADMIN_SIGN_UP_PAGE))
+                // 拦截表单登陆的action
+                .loginProcessingUrl("/admin/login")
+                // 登陆页面
+                .loginPage("/admin/login.html")
+                .usernameParameter("username")
+                .passwordParameter("password")
+                // false 为登陆后跳转至之前访问的界面
+                .defaultSuccessUrl("/admin/index.html", false)
+                // 登陆失败跳转
+                .failureUrl(String.format("%s?error=true", "/admin/login.html"))
                 .permitAll().and()
                 
                 // 自动登陆
                 .rememberMe()
-                    .rememberMeParameter("remember-me")
-                    .userDetailsService(userDetailsService)
+                .rememberMeParameter("remember-me")
+                .userDetailsService(userDetailsService)
                 .and()
                 
                 // 后台退出登陆

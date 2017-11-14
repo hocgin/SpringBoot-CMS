@@ -8,7 +8,6 @@ import in.hocg.web.modules.security.JwtAuthenticationRequest;
 import in.hocg.web.modules.security.JwtAuthenticationResponse;
 import in.hocg.web.modules.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -25,16 +24,14 @@ import javax.servlet.http.HttpSession;
 @RestController
 @RequestMapping("/api")
 public class AuthController {
-    private final AuthService authService;
+    private AuthService authService;
+    
     @Autowired
     public AuthController(AuthService authService) {
         this.authService = authService;
     }
     
-    @Value("${jwt.header}")
-    private String tokenHeader;
-    
-    @RequestMapping(value = "${jwt.route.authentication.path}", method = RequestMethod.POST)
+    @RequestMapping(value = "/auth", method = RequestMethod.POST)
     public Results createAuthenticationToken(JwtAuthenticationRequest authenticationRequest, HttpSession session) throws AuthenticationException{
         final String token = authService.login(authenticationRequest.getUsername(), authenticationRequest.getPassword());
         session.setAttribute(SESSION.TOKEN, token);
@@ -43,9 +40,9 @@ public class AuthController {
                 .setMessage("申请 Token 成功");
     }
     
-    @RequestMapping(value = "${jwt.route.authentication.refresh}", method = RequestMethod.GET)
+    @RequestMapping(value = "/auth/refresh", method = RequestMethod.GET)
     public ResponseEntity<?> refreshAndGetAuthenticationToken(HttpServletRequest request) throws AuthenticationException{
-        String token = request.getHeader(tokenHeader);
+        String token = request.getHeader("Authorization");
         String refreshedToken = authService.refresh(token);
         if(refreshedToken == null) {
             return ResponseEntity.badRequest()
@@ -55,7 +52,7 @@ public class AuthController {
         }
     }
     
-    @RequestMapping(value = "${jwt.route.authentication.register}", method = RequestMethod.POST)
+    @RequestMapping(value = "/auth/register", method = RequestMethod.POST)
     public Results register(User user) throws AuthenticationException{
         CheckError checkError = CheckError.get();
         User register = authService.register(user, checkError);

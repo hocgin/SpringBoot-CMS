@@ -9,7 +9,6 @@ import in.hocg.web.modules.security.IUser;
 import in.hocg.web.modules.security.JwtTokenUtil;
 import in.hocg.web.modules.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -35,9 +34,6 @@ public class AuthServiceImpl implements AuthService {
     private AuthenticationManager authenticationManager;
     private JwtTokenUtil tokenUtil;
     
-    @Value("${jwt.token-head}")
-    private String tokenHead;
-    
     @Autowired
     public AuthServiceImpl(UserRepository userRepository,
                            AuthenticationManager authenticationManager,
@@ -60,7 +56,7 @@ public class AuthServiceImpl implements AuthService {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String rawPassword = user.getPassword();
         user.setPassword(encoder.encode(rawPassword));
-        user.setLastPasswordResetDate(new Timestamp(new Date().getTime()));
+        user.setLastPasswordResetAt(new Timestamp(new Date().getTime()));
         // 分配用户权限
         user.setRole(Collections.singleton(roleRepository.findTopByRole(Role.ROLE_USER)));
         return userRepository.insert(user);
@@ -78,7 +74,7 @@ public class AuthServiceImpl implements AuthService {
     
     @Override
     public String refresh(String oldToken) {
-        final String token = oldToken.substring(tokenHead.length());
+        final String token = oldToken.substring("Bearer ".length());
         String username = tokenUtil.getUsernameFromToken(token);
         IUser user = (IUser) userDetailsService.loadUserByUsername(username);
         if (tokenUtil.canTokenBeRefreshed(token,

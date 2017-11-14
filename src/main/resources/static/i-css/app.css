@@ -39,3 +39,18 @@ a.button-next:hover
 .i-mr10 {
     margin-right: 10px;
 }
+.i-label {
+    display: inline;
+    padding: .1em .2em .1em;
+    font-size: 10%;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: normal;
+    vertical-align: baseline;
+    border-radius: .25em;
+}
+.i-bold {
+    font-weight: 700;
+}

@@ -21,4 +21,6 @@ public interface RoleRepository extends DataTablesRepository<Role, String>,
     void deleteAllByIdIn(String... id);
     
     void deleteAllByDepartmentIn(String... departmentId);
+    
+    List<Role> findAllByIdIn(String... id);
 }

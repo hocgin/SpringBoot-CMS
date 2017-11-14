@@ -52,7 +52,7 @@
                               method="POST">
                             <div class="box-body">
                                 <div class="form-group">
-                                    <label for="departmentId">所属单位</label>
+                                    <label for="departmentId">所属单位 <span class="i-label label-warning">必填</span></label>
                                     <div class="input-group">
                                         <input type="text" class="form-control" id="departmentId"
                                                placeholder="选择单位"
@@ -66,7 +66,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="username">用户名</label>
+                                    <label for="username">用户名 <span class="i-label label-warning">必填</span></label>
                                     <input class="form-control" id="username" name="username"
                                            placeholder="请输入用户名, 用于登陆"
                                            required
@@ -75,18 +75,18 @@
                                 <div class="form-group">
                                     <label for="nickname">昵称</label>
                                     <input class="form-control" id="nickname" name="nickname"
-                                           placeholder="请输入昵称"
+                                           placeholder="请输入昵称, 默认等于用户名"
                                            type="text">
                                 </div>
                                 <div class="form-group">
-                                    <label for="email">电子邮箱</label>
+                                    <label for="email">电子邮箱 <span class="i-label label-warning">必填</span></label>
                                     <input class="form-control" id="email" name="email"
                                            placeholder="请输入电子邮箱"
                                            required
                                            type="email">
                                 </div>
                                 <div class="form-group">
-                                    <label for="password">登陆密码</label>
+                                    <label for="password">登陆密码 <span class="i-label label-warning">必填</span></label>
                                     <input class="form-control" id="password" name="password"
                                            placeholder="请输入登陆密码"
                                            required
