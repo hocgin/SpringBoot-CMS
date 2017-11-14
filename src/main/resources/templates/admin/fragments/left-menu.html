@@ -31,15 +31,16 @@
                 <li class="treeview"
                     th:each="root, i: ${leftMenu.root}">
                     <a th:href="${root.url?:'#'}">
-                        <i class="fa fa-dashboard"></i> <span th:text="${root.name}">系统配置</span>
+                        <i th:class="${root.icon}"></i> <span th:text="${root.name}">系统配置</span>
                         <span class="pull-right-container">
                           <i class="fa fa-angle-left pull-right"></i>
                         </span>
                     </a>
                     <ul class="treeview-menu">
                         <li th:each="children, i: ${leftMenu.children.get(root.path)}">
-                            <a th:href="${children.url}" data-pjax th:inline="text"><i
-                                    th:class="${children.icon}"></i>
+                            <a data-pjax
+                               th:href="${children.url}"
+                               th:inline="text"><i th:class="${children.icon}"></i>
                                 [[${children.name}]]</a>
                         </li>
                     </ul>

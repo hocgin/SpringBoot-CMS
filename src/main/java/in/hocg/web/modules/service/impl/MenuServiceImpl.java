@@ -145,7 +145,7 @@ public class MenuServiceImpl extends BaseService implements MenuService {
      * @return
      */
     public String getSubPath(String parentPath) {
-        List<Menu> all = menuRepository.findAllByPathRegexOrderByPathDesc(parentPath + ".{4}");
+        List<Menu> all = menuRepository.findAllByPathRegexOrderByPathDesc(String.format("^%s.{4}$", parentPath));
         String rsvalue = parentPath + "0001";
         if (all.size() > 0) {
             rsvalue = all.get(0).getPath();

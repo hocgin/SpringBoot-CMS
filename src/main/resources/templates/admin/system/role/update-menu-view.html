@@ -70,7 +70,7 @@
                         var nodes = tree.get_selected();
                         if (!!nodes
                             && nodes.length > 0) {
-                            $.post('/admin/system/role/update-permission', {
+                            $.post('/admin/system/role/update-menu', {
                                 id: $('#id').val(),
                                 permissionIds: nodes.toString()
                             }, function (data) {
@@ -85,7 +85,7 @@
                     core: {
                         data: {
                             url: function (node) {
-                                return '/admin/system/permission/tree/' + (node.id === '#' ? '' : node.id)
+                                return '/admin/system/menu/tree/' + (node.id === '#' ? '' : node.id)
                             }
                         }
                     },

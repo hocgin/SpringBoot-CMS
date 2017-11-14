@@ -69,10 +69,10 @@ public class RoleController extends BaseController {
         return "/admin/system/role/detail-modal";
     }
     
-    @GetMapping("/update-permission-view/{id}")
+    @GetMapping("/update-menu-view/{id}")
     public String vUpdatePermission(@PathVariable("id") String id, Model model) {
         model.addAttribute("role", roleService.find(id));
-        return String.format(BASE_TEMPLATES_PATH, "update-permission-view");
+        return String.format(BASE_TEMPLATES_PATH, "update-menu-view");
     }
     
     @GetMapping("/select-user-view/{id}")
@@ -121,7 +121,7 @@ public class RoleController extends BaseController {
         return Results.check(checkError, "修改信息成功");
     }
     
-    @PostMapping("/update-permission")
+    @PostMapping("/update-menu")
     @ResponseBody
     @PreAuthorize("hasPermission(null, 'sys.role.edit')")
     public Results updatePermission(@Validated({Update2.class}) RoleFilter filter,

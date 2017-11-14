@@ -21,6 +21,10 @@ public class UserRepositoryImpl
         return findOne(query);
     }
     
+    /**
+     * 移除部门
+     * @param departmentId
+     */
     @Override
     public void removeDepartmentField(String... departmentId) {
         Query query = Query.query(Criteria.where("department").in(departmentId));

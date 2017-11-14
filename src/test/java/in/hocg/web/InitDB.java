@@ -42,7 +42,7 @@ public class InitDB {
     
     @Test
     public void test() {
-        List<Department> allByPathRegexOrderByPathAsc = departmentRepository.findAllByPathRegexOrderByPathDesc(".{4}");
+        List<Department> allByPathRegexOrderByPathAsc = departmentRepository.findAllByPathRegexOrderByPathDesc("^%s.{4}$");
         System.out.println("");
     }
 }

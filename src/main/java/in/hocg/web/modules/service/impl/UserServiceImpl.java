@@ -92,9 +92,14 @@ public class UserServiceImpl implements UserService {
         List<Menu> root = new ArrayList<>();
         Map<String, List<Menu>> childMenus = new HashMap<>();
         for (Menu menu : menus) {
+            if (!menu.getAvailable()) { // 如果被关闭的话, 跳过
+                continue;
+            }
             if (menu.getPath().length() > 4) {
                 List<Menu> s = childMenus.get(DocumentKit.getParentId(menu.getPath()));
-                if (s == null) s = new ArrayList<>();
+                if (CollectionUtils.isEmpty(s)) {
+                    s = new ArrayList<>();
+                }
                 s.add(menu);
                 childMenus.put(DocumentKit.getParentId(menu.getPath()), s);
             } else if (menu.getPath().length() == 4) {

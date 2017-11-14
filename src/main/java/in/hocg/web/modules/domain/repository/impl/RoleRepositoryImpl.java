@@ -1,6 +1,7 @@
 package in.hocg.web.modules.domain.repository.impl;
 
 import com.mongodb.DBRef;
+import in.hocg.web.modules.domain.Menu;
 import in.hocg.web.modules.domain.Role;
 import in.hocg.web.modules.domain.repository.custom.RoleRepositoryCustom;
 import org.bson.types.ObjectId;
@@ -24,7 +25,7 @@ public class RoleRepositoryImpl
                 .map(ObjectId::new)
                 .toArray(ObjectId[]::new);
         DBRef[] dbRefs = Arrays.stream(objectIds)
-                .map(i -> new DBRef("Permission", i))
+                .map(i -> new DBRef(Menu.Document, i))
                 .toArray(DBRef[]::new);
         
         Query query = Query.query(Criteria.where("permissions.$id").in(objectIds));

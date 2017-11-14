@@ -2,6 +2,7 @@ package in.hocg.web.modules.domain;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
@@ -11,6 +12,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Data
 @Document(collection = "Menu")
 public class Menu extends BaseDomain {
+    @Transient
+    public static String Document = "Menu";
+    
     @Id
     private String id;
     

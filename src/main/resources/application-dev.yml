@@ -84,3 +84,4 @@ jwt:
 i:
   mongo:
     init: true
+#    init: false

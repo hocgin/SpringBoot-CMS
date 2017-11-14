@@ -144,7 +144,7 @@ public class DepartmentServiceImpl extends BaseService implements DepartmentServ
      * @return
      */
     public String getSubPath(String parentPath) {
-        List<Department> all = departmentRepository.findAllByPathRegexOrderByPathDesc(parentPath + ".{4}");
+        List<Department> all = departmentRepository.findAllByPathRegexOrderByPathDesc(String.format("^%s.{4}$", parentPath));
         String rsvalue = parentPath + "0001";
         if (all.size() > 0) {
             rsvalue = all.get(0).getPath();
