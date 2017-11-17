@@ -75,7 +75,7 @@ public class BuiltInSeeder {
         menu1 = menuRepository.insert(menu1);
         
         // - 系统变量管理
-        Menu menu11 = DocumentFactory.menu("系统变量管理", "00010001",
+        Menu menu11 = DocumentFactory.menu("系统变量", "00010001",
                 "sys.variable",
                 "/admin/system/variable/index.html");
         menu11.setParent(menu1.getId());
@@ -135,6 +135,16 @@ public class BuiltInSeeder {
         Menu menu153 = DocumentFactory.data("修改用户", "000100050003", "sys.user.edit", menu15.getId());
         menu153 = menuRepository.insert(menu153);
     
+        // - 日志管理 todo 后续增加查询功能
+        Menu menu16 = DocumentFactory.menu("系统日志", "00010006",
+                "sys.log", "/admin/system/log/index.html");
+        menu16.setParent(menu1.getId());
+        menu16 = menuRepository.insert(menu16);
+        Menu menu161 = DocumentFactory.data("清空日志", "000100060001", "sys.log.empty", menu16.getId());
+        menu161 = menuRepository.insert(menu161);
+        
+        
+        
         // 仪表盘
         Menu menu2 = DocumentFactory.menu("仪表盘", "0002", "dashboard", "");
         menu2 = menuRepository.insert(menu2);
@@ -151,6 +161,7 @@ public class BuiltInSeeder {
                 menu13, menu131, menu132, menu133,
                 menu14, menu141, menu142, menu143,
                 menu15, menu151, menu152, menu153,
+                menu16, menu161,
                 menu2,
                 menu21
         };

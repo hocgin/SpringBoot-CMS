@@ -64,4 +64,8 @@ public class ApplicationTests {
         
     }
     
+    @Test
+    public void testAdminHtml() {
+    
+    }
 }

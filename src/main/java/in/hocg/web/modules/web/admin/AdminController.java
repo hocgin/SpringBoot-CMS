@@ -1,5 +1,6 @@
 package in.hocg.web.modules.web.admin;
 
+import in.hocg.web.global.aspect.ILog;
 import in.hocg.web.modules.service.AuthService;
 import in.hocg.web.modules.web.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,20 +23,9 @@ public class AdminController extends BaseController {
         this.authService = authService;
     }
     
-    @GetMapping("/login.html")
+    @ILog(value = "测试信息", tag = "后台登陆界面")
+    @GetMapping({"/login.html", ""})
     public String vLogin() {
         return String.format(BASE_TEMPLATES_PATH, "login");
     }
-    
-    
-//    @PostMapping("/login")
-//    @ResponseBody
-//    public Results login(String username, String password,
-//                         HttpSession session) {
-//        String token = authService.login(username, password);
-//        session.setAttribute(SESSION.TOKEN, token);
-//        return Results.success()
-//                .setMessage(!StringUtils.isEmpty(token) ? "登陆成功" : "登陆失败")
-//                .setData("/admin/system/department/index.html");
-//    }
 }
