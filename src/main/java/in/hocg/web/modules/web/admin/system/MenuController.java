@@ -41,7 +41,7 @@ public class MenuController extends BaseController {
         this.htmlUtils = htmlUtils;
     }
     
-    @RequestMapping("/index.html")
+    @GetMapping({"/index.html", "/"})
     public String vIndex(Model model) {
         Optional<String> html = menuService.queryRoot()
                 .stream()
@@ -51,7 +51,7 @@ public class MenuController extends BaseController {
         return String.format(BASE_TEMPLATES_PATH, "index");
     }
     
-    @RequestMapping("/add-view.html")
+    @GetMapping("/add-view.html")
     public String vAdd(@RequestParam(value = "id", required = false) String parentId, Model model) {
         if (!StringUtils.isEmpty(parentId)) {
             Menu permission = menuService.findById(parentId);
@@ -60,7 +60,7 @@ public class MenuController extends BaseController {
         return String.format(BASE_TEMPLATES_PATH, "add-view");
     }
     
-    @RequestMapping("/detail/{id}")
+    @GetMapping("/detail/{id}")
     public String vDetail(@PathVariable("id") String detailId, Model model) {
         model.addAttribute("o", menuService.findById(detailId));
         return String.format(BASE_TEMPLATES_PATH, "detail-modal");

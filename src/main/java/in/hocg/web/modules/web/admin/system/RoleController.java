@@ -40,7 +40,7 @@ public class RoleController extends BaseController {
         this.userService = userService;
     }
     
-    @GetMapping("/index.html")
+    @GetMapping({"/index.html", "/"})
     public String vIndex(Model model) {
         return String.format(BASE_TEMPLATES_PATH, "index");
     }
@@ -61,7 +61,7 @@ public class RoleController extends BaseController {
         return String.format(BASE_TEMPLATES_PATH, "update-info-view");
     }
     
-    @RequestMapping("/detail/{id}")
+    @GetMapping("/detail/{id}")
     public String vDetail(@PathVariable("id") String id, Model model) {
         Role role = roleService.find(id);
         

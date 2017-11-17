@@ -35,7 +35,7 @@ public class UserController extends BaseController {
     }
     
     
-    @GetMapping("/index.html")
+    @GetMapping({"/index.html", "/"})
     public String vIndex(Model model) {
         return String.format(BASE_TEMPLATES_PATH, "index");
     }

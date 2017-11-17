@@ -41,7 +41,7 @@ public class DepartmentController extends BaseController {
         this.htmlUtils = htmlUtils;
     }
     
-    @RequestMapping("/index.html")
+    @GetMapping({"/index.html", "/"})
     public String vIndex(Model model) {
         Optional<String> html = departmentService.queryRoot()
                 .stream()
@@ -52,7 +52,7 @@ public class DepartmentController extends BaseController {
         return String.format(BASE_TEMPLATES_PATH, "index");
     }
     
-    @RequestMapping("/add-view.html")
+    @GetMapping("/add-view.html")
     public String vAdd(@RequestParam(value = "id", required = false) String parentId, Model model) {
         if (!StringUtils.isEmpty(parentId)) {
             Department department = departmentService.findById(parentId);
@@ -61,7 +61,7 @@ public class DepartmentController extends BaseController {
         return String.format(BASE_TEMPLATES_PATH, "add-view");
     }
     
-    @RequestMapping("/detail/{id}")
+    @GetMapping("/detail/{id}")
     public String vDetail(@PathVariable("id") String departmentId, Model model) {
         model.addAttribute("department", departmentService.findById(departmentId));
         return String.format(BASE_TEMPLATES_PATH, "detail-modal");

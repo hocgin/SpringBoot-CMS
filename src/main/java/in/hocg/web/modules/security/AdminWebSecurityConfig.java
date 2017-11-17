@@ -69,7 +69,7 @@ public class AdminWebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .usernameParameter("username")
                 .passwordParameter("password")
                 // false 为登陆后跳转至之前访问的界面
-                .defaultSuccessUrl("/admin/index.html", false)
+                .defaultSuccessUrl("/admin/dashboard/index.html", false)
                 // 登陆失败跳转
                 .failureUrl(String.format("%s?error=true", "/admin/login.html"))
                 .permitAll().and()
