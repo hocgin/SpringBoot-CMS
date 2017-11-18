@@ -1,6 +1,5 @@
 package in.hocg.web.modules.web.api;
 
-import in.hocg.web.SESSION;
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.lang.body.response.Results;
 import in.hocg.web.modules.domain.User;
@@ -34,7 +33,6 @@ public class AuthController {
     @RequestMapping(value = "/auth", method = RequestMethod.POST)
     public Results createAuthenticationToken(JwtAuthenticationRequest authenticationRequest, HttpSession session) throws AuthenticationException{
         final String token = authService.login(authenticationRequest.getUsername(), authenticationRequest.getPassword());
-        session.setAttribute(SESSION.TOKEN, token);
         // Return the token
         return Results.success(token)
                 .setMessage("申请 Token 成功");

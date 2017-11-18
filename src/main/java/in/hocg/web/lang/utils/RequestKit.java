@@ -1,6 +1,8 @@
 package in.hocg.web.lang.utils;
 
 import org.springframework.util.StringUtils;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -42,5 +44,13 @@ public class RequestKit {
      */
     public static String getUserAgent(HttpServletRequest request) {
         return request.getHeader("User-Agent");
+    }
+    
+    /**
+     * 获取请求对象
+     * @return
+     */
+    public static HttpServletRequest get() {
+        return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
     }
 }

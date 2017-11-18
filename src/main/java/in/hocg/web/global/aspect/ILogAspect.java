@@ -1,45 +1,49 @@
 package in.hocg.web.global.aspect;
 
-import com.google.common.base.Optional;
 import com.google.gson.Gson;
 import in.hocg.web.lang.utils.RequestKit;
+import in.hocg.web.lang.utils.ResponseKit;
 import in.hocg.web.modules.domain.SysLog;
-import in.hocg.web.modules.domain.repository.SysLogRepository;
 import in.hocg.web.modules.security.SecurityKit;
+import in.hocg.web.modules.service.SysLogService;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.expression.Expression;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.SpelParserConfiguration;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
-import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
-import java.security.Security;
 
 /**
  * Created by hocgin on 2017/11/17.
  * email: hocgin@gmail.com
+ *
+ * @ILog 处理
  */
 @Aspect
 @Component
 public class ILogAspect {
     private Gson gson;
     private HttpServletRequest request;
-    private SysLogRepository sysLogRepository;
+    private SysLogService sysLogService;
     
     @Autowired
     public ILogAspect(Gson gson,
                       HttpServletRequest request,
-                      SysLogRepository sysLogRepository) {
+                      SysLogService sysLogService) {
         this.gson = gson;
         this.request = request;
-        this.sysLogRepository = sysLogRepository;
+        this.sysLogService = sysLogService;
     }
     
     @Pointcut("execution(* in.hocg..*(..)) && @annotation(in.hocg.web.global.aspect.ILog)")
@@ -49,45 +53,53 @@ public class ILogAspect {
     @Around("ILogPointcut()")
     public Object ILogHandler(ProceedingJoinPoint point) {
         long start = System.currentTimeMillis();
-        MethodSignature methodSignature = (MethodSignature) point.getSignature();
-        Method method = methodSignature.getMethod();
-        ILog annotation = method.getAnnotation(ILog.class);
-        SysLog.Type type = annotation.type();
-        // 类的位置
-        Class aClass = point.getSourceLocation().getWithinType();
-        String src = String.format("%s#%s", aClass.getName(), method.getName());
-        
-        SysLog sysLog = SysLog.NEW(annotation.type().name(),
-                annotation.tag(),
-                src,
-                RequestKit.getClientIP(request),
-                annotation.value(),
-                gson.toJson(point.getArgs()), null,
-                null,
-                annotation.from().getValue());
-        if (SecurityKit.isLogged()) {
-            sysLog.setUsername(SecurityKit.username());
-        }
-        if (SysLog.Type.BEFORE.equals(type)) {
-            sysLog = sysLogRepository.save(sysLog);
-        }
         
         Object result = null;
         try {
             result = point.proceed();
+            doLog(start, point, result, null);
         } catch (Throwable throwable) {
-            sysLog.setType(SysLog.Type.ERROR.name());
-            sysLog.setResult(gson.toJson(throwable));
-            sysLogRepository.save(sysLog);
+            doLog(start, point, null, throwable);
             throwable.printStackTrace();
         }
-    
-    
-        sysLog.setUsageTime(System.currentTimeMillis() - start);
-        sysLog.setUsername(Optional.of(sysLog.getUsername())
-                .or(SecurityKit.username()));
-        sysLog.setResult(gson.toJson(result));
-        sysLogRepository.save(sysLog);
+        
+        
         return result;
+    }
+    
+    private void doLog(long start, ProceedingJoinPoint point, Object result, Throwable e) {
+        MethodSignature methodSignature = (MethodSignature) point.getSignature();
+        Method method = methodSignature.getMethod();
+        ILog annotation = method.getAnnotation(ILog.class);
+        Class aClass = point.getSourceLocation().getWithinType();
+        String src = String.format("%s#%s", aClass.getName(), method.getName());
+        
+        String msg = annotation.msg();
+        try {
+            SpelParserConfiguration config = new SpelParserConfiguration(true, true);
+            ExpressionParser parser = new SpelExpressionParser(config);
+            Expression expression = parser.parseExpression(msg);
+            
+            StandardEvaluationContext context = new StandardEvaluationContext();
+            context.setVariable("args", point.getArgs());
+            context.setVariable("request", RequestKit.get());
+            context.setVariable("response", ResponseKit.get());
+            context.setVariable("return", result);
+            msg = expression.getValue(context, String.class);
+        } catch (Throwable ignored) {
+        }
+        
+        
+        SysLog sysLog = SysLog.NEW(ObjectUtils.isEmpty(e) ? annotation.type().name() : SysLog.Type.ERROR.name(),
+                annotation.value(),
+                src,
+                RequestKit.getClientIP(request),
+                msg,
+                gson.toJson(point.getArgs()),
+                gson.toJson(result),
+                SecurityKit.username(),
+                annotation.from().getValue());
+        sysLog.setUsageTime(System.currentTimeMillis() - start);
+        sysLogService.save(sysLog);
     }
 }

@@ -32,7 +32,7 @@ public class SysLogController extends BaseController {
     
     @PostMapping("/data")
     @ResponseBody
-    public DataTablesOutput data(DataTablesInput filter) {
+    public DataTablesOutput data(@RequestBody DataTablesInput filter) {
         return sysLogService.data(filter);
     }
     

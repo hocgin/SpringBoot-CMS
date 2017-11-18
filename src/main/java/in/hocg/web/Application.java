@@ -13,11 +13,14 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.datatables.repository.DataTablesRepositoryFactoryBean;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import org.springframework.web.context.request.RequestContextListener;
 
 @SpringBootApplication
 @EnableMongoRepositories(repositoryFactoryBeanClass = DataTablesRepositoryFactoryBean.class)
 public class Application {
     final Logger logger = LoggerFactory.getLogger(getClass());
+    
+    
     @Value("${i.mongo.init}")
     private Boolean mongoInit = false;
     
@@ -33,6 +36,10 @@ public class Application {
                 .run(args);
     }
     
+    @Bean
+    public RequestContextListener requestContextListener() {
+        return new RequestContextListener();
+    }
     
     /**
      * MongoDB 初始化

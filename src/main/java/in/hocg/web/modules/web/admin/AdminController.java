@@ -23,7 +23,7 @@ public class AdminController extends BaseController {
         this.authService = authService;
     }
     
-    @ILog(value = "测试信息", tag = "后台登陆界面")
+    @ILog(value = "后台登陆界面", msg = "'测试信息:'+ #return")
     @GetMapping({"/login.html", ""})
     public String vLogin() {
         return String.format(BASE_TEMPLATES_PATH, "login");

@@ -1,5 +1,6 @@
 package in.hocg.web.modules.service.impl;
 
+import in.hocg.web.modules.domain.SysLog;
 import in.hocg.web.modules.domain.repository.SysLogRepository;
 import in.hocg.web.modules.service.SysLogService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,10 @@ public class SysLogServiceImpl implements SysLogService {
     
     public DataTablesOutput data(DataTablesInput filter) {
         return sysLogRepository.findAll(filter);
+    }
+    
+    public SysLog save(SysLog sysLog) {
+        return sysLogRepository.save(sysLog);
     }
     
     @Override

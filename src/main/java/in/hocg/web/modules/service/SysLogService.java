@@ -1,5 +1,6 @@
 package in.hocg.web.modules.service;
 
+import in.hocg.web.modules.domain.SysLog;
 import org.springframework.data.mongodb.datatables.mapping.DataTablesInput;
 import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
 
@@ -11,4 +12,6 @@ public interface SysLogService {
     DataTablesOutput data(DataTablesInput filter);
     
     void empty();
+    
+    SysLog save(SysLog sysLog);
 }

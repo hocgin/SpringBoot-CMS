@@ -11,11 +11,24 @@ import java.lang.annotation.*;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ILog {
+    /**
+     * 标志,例如 [后台登陆]
+     *
+     * @return
+     */
     String value();
     
-    String tag();
+    /**
+     * 消息内容, 支持SpEL
+     * - #args
+     * - #request
+     * - #response
+     * - #return
+     * @return
+     */
+    String msg() default "''";
     
     SysLog.From from() default SysLog.From.Admin;
     
-    SysLog.Type type() default SysLog.Type.AFTER;
+    SysLog.Type type() default SysLog.Type.INFO;
 }

@@ -5,5 +5,4 @@ package in.hocg.web;
  * email: hocgin@gmail.com
  */
 public interface SESSION {
-    public final String TOKEN = "token";
 }

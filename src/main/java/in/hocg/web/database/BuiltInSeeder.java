@@ -65,11 +65,13 @@ public class BuiltInSeeder {
         /**
          * 菜单
          * 系统管理
-         *   - 系统参数管理
+         *   - 系统参数
          *   - 单位管理
          *   - 菜单管理
          *   - 角色管理
          *   - 用户管理
+         * 系统安全
+         *   - 系统日志
          */
         Menu menu1 = DocumentFactory.menu("系统管理", "0001", "sys", "");
         menu1 = menuRepository.insert(menu1);
@@ -135,24 +137,28 @@ public class BuiltInSeeder {
         Menu menu153 = DocumentFactory.data("修改用户", "000100050003", "sys.user.edit", menu15.getId());
         menu153 = menuRepository.insert(menu153);
     
+    
+        // 系统安全
+        Menu menu2 = DocumentFactory.menu("系统安全", "0002", "sys", "");
+        menu2 = menuRepository.insert(menu2);
         // - 日志管理 todo 后续增加查询功能
-        Menu menu16 = DocumentFactory.menu("系统日志", "00010006",
+        Menu menu26 = DocumentFactory.menu("系统日志", "00020006",
                 "sys.log", "/admin/system/log/index.html");
-        menu16.setParent(menu1.getId());
-        menu16 = menuRepository.insert(menu16);
-        Menu menu161 = DocumentFactory.data("清空日志", "000100060001", "sys.log.empty", menu16.getId());
-        menu161 = menuRepository.insert(menu161);
+        menu26.setParent(menu2.getId());
+        menu26 = menuRepository.insert(menu26);
+        Menu menu261 = DocumentFactory.data("清空日志", "000200060001", "sys.log.empty", menu26.getId());
+        menu261 = menuRepository.insert(menu261);
         
         
         
         // 仪表盘
-        Menu menu2 = DocumentFactory.menu("仪表盘", "0002", "dashboard", "");
-        menu2 = menuRepository.insert(menu2);
+        Menu menu3 = DocumentFactory.menu("仪表盘", "0002", "dashboard", "");
+        menu3 = menuRepository.insert(menu3);
         // - 主界面
-        Menu menu21 = DocumentFactory.menu("主界面", "00020001",
+        Menu menu31 = DocumentFactory.menu("主界面", "00020001",
                 "dashboard.index", "/admin/dashboard/index.html");
-        menu21.setParent(menu2.getId());
-        menu21 = menuRepository.insert(menu21);
+        menu31.setParent(menu2.getId());
+        menu31 = menuRepository.insert(menu31);
         
         Menu[] role_admin = new Menu[]{
                 menu1,
@@ -161,16 +167,19 @@ public class BuiltInSeeder {
                 menu13, menu131, menu132, menu133,
                 menu14, menu141, menu142, menu143,
                 menu15, menu151, menu152, menu153,
-                menu16, menu161,
                 menu2,
-                menu21
+                menu26, menu261,
+                menu3,
+                menu31
         };
     
         Menu[] role_admin_old = new Menu[]{
                 menu1,
                 menu11, menu12, menu13, menu14, menu15,
                 menu2,
-                menu21
+                menu26,
+                menu3,
+                menu31
         };
         
         /**

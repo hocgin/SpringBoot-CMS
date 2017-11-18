@@ -16,7 +16,7 @@ import java.util.Date;
 @Data
 public class SysLog extends BaseDomain {
     public enum Type {
-        BEFORE, AFTER, ERROR
+        INFO, WANING, ERROR
     }
     
     public enum From {
@@ -40,7 +40,9 @@ public class SysLog extends BaseDomain {
     @Id
     private String id;
     
-    // aop.before | aop.after | aop.error
+    /**
+     * INFO, WANING, ERROR
+     */
     private String type;
     
     /**
