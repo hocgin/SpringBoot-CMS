@@ -1,11 +1,11 @@
 package in.hocg.web;
 
-import in.hocg.web.modules.domain.Department;
-import in.hocg.web.modules.domain.Role;
-import in.hocg.web.modules.domain.repository.DepartmentRepository;
-import in.hocg.web.modules.domain.repository.SysMenuRepository;
-import in.hocg.web.modules.domain.repository.RoleRepository;
-import in.hocg.web.modules.domain.repository.UserRepository;
+import in.hocg.web.modules.admin.domain.Department;
+import in.hocg.web.modules.admin.domain.Role;
+import in.hocg.web.modules.admin.domain.repository.DepartmentRepository;
+import in.hocg.web.modules.admin.domain.repository.SysMenuRepository;
+import in.hocg.web.modules.admin.domain.repository.RoleRepository;
+import in.hocg.web.modules.admin.domain.repository.UserRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

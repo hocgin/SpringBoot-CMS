@@ -1,6 +1,6 @@
 package in.hocg.web.modules.security;
 
-import in.hocg.web.modules.domain.SysMenu;
+import in.hocg.web.modules.admin.domain.SysMenu;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;

@@ -1,5 +1,6 @@
 package in.hocg.web.modules.web;
 
+import in.hocg.web.modules.base.BaseController;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

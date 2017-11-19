@@ -1,7 +1,7 @@
 package in.hocg.web.modules.security;
 
-import in.hocg.web.modules.domain.Role;
-import in.hocg.web.modules.domain.User;
+import in.hocg.web.modules.admin.domain.Role;
+import in.hocg.web.modules.admin.domain.User;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -1,7 +1,7 @@
 package in.hocg.web.modules.security;
 
-import in.hocg.web.modules.domain.Custom;
-import in.hocg.web.modules.domain.Role;
+import in.hocg.web.modules.admin.domain.Custom;
+import in.hocg.web.modules.admin.domain.Role;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.CollectionUtils;

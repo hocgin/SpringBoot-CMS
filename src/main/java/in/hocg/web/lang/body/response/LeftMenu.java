@@ -1,6 +1,6 @@
 package in.hocg.web.lang.body.response;
 
-import in.hocg.web.modules.domain.SysMenu;
+import in.hocg.web.modules.admin.domain.SysMenu;
 import lombok.Data;
 
 import java.io.Serializable;
