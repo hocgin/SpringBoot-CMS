@@ -95,6 +95,13 @@
             <artifactId>guava</artifactId>
             <version>23.4-jre</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.imgscalr/imgscalr-lib -->
+        <dependency>
+            <groupId>net.coobird</groupId>
+            <artifactId>thumbnailator</artifactId>
+            <version>0.4.8</version>
+        </dependency>
+
 
 
         <dependency>

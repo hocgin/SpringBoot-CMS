@@ -1,4 +1,4 @@
-package in.hocg.web.lang.body.response;
+package in.hocg.web.modules.base.body;
 
 import in.hocg.web.lang.CheckError;
 import org.springframework.util.StringUtils;

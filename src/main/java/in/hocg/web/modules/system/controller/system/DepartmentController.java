@@ -6,7 +6,7 @@ import in.hocg.web.modules.base.filter.group.Update;
 import in.hocg.web.modules.base.filter.lang.IdFilter;
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.lang.iText;
-import in.hocg.web.lang.body.response.Results;
+import in.hocg.web.modules.base.body.Results;
 import in.hocg.web.modules.system.domain.Department;
 import in.hocg.web.modules.system.service.DepartmentService;
 import in.hocg.web.modules.base.BaseController;

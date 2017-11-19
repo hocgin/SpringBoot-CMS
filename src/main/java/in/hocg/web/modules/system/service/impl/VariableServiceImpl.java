@@ -67,5 +67,14 @@ public class VariableServiceImpl implements VariableService {
         return variableRepository.findOne(id);
     }
     
+    @Override
+    public String getValue(String key, String def) {
+        Variable variable = variableRepository.findFirstByKey(key);
+        if (ObjectUtils.isEmpty(variable)) {
+            return def;
+        }
+        return variable.getValue();
+    }
+    
     
 }

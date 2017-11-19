@@ -32,6 +32,10 @@ public class CheckError extends HashMap<String, String> {
         }
     }
     
+    public String getError() {
+        return get("ERROR");
+    }
+    
     /**
      * 获取所有错误
      * @return

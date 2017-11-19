@@ -3,7 +3,7 @@
         xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta th:replace="/admin/fragments/meta::meta"/>
-    <title>用户管理</title>
+    <title>文件管理</title>
     <css th:replace="/admin/fragments/all-css :: all-css"></css>
     <js th:replace="/admin/fragments/head-js :: head-js"></js>
 </head>
@@ -12,14 +12,6 @@
     <div th:replace="/admin/fragments/header::header"></div>
     <div th:replace="/admin/fragments/left-menu::left-menu"></div>
     <div id="pjax-container" class="content-wrapper">
-        <!--Modal 角色详情-->
-        <div class="modal fade in" id="js-detail-modal">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                </div>
-            </div>
-        </div>
-        <!--./Modal 角色详情-->
         <!--Modal 查询框-->
         <div class="modal fade in" id="js-query-modal">
             <div class="modal-dialog">
@@ -32,12 +24,12 @@
             <!-- 位置提示 -->
             <section class="content-header">
                 <h1>
-                    用户管理
-                    <small>管理用户</small>
+                    文件管理
+                    <small>管理文件</small>
                 </h1>
                 <ol class="breadcrumb">
                     <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                    <li class="active">用户管理</li>
+                    <li class="active">文件管理</li>
                 </ol>
             </section>
             <!-- 内容区域 -->
@@ -48,34 +40,33 @@
                         <div class="box">
                             <div class="box-header">
                                 <header class="tool-bar">
-                                    <h3 class="pull-left">用户管理</h3>
+                                    <h3 class="pull-left">文件管理</h3>
                                     <div class="pull-right tool-button">
-                                        <a th:href="@{/admin/system/user/add-view.html}"
+                                        <a th:href="@{/admin/system/file/upload-view.html}"
                                            class="btn btn-primary" data-pjax>
-                                            <i class="fa fa-plus"></i> 新建用户
+                                            <i class="fa fa-plus"></i> 上传文件
                                         </a>
                                         <button class="btn btn-danger" id="js-trash">
                                             <i class="fa fa-trash-o"></i> 删除选中
                                         </button>
-                                        <a th:href="@{/admin/system/user/query-modal.html}"
-                                           class="btn btn-info"
-                                           data-toggle="modal"
-                                           data-target="#js-query-modal">
-                                            <i class="fa fa-search"></i> 查询
-                                        </a>
+                                        <button class="btn btn-danger" id="js-clear">
+                                            <i class="fa fa-eraser"></i> 清理
+                                        </button>
                                     </div>
                                 </header>
                             </div>
                             <!-- /.box-header -->
                             <div class="box-body">
-                                <table id="js-system-var-table" class="table table-bordered table-hover">
+                                <table id="table" class="table table-bordered table-hover">
                                     <thead>
                                     <tr>
-                                        <th>用户名</th>
-                                        <th>昵称</th>
-                                        <th>所属单位</th>
-                                        <th>邮箱</th>
+                                        <th>上传时文件名</th>
+                                        <th>保存时文件名</th>
+                                        <th>保存路径</th>
+                                        <th>文件类型</th>
                                         <th>状态</th>
+                                        <th>来源</th>
+                                        <th>大小</th>
                                         <th>操作</th>
                                     </tr>
                                     </thead>
@@ -96,12 +87,12 @@
             $(function () {
                 // 所有网络请求
                 allRequest = {
-                    deleteByIds: function (ids) {
+                    deletes: function (ids) {
                         if (!!ids && !!ids.length) {
                             layer.confirm('确定删除选中的 ' + ids.length + ' 行？', {
                                 btn: ['确定', '取消'] //按钮
                             }, function () {
-                                $.post('/admin/system/user/delete', {id: ids.toString()}, function (data) {
+                                $.post('/admin/system/file/delete', {id: ids.toString()}, function (data) {
                                     if (data.code === 200) {
                                         layer.msg(data.message, {icon: 1});
                                         table.reloadPage();
@@ -116,17 +107,14 @@
                             layer.msg('请先选中行');
                         }
                     },
-                    deleteById: function (id) {
-                        this.deleteByIds([id])
-                    },
-                    available: function (id, isAvailable) { // isAvailable 1:0
+                    available: function (id, isAvailable) {
                         var available = !!isAvailable;
                         if (!!id
                             && isAvailable !== undefined) {
                             layer.confirm('确定要' + (available ? '开启' : '关闭') + '它？', {
                                 btn: ['确定', '取消'] //按钮
                             }, function () {
-                                $.post('/admin/system/user/available/' + id.toString(), {available: available}, function (data) {
+                                $.post('/admin/system/file/available/' + id.toString(), {available: available}, function (data) {
                                     if (data.code === 200) {
                                         layer.msg(data.message, {icon: 1});
                                         $('#js-' + id).attr('class', 'fa fa-circle ' + (available ? 'text-success' : 'text-danger'));
@@ -138,12 +126,28 @@
                                 layer.msg('取消' + (available ? '开启' : '关闭'));
                             });
                         }
+                    },
+                    clear: function (removeFile) {
+                        layer.confirm('确定要进行文件清理？', {
+                            btn: ['确定', '取消'] //按钮
+                        }, function () {
+                            $.post('/admin/system/file/clear', {removeFile: removeFile}, function (data) {
+                                if (data.code === 200) {
+                                    layer.msg(data.message, {icon: 1});
+                                    table.reloadPage();
+                                } else {
+                                    layer.msg(data.message, {icon: 2});
+                                }
+                            }, 'json');
+                        }, function () {
+                            layer.msg('取消清理');
+                        });
                     }
                 };
 
                 // 系统参数配置表格
                 table = {
-                    $obj: $('#js-system-var-table'),
+                    $obj: $('#table'),
                     dataTableObject: {},
                     getSelectedRow: function () {
                         return this.dataTableObject.rows('.selected').data();
@@ -162,7 +166,7 @@
                             language: DATA_TABLE_CONFIG.language,
                             preDrawCallback: DATA_TABLE_CONFIG.preDrawCallback,
                             ajax: {
-                                url: '/admin/system/user/data',
+                                url: '/admin/system/file/data',
                                 type: 'POST',
                                 contentType: 'application/json',
                                 data: function (params) {
@@ -173,20 +177,16 @@
                                 }
                             },
                             columns: [
-                                {data: 'username', bSortable: true},
-                                {data: 'nickname', bSortable: true},
-                                {bSortable: true},
-                                {data: 'email', bSortable: true},
-                                {data: 'available', bSortable: true}
+                                {data: 'uploadName', bSortable: true},
+                                {data: 'keepName', bSortable: true},
+                                {data: 'keepPath', bSortable: true},
+                                {data: 'suffix', bSortable: true},
+                                {data: 'available', bSortable: true},
+                                {data: 'src', bSortable: true},
+                                {data: 'size', bSortable: true}
                             ],
                             order: [[0, "desc"]],
                             columnDefs: [{
-                                render: function (data, type, row) {
-                                    console.log(data, type, row);
-                                    return !!row.department ? row.department.name : '<span class="text-danger">暂未分配</span>';
-                                },
-                                targets: 2
-                            }, {
                                 render: function (data, type, row) { // 状态
                                     if (!!data) {
                                         return '<i id="js-' + row.id + '" class="fa fa-circle text-success"></i>';
@@ -195,7 +195,12 @@
                                     }
                                 },
                                 targets: 4
-                            }, { // 操作
+                            }, {
+                                render: function (data, type, row) {
+                                    return LangUtils.bytesToSize(row.size);
+                                },
+                                targets: 6
+                            }, {
                                 render: function (data, type, row) {
                                     return '<div class="btn-group">' +
                                         '         <button type="button" class="btn btn-default btn-flat">操作</button>' +
@@ -204,19 +209,16 @@
                                         '               <span class="sr-only">Toggle Dropdown</span>' +
                                         '         </button>' +
                                         '         <ul class="dropdown-menu" role="menu">' +
-                                        '             <li><a class="js-modal" href="/admin/system/user/detail/' + row.id + '" data-target="#js-detail-modal" data-toggle="modal">查看信息</a></li>' +
+                                        '             <li><a href="/admin/system/file/download/' + row.id + '?rename=' + row.uploadName + '" >下载</a></li>' +
                                         '             <li class="divider"></li>' +
-                                        '             <li><a href="/admin/system/user/" pjax-data>密码重置</a></li>' +
-                                        '             <li><a href="/admin/system/user/update-view/' + row.id + '" pjax-data>修改信息</a></li>' +
-                                        '             <li class="divider"></li>' +
-                                        '             <li><a href="javascript:;;" onclick="allRequest.deleteById(\'' + row.id + '\')">删除</a></li>' +
+                                        '             <li><a href="javascript:;;" onclick="allRequest.deletes([\''+row.id+'\'])">删除</a></li>' +
                                         '             <li class="divider"></li>' +
                                         '             <li><a href="javascript:;;" onclick="allRequest.available(\'' + row.id + '\', 1)">启用</a></li>' +
                                         '             <li><a href="javascript:;;" onclick="allRequest.available(\'' + row.id + '\', 0)">禁用</a></li>' +
                                         '         </ul>' +
                                         '   </div>';
                                 },
-                                targets: 5
+                                targets: 7
                             }
                             ]
                         });
@@ -236,7 +238,10 @@
                                     ids.push(obj.id);
                                 });
                             }
-                            allRequest.deleteByIds(ids);
+                            allRequest.deletes(ids);
+                        });
+                        $('#js-clear').on('click', function () {
+                            allRequest.clear(true);
                         });
                     },
                     reloadPage: function () {
@@ -247,11 +252,6 @@
                     }
                 };
                 table.init();
-
-
-                $('#js-detail-modal').on("hidden.bs.modal", function () {
-                    $(this).removeData("bs.modal");
-                });
             });
         </script>
     </div>

@@ -5,5 +5,4 @@ package in.hocg.web.modules.base;
  * email: hocgin@gmail.com
  */
 public abstract class BaseService {
-
 }

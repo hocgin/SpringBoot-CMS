@@ -1,9 +1,6 @@
 package in.hocg.web.database;
 
-import in.hocg.web.modules.system.domain.Department;
-import in.hocg.web.modules.system.domain.SysMenu;
-import in.hocg.web.modules.system.domain.Role;
-import in.hocg.web.modules.system.domain.User;
+import in.hocg.web.modules.system.domain.*;
 
 import java.util.Collection;
 import java.util.Date;
@@ -115,5 +112,19 @@ public class DocumentFactory {
         user.setEmail(email);
         user.setPassword(password);
         return user;
+    }
+    
+    /**
+     * 系统变量
+     * @return
+     */
+    public static Variable variable(String key, String value, String note) {
+        Variable variable = new Variable();
+        variable.setKey(key);
+        variable.setValue(value);
+        variable.setNote(note);
+        variable.setBuiltIn(true);
+        variable.createdAt();
+        return variable;
     }
 }

@@ -20,4 +20,6 @@ public interface VariableRepository
     void deleteAllByIdIn(String... id);
     
     List<Variable> findAllByIdIn(String... id);
+    
+    Variable findFirstByKey(String key);
 }

@@ -1,6 +1,6 @@
 package in.hocg.web.modules.system.service.impl;
 
-import in.hocg.web.lang.body.response.LeftMenu;
+import in.hocg.web.modules.system.body.LeftMenu;
 import in.hocg.web.lang.utils.SecurityKit;
 import in.hocg.web.modules.security.IUser;
 import in.hocg.web.modules.system.service.UserService;

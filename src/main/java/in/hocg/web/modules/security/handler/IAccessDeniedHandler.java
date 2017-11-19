@@ -1,8 +1,8 @@
 package in.hocg.web.modules.security.handler;
 
 import com.google.gson.Gson;
-import in.hocg.web.lang.body.response.ResultCode;
-import in.hocg.web.lang.body.response.Results;
+import in.hocg.web.modules.base.body.ResultCode;
+import in.hocg.web.modules.base.body.Results;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;

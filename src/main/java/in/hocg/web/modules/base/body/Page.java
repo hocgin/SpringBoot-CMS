@@ -1,4 +1,4 @@
-package in.hocg.web.lang.body.response;
+package in.hocg.web.modules.base.body;
 
 import java.io.Serializable;
 import java.util.List;

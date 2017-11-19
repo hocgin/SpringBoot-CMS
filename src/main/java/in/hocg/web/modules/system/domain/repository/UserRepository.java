@@ -20,7 +20,7 @@ public interface UserRepository
     
     User findByUsername(String username);
     
-    void deleteAllByIdIn(String... username);
+    void deleteAllByIdIn(String... id);
     
     List<User> findAllByIdIn(String... ids);
 }

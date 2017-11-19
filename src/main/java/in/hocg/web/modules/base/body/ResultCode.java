@@ -1,4 +1,4 @@
-package in.hocg.web.lang.body.response;
+package in.hocg.web.modules.base.body;
 
 /**
  * Created by hocgin on 2017/11/19.

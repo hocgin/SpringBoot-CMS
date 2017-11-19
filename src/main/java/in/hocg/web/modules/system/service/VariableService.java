@@ -19,4 +19,6 @@ public interface VariableService {
     void delete(CheckError checkError, String... id);
     
     Variable findById(String id);
+    
+    String getValue(String key, String def);
 }

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta th:replace="/admin/fragments/meta::meta"/>
+    <title>文件管理</title>
+    <css th:replace="/admin/fragments/all-css :: all-css"></css>
+    <js th:replace="/admin/fragments/head-js :: head-js"></js>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+    <div th:replace="/admin/fragments/header::header"></div>
+    <div th:replace="/admin/fragments/left-menu::left-menu"></div>
+    <div id="pjax-container" class="content-wrapper">
+
+        <!-- 内容区域 -->
+        <section class="content">
+            <!-- Small boxes (Stat box) -->
+            <div class="row">
+                <div class="col-xs-12 i-navbar">
+                    <a class="btn btn-primary" th:href="@{/admin/system/file/index.html}" data-pjax><i
+                            class="fa fa-arrow-left"></i> 返回
+                    </a>
+                </div>
+                <div class="col-xs-12">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">上传文件</h3>
+                        </div>
+                        <!-- /.box-header -->
+                        <!-- form start -->
+                        <div class="box-body">
+                            <table class="table table-bordered i-upload-box">
+                                <tbody>
+                                <tr>
+                                    <th style="width: 180px">选择文件</th>
+                                    <th style="width: 180px">上传</th>
+                                    <th>文件名</th>
+                                    <th>状态</th>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="i-upload-choose">选择文件</div>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-primary i-upload-btn">开始上传</button>
+                                    </td>
+                                    <td class="i-upload-description">请选择上传文件...</td>
+                                    <td class="i-upload-status"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.box-body -->
+
+                        <!--<div class="box-footer">-->
+                        <!--<button id="uploadBtn" class="btn btn-primary">开始上传</button>-->
+                        <!--</div>-->
+                    </div>
+                </div>
+            </div>
+            <!-- /.row -->
+        </section>
+        <!-- /内容区域 -->
+        <script>
+            $(function () {
+
+
+                var up = {
+                    $el: $('.i-upload-box'),
+                    $btnEl: $('.i-upload-btn'),
+                    $description: $('.i-upload-description'),
+                    $status: $('.i-upload-status'),
+                    webUploader: null,
+                    init: function () {
+                        var that = this;
+                        this.webUploader = WebUploader.create({
+                            // swf文件路径
+                            swf: '/static/dist/webuploader/Uploader.swf',
+
+                            // 文件接收服务端。
+                            server: '/admin/system/file/upload',
+
+                            // 选择文件的按钮。可选。
+                            // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+                            pick: '.i-upload-choose',
+
+                            // 不压缩image, 默认如果是jpeg，文件上传前会压缩一把再上传！
+                            resize: false
+                        }).on('fileQueued', function (file) {
+                            that.$description.empty().append('<div id="' + file.id + '" class="item">' +
+                                '<h4 class="info">' + file.name + '</h4>' +
+                                '</div>');
+                            that.$status.empty().text("等待上传");
+                        }).on('uploadBeforeSend', function (object, data, headers) {
+                            var token = $("meta[name='_csrf']").attr("content");
+                            var header = $("meta[name='_csrf_header']").attr("content");
+                            headers[header] = token;
+                        }).on('uploadProgress', function (file, percentage) {
+                            that.$status.empty().text("上传中");
+                        }).on('uploadSuccess', function (file) {
+                            that.$status.empty().text("已上传");
+                        }).on('uploadError', function (file) {
+                            that.$status.empty().text("上传出错, 请重试。");
+                        });
+
+                        this.$btnEl.on('click', function () {
+                            up.webUploader.upload();
+                        });
+                    }
+                };
+                up.init();
+            });
+        </script>
+    </div>
+    <div th:replace="/admin/fragments/main-footer::main-footer"></div>
+    <div th:replace="/admin/fragments/right-setting::right-setting"></div>
+    <div class="control-sidebar-bg"></div>
+</div>
+<js th:replace="/admin/fragments/footer-js::footer-js"></js>
+</body>
+</html>

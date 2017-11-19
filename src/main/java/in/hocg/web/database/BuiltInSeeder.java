@@ -1,13 +1,7 @@
 package in.hocg.web.database;
 
-import in.hocg.web.modules.system.domain.Department;
-import in.hocg.web.modules.system.domain.SysMenu;
-import in.hocg.web.modules.system.domain.Role;
-import in.hocg.web.modules.system.domain.User;
-import in.hocg.web.modules.system.domain.repository.DepartmentRepository;
-import in.hocg.web.modules.system.domain.repository.SysMenuRepository;
-import in.hocg.web.modules.system.domain.repository.RoleRepository;
-import in.hocg.web.modules.system.domain.repository.UserRepository;
+import in.hocg.web.modules.system.domain.*;
+import in.hocg.web.modules.system.domain.repository.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -24,13 +18,17 @@ public class BuiltInSeeder {
     private DepartmentRepository departmentRepository;
     private UserRepository userRepository;
     private SysMenuRepository sysMenuRepository;
+    private VariableRepository variableRepository;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     
-    public BuiltInSeeder(RoleRepository roleRepository, DepartmentRepository departmentRepository, UserRepository userRepository, SysMenuRepository sysMenuRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public BuiltInSeeder(
+            VariableRepository variableRepository,
+            RoleRepository roleRepository, DepartmentRepository departmentRepository, UserRepository userRepository, SysMenuRepository sysMenuRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.roleRepository = roleRepository;
         this.departmentRepository = departmentRepository;
         this.userRepository = userRepository;
         this.sysMenuRepository = sysMenuRepository;
+        this.variableRepository = variableRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
     
@@ -39,6 +37,7 @@ public class BuiltInSeeder {
         departmentRepository.deleteAll();
         userRepository.deleteAll();
         sysMenuRepository.deleteAll();
+        variableRepository.deleteAll();
         return this;
     }
     
@@ -137,8 +136,18 @@ public class BuiltInSeeder {
         menu152 = sysMenuRepository.insert(menu152);
         SysMenu menu153 = DocumentFactory.data("修改用户", "000100050003", "sys.user.edit", menu15.getId());
         menu153 = sysMenuRepository.insert(menu153);
-    
-    
+        
+        SysMenu menu16 = DocumentFactory.menu("文件管理", "00010006", "sys.file", "/admin/system/file/index.html");
+        menu16.setParent(menu1.getId());
+        menu16 = sysMenuRepository.insert(menu16);
+        SysMenu menu161 = DocumentFactory.data("上传文件", "000100060001", "sys.file.add", menu16.getId());
+        menu161 = sysMenuRepository.insert(menu161);
+        SysMenu menu162 = DocumentFactory.data("删除文件", "000100060002", "sys.file.delete", menu16.getId());
+        menu162 = sysMenuRepository.insert(menu162);
+        SysMenu menu163 = DocumentFactory.data("修改文件", "000100060003", "sys.file.edit", menu16.getId());
+        menu163 = sysMenuRepository.insert(menu163);
+        
+        
         // 系统安全
         String path = "0002";
         SysMenu menu2 = DocumentFactory.menu("系统安全", path, "safety", "");
@@ -151,7 +160,6 @@ public class BuiltInSeeder {
         menu26 = sysMenuRepository.insert(menu26);
         SysMenu menu261 = DocumentFactory.data("清空日志", "000200060001", "safety.log.empty", menu26.getId());
         menu261 = sysMenuRepository.insert(menu261);
-        
         
         
         // 仪表盘
@@ -171,15 +179,16 @@ public class BuiltInSeeder {
                 menu13, menu131, menu132, menu133,
                 menu14, menu141, menu142, menu143,
                 menu15, menu151, menu152, menu153,
+                menu16, menu161, menu162, menu163,
                 menu2,
                 menu26, menu261,
                 menu3,
                 menu31
         };
-    
+        
         SysMenu[] role_admin_old = new SysMenu[]{
                 menu1,
-                menu11, menu12, menu13, menu14, menu15,
+                menu11, menu12, menu13, menu14, menu15, menu16,
                 menu2,
                 menu26,
                 menu3,
@@ -226,6 +235,10 @@ public class BuiltInSeeder {
         user2.setBuiltIn(false);
         user2 = userRepository.insert(user2);
         
-        
+        /**
+         * 添加系统变量
+         */
+        Variable variable = DocumentFactory.variable("FILE_UPLOAD_DIR", "/Users/hocgin/Desktop/FileUpload", "文件上传目录");
+        variableRepository.insert(variable);
     }
 }

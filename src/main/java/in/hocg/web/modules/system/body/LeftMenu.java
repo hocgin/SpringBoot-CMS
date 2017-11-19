@@ -1,4 +1,4 @@
-package in.hocg.web.lang.body.response;
+package in.hocg.web.modules.system.body;
 
 import in.hocg.web.modules.system.domain.SysMenu;
 import lombok.Data;

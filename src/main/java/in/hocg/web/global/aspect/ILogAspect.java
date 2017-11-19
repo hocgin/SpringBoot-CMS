@@ -77,13 +77,12 @@ public class ILogAspect {
         try {
             SpelParserConfiguration config = new SpelParserConfiguration(true, true);
             ExpressionParser parser = new SpelExpressionParser(config);
-            Expression expression = parser.parseExpression(msg);
-            
             StandardEvaluationContext context = new StandardEvaluationContext();
             context.setVariable("args", point.getArgs());
             context.setVariable("request", RequestKit.get());
             context.setVariable("response", ResponseKit.get());
             context.setVariable("return", result);
+            Expression expression = parser.parseExpression(msg);
             msg = expression.getValue(context, String.class);
         } catch (Throwable ignored) {
         }

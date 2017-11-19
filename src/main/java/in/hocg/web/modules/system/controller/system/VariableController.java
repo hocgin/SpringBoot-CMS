@@ -3,7 +3,7 @@ package in.hocg.web.modules.system.controller.system;
 import in.hocg.web.modules.system.filter.VariableFilter;
 import in.hocg.web.modules.base.filter.lang.IdsFilter;
 import in.hocg.web.lang.CheckError;
-import in.hocg.web.lang.body.response.Results;
+import in.hocg.web.modules.base.body.Results;
 import in.hocg.web.modules.system.domain.Variable;
 import in.hocg.web.modules.system.service.VariableService;
 import in.hocg.web.modules.base.BaseController;

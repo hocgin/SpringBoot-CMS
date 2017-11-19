@@ -55,7 +55,8 @@ public class AdminWebSecurityConfig extends WebSecurityConfigurerAdapter {
             
                 // 允许匿名访问(后台登陆)
                 .antMatchers("/admin/login",
-                        "/admin/login.html").permitAll()
+                        "/admin/login.html"
+                ).permitAll()
             
                 // 除以上连接, 其余都要认证
                 .anyRequest().authenticated().and()

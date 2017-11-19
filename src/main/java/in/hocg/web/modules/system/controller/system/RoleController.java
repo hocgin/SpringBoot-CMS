@@ -8,7 +8,7 @@ import in.hocg.web.modules.base.filter.group.Update1;
 import in.hocg.web.modules.base.filter.group.Update2;
 import in.hocg.web.modules.base.filter.lang.IdsFilter;
 import in.hocg.web.lang.CheckError;
-import in.hocg.web.lang.body.response.Results;
+import in.hocg.web.modules.base.body.Results;
 import in.hocg.web.modules.system.domain.Role;
 import in.hocg.web.modules.system.service.RoleService;
 import in.hocg.web.modules.system.service.UserService;

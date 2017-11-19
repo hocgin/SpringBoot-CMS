@@ -1,7 +1,7 @@
 package in.hocg.web.modules.base;
 
 import com.mongodb.WriteResult;
-import in.hocg.web.lang.body.response.Page;
+import in.hocg.web.modules.base.body.Page;
 import in.hocg.web.lang.utils.Clazz;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
