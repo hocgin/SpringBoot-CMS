@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import in.hocg.web.lang.utils.RequestKit;
 import in.hocg.web.lang.utils.ResponseKit;
 import in.hocg.web.modules.domain.SysLog;
-import in.hocg.web.modules.security.SecurityKit;
+import in.hocg.web.lang.utils.SecurityKit;
 import in.hocg.web.modules.service.SysLogService;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -19,7 +19,6 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
-import org.springframework.web.context.request.RequestContextHolder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;

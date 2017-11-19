@@ -1,5 +1,6 @@
-package in.hocg.web.modules.security;
+package in.hocg.web.lang.utils;
 
+import in.hocg.web.modules.security.IUser;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.security.Principal;
@@ -26,5 +27,11 @@ public class SecurityKit {
     
     public static boolean isLogged() {
         return SecurityContextHolder.getContext().getAuthentication().isAuthenticated();
+    }
+    
+    public static IUser iUser() {
+        return (IUser) SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
     }
 }

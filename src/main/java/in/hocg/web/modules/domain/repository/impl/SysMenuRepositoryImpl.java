@@ -1,7 +1,7 @@
 package in.hocg.web.modules.domain.repository.impl;
 
-import in.hocg.web.modules.domain.Menu;
-import in.hocg.web.modules.domain.repository.custom.MenuRepositoryCustom;
+import in.hocg.web.modules.domain.SysMenu;
+import in.hocg.web.modules.domain.repository.custom.SysMenuRepositoryCustom;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -13,9 +13,9 @@ import java.util.List;
  * Created by hocgin on 2017/10/29.
  * email: hocgin@gmail.com
  */
-public class MenuRepositoryImpl
-        extends BaseMongoCustom<Menu, String>
-        implements MenuRepositoryCustom {
+public class SysMenuRepositoryImpl
+        extends BaseMongoCustom<SysMenu, String>
+        implements SysMenuRepositoryCustom {
     
     @Override
     public void updateHasChildren(String id, boolean hasChildren) {
@@ -30,15 +30,36 @@ public class MenuRepositoryImpl
     }
     
     @Override
-    public List<Menu> findAllByPathRegexOrderByPathDesc(String regexPath) {
+    public List<SysMenu> findAllByPathRegexOrderByPathDesc(String regexPath) {
         return find(Query.query(Criteria.where("path")
                 .regex(regexPath))
                 .with(new Sort(new Sort.Order(Sort.Direction.DESC, "path"))));
     }
     
     @Override
-    public List<Menu> findAllByIdOrderByPathAes(String... id) {
+    public List<SysMenu> findAllByIdOrderByPathAsc(String... id) {
         return find(Query.query(Criteria.where("id").in(id))
                 .with(new Sort(new Sort.Order(Sort.Direction.ASC, "path"))));
+    }
+    
+    @Override
+    public List<SysMenu> findAll() {
+        return super.findAll();
+    }
+    
+    @Override
+    public void updateLocation(String... ids) {
+        findAndModify(new Query(), Update.update("location", 0));
+        for (int i = 0; i < ids.length; i++) {
+            updateFirst(Query.query(Criteria.where("id").is(ids[i])),
+                    Update.update("location", i));
+        }
+    }
+    
+    @Override
+    public List<SysMenu> findAllOrderByLocationAscAndPathAsc() {
+        return find(new Query().with(new Sort(
+                new Sort.Order(Sort.Direction.ASC, "location"),
+                new Sort.Order(Sort.Direction.ASC, "path"))));
     }
 }

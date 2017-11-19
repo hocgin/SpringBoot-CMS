@@ -38,7 +38,7 @@ public class SysLogController extends BaseController {
     
     @PostMapping("/empty")
     @ResponseBody
-    @PreAuthorize("hasPermission(null, 'sys.log.empty')")
+    @PreAuthorize("hasPermission(null, 'safety.log.empty')")
     public Results empty() {
         sysLogService.empty();
         return Results.success().setMessage("清空成功");

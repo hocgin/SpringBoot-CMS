@@ -1,7 +1,7 @@
 package in.hocg.web.database;
 
 import in.hocg.web.modules.domain.Department;
-import in.hocg.web.modules.domain.Menu;
+import in.hocg.web.modules.domain.SysMenu;
 import in.hocg.web.modules.domain.Role;
 import in.hocg.web.modules.domain.User;
 
@@ -58,8 +58,8 @@ public class DocumentFactory {
      * @param url
      * @return
      */
-    public static Menu menu(String name, String path, String flag, String url) {
-        Menu menu = new Menu();
+    public static SysMenu menu(String name, String path, String flag, String url) {
+        SysMenu menu = new SysMenu();
         menu.setBuiltIn(true);
         menu.setName(name);
         menu.setHasChildren(true);
@@ -80,8 +80,8 @@ public class DocumentFactory {
      * @param flag
      * @return
      */
-    public static Menu data(String name, String path, String flag, String parent) {
-        Menu menu = new Menu();
+    public static SysMenu data(String name, String path, String flag, String parent) {
+        SysMenu menu = new SysMenu();
         menu.setBuiltIn(true);
         menu.setName(name);
         menu.setHasChildren(false);

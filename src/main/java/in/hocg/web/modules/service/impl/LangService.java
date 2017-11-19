@@ -1,10 +1,10 @@
 package in.hocg.web.modules.service.impl;
 
 import in.hocg.web.lang.body.response.LeftMenu;
+import in.hocg.web.lang.utils.SecurityKit;
 import in.hocg.web.modules.security.IUser;
 import in.hocg.web.modules.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 /**
@@ -21,9 +21,7 @@ public class LangService {
     }
     
     public LeftMenu getLeftMenu() {
-        IUser iUser = (IUser) SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getPrincipal();
+        IUser iUser = SecurityKit.iUser();
         return userService.getLeftMenu(iUser.getId());
     }
 }

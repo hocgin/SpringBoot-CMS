@@ -2,7 +2,7 @@ package in.hocg.web.filter;
 
 import in.hocg.web.filter.group.Insert;
 import in.hocg.web.filter.group.Update;
-import in.hocg.web.modules.domain.Menu;
+import in.hocg.web.modules.domain.SysMenu;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.validator.constraints.NotBlank;
@@ -46,8 +46,8 @@ public class MenuFilter extends BaseFilter {
      */
     private String parent;   // 父ID
     
-    public Menu get() {
-        Menu permissionObject = new Menu();
+    public SysMenu get() {
+        SysMenu permissionObject = new SysMenu();
         permissionObject.setAvailable(available);
         permissionObject.setParent(parent);
         permissionObject.setPermission(permission);
@@ -61,7 +61,7 @@ public class MenuFilter extends BaseFilter {
         return permissionObject;
     }
     
-    public Menu update(Menu permissionObject) {
+    public SysMenu update(SysMenu permissionObject) {
         permissionObject.setAvailable(available);
         permissionObject.setPermission(permission);
         permissionObject.setTarget(target);

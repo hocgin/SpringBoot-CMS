@@ -4,7 +4,7 @@ import in.hocg.web.filter.UserDataTablesInputFilter;
 import in.hocg.web.filter.UserFilter;
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.lang.body.response.LeftMenu;
-import in.hocg.web.modules.domain.Menu;
+import in.hocg.web.modules.domain.SysMenu;
 import in.hocg.web.modules.domain.Role;
 import in.hocg.web.modules.domain.User;
 import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
@@ -43,7 +43,7 @@ public interface UserService {
     
     Collection<Role> findRoleByUser(String id);
     
-    Collection<Menu> findMenuByUser(String id);
+    Collection<SysMenu> findSysMenuByUser(String id);
     
     LeftMenu getLeftMenu(String id);
 }

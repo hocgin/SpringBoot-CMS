@@ -7,7 +7,7 @@ import in.hocg.web.lang.body.response.LeftMenu;
 import in.hocg.web.lang.utils.DocumentKit;
 import in.hocg.web.lang.utils.RequestKit;
 import in.hocg.web.modules.domain.Department;
-import in.hocg.web.modules.domain.Menu;
+import in.hocg.web.modules.domain.SysMenu;
 import in.hocg.web.modules.domain.Role;
 import in.hocg.web.modules.domain.User;
 import in.hocg.web.modules.domain.repository.UserRepository;
@@ -15,7 +15,6 @@ import in.hocg.web.modules.service.DepartmentService;
 import in.hocg.web.modules.service.RoleService;
 import in.hocg.web.modules.service.UserService;
 import org.bson.types.ObjectId;
-import org.codehaus.groovy.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
@@ -27,6 +26,7 @@ import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by hocgin on 2017/10/25.
@@ -68,35 +68,38 @@ public class UserServiceImpl implements UserService {
     }
     
     @Override
-    public Collection<Menu> findMenuByUser(String id) {
+    public Collection<SysMenu> findSysMenuByUser(String id) {
         Collection<Role> roles = findRoleByUser(id);
         // 一般角色处理
-        HashSet<Menu> menus = new HashSet<>();
+        HashSet<SysMenu> menus = new HashSet<>();
         roles.forEach(role -> {
-            Collection<Menu> menuCollection = role.getPermissions();
+            Collection<SysMenu> menuCollection = role.getPermissions();
             if (!CollectionUtils.isEmpty(menuCollection)) {
                 menus.addAll(menuCollection);
             }
         });
-        return menus;
+        return menus.stream()
+                .sorted(Comparator.comparing(SysMenu::getLocation))
+                .collect(Collectors.toList());
     }
     
     /**
      * 获取左侧用户权限内的菜单
+     *
      * @param id
      * @return
      */
     @Override
     public LeftMenu getLeftMenu(String id) {
-        Collection<Menu> menus = findMenuByUser(id);
-        List<Menu> root = new ArrayList<>();
-        Map<String, List<Menu>> childMenus = new HashMap<>();
-        for (Menu menu : menus) {
+        Collection<SysMenu> menus = findSysMenuByUser(id);
+        List<SysMenu> root = new ArrayList<>();
+        Map<String, List<SysMenu>> childMenus = new HashMap<>();
+        for (SysMenu menu : menus) {
             if (!menu.getAvailable()) { // 如果被关闭的话, 跳过
                 continue;
             }
             if (menu.getPath().length() > 4) {
-                List<Menu> s = childMenus.get(DocumentKit.getParentId(menu.getPath()));
+                List<SysMenu> s = childMenus.get(DocumentKit.getParentId(menu.getPath()));
                 if (CollectionUtils.isEmpty(s)) {
                     s = new ArrayList<>();
                 }

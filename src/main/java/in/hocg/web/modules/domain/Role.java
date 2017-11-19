@@ -32,7 +32,7 @@ public class Role extends BaseDomain{
     private Department department;
     
     @DBRef
-    private Collection<Menu> permissions;
+    private Collection<SysMenu> permissions;
     
     public Role() {
     }

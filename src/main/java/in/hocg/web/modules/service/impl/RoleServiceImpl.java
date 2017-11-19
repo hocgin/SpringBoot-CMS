@@ -4,11 +4,11 @@ import in.hocg.web.filter.RoleDataTablesInputFilter;
 import in.hocg.web.filter.RoleFilter;
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.modules.domain.Department;
-import in.hocg.web.modules.domain.Menu;
+import in.hocg.web.modules.domain.SysMenu;
 import in.hocg.web.modules.domain.Role;
 import in.hocg.web.modules.domain.repository.RoleRepository;
 import in.hocg.web.modules.service.DepartmentService;
-import in.hocg.web.modules.service.MenuService;
+import in.hocg.web.modules.service.SysMenuService;
 import in.hocg.web.modules.service.RoleService;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +28,12 @@ import java.util.List;
 @Service
 public class RoleServiceImpl implements RoleService {
     private RoleRepository roleRepository;
-    private MenuService permissionService;
+    private SysMenuService permissionService;
     private DepartmentService departmentService;
     
     @Autowired
     public RoleServiceImpl(RoleRepository roleRepository,
-                           MenuService permissionService,
+                           SysMenuService permissionService,
                            DepartmentService departmentService) {
         this.roleRepository = roleRepository;
         this.departmentService = departmentService;
@@ -72,7 +72,7 @@ public class RoleServiceImpl implements RoleService {
         // 过滤非法权限
         if (!ObjectUtils.isEmpty(filter.getPermissionIds())
                 && filter.getPermissionIds().length > 0) {
-            List<Menu> permissions = permissionService.queryAllByIdOrderByPathAes(filter.getPermissionIds());
+            List<SysMenu> permissions = permissionService.queryAllByIdOrderByPathAsc(filter.getPermissionIds());
             role.setPermissions(permissions);
         }
         
@@ -124,7 +124,7 @@ public class RoleServiceImpl implements RoleService {
             checkError.putError("角色异常");
             return;
         }
-        List<Menu> permissions = permissionService.queryAllByIdOrderByPathAes(filter.getPermissionIds());
+        List<SysMenu> permissions = permissionService.queryAllByIdOrderByPathAsc(filter.getPermissionIds());
         role.setPermissions(permissions);
         role.updatedAt();
         roleRepository.save(role);

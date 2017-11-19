@@ -4,16 +4,20 @@ import in.hocg.web.filter.MenuFilter;
 import in.hocg.web.filter.group.Insert;
 import in.hocg.web.filter.group.Update;
 import in.hocg.web.filter.lang.IdFilter;
+import in.hocg.web.filter.lang.IdsFilter;
 import in.hocg.web.lang.CheckError;
-import in.hocg.web.lang.iText;
+import in.hocg.web.lang.body.response.LeftMenu;
 import in.hocg.web.lang.body.response.Results;
-import in.hocg.web.modules.domain.Menu;
-import in.hocg.web.modules.service.MenuService;
+import in.hocg.web.lang.iText;
+import in.hocg.web.lang.utils.DocumentKit;
+import in.hocg.web.modules.domain.SysMenu;
+import in.hocg.web.modules.service.SysMenuService;
 import in.hocg.web.modules.web.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
@@ -28,22 +32,22 @@ import java.util.*;
  */
 @Controller
 @RequestMapping("/admin/system/menu")
-public class MenuController extends BaseController {
+public class SysMenuController extends BaseController {
     public final String BASE_TEMPLATES_PATH = "/admin/system/menu/%s";
     
-    private MenuService menuService;
+    private SysMenuService sysMenuService;
     private iText htmlUtils;
     
     @Autowired
-    public MenuController(MenuService permissionService,
-                          iText htmlUtils) {
-        this.menuService = permissionService;
+    public SysMenuController(SysMenuService permissionService,
+                             iText htmlUtils) {
+        this.sysMenuService = permissionService;
         this.htmlUtils = htmlUtils;
     }
     
     @GetMapping({"/index.html", "/"})
     public String vIndex(Model model) {
-        Optional<String> html = menuService.queryRoot()
+        Optional<String> html = sysMenuService.queryRoot()
                 .stream()
                 .map(this::tr)
                 .reduce((a, b) -> a + b);
@@ -54,7 +58,7 @@ public class MenuController extends BaseController {
     @GetMapping("/add-view.html")
     public String vAdd(@RequestParam(value = "id", required = false) String parentId, Model model) {
         if (!StringUtils.isEmpty(parentId)) {
-            Menu permission = menuService.findById(parentId);
+            SysMenu permission = sysMenuService.findById(parentId);
             model.addAttribute("permission", permission);
         }
         return String.format(BASE_TEMPLATES_PATH, "add-view");
@@ -62,20 +66,44 @@ public class MenuController extends BaseController {
     
     @GetMapping("/detail/{id}")
     public String vDetail(@PathVariable("id") String detailId, Model model) {
-        model.addAttribute("o", menuService.findById(detailId));
+        model.addAttribute("o", sysMenuService.findById(detailId));
         return String.format(BASE_TEMPLATES_PATH, "detail-modal");
     }
     
     @GetMapping("/{id}")
     public String vUpdate(@PathVariable("id") String permissionId, Model model) {
-        Menu permission = menuService.findById(permissionId);
+        SysMenu permission = sysMenuService.findById(permissionId);
         if (!ObjectUtils.isEmpty(permission)) {
             model.addAttribute("permission", permission);
             if (!StringUtils.isEmpty(permission.getParent())) {
-                model.addAttribute("parent", menuService.findById(permission.getParent()));
+                model.addAttribute("parent", sysMenuService.findById(permission.getParent()));
             }
         }
         return String.format(BASE_TEMPLATES_PATH, "update-view");
+    }
+    
+    @GetMapping("/sort-view.html")
+    public String vSort(Model model) {
+        List<SysMenu> sysMenus = sysMenuService.queryAllOrderByLocationAscAndPathAsc();
+        List<SysMenu> root = new ArrayList<>();
+        Map<String, List<SysMenu>> childMenus = new HashMap<>();
+        for (SysMenu menu : sysMenus) {
+            if (menu.getPath().length() > 4) {
+                List<SysMenu> s = childMenus.get(DocumentKit.getParentId(menu.getPath()));
+                if (CollectionUtils.isEmpty(s)) {
+                    s = new ArrayList<>();
+                }
+                s.add(menu);
+                childMenus.put(DocumentKit.getParentId(menu.getPath()), s);
+            } else if (menu.getPath().length() == 4) {
+                root.add(menu);
+            }
+        }
+        LeftMenu leftMenu = new LeftMenu();
+        leftMenu.setRoot(root);
+        leftMenu.setChildren(childMenus);
+        model.addAttribute("leftMenu", leftMenu);
+        return String.format(BASE_TEMPLATES_PATH, "sort-view");
     }
     
     /**
@@ -93,10 +121,16 @@ public class MenuController extends BaseController {
             return Results.check(bindingResult);
         }
         CheckError checkError = CheckError.get();
-        menuService.insert(filter, checkError);
+        sysMenuService.insert(filter, checkError);
         return Results.check(checkError, "增加成功");
     }
     
+    @RequestMapping("/update-sort")
+    @ResponseBody
+    public Results updateSort(@Validated IdsFilter filter) {
+        sysMenuService.sort(filter.getId());
+        return Results.success().setMessage("保存成功");
+    }
     /**
      * 更新
      *
@@ -112,7 +146,7 @@ public class MenuController extends BaseController {
             return Results.check(bindingResult);
         }
         CheckError checkError = CheckError.get();
-        menuService.update(filter, checkError);
+        sysMenuService.update(filter, checkError);
         return Results.check(checkError, "更新成功");
     }
     
@@ -130,7 +164,7 @@ public class MenuController extends BaseController {
         if (bindingResult.hasErrors()) {
             return Results.check(bindingResult);
         }
-        menuService.delete(filter.getId());
+        sysMenuService.delete(filter.getId());
         return Results.success()
                 .setMessage("删除成功");
     }
@@ -138,7 +172,7 @@ public class MenuController extends BaseController {
     @PostMapping("/children/{id}")
     @ResponseBody
     public Results children(@PathVariable("id") String parentId) {
-        Optional<String> html = menuService.queryChildren(parentId)
+        Optional<String> html = sysMenuService.queryChildren(parentId)
                 .stream()
                 .map(this::tr)
                 .reduce((a, b) -> a + b);
@@ -149,7 +183,7 @@ public class MenuController extends BaseController {
     @ResponseBody
     public Object root() {
         List<Object> result = new ArrayList<>();
-        menuService.queryRoot()
+        sysMenuService.queryRoot()
                 .forEach((o) -> {
                     Map<String, Object> one = new HashMap<>();
                     one.put("id", o.getId());
@@ -166,7 +200,7 @@ public class MenuController extends BaseController {
     @ResponseBody
     public Object root(@PathVariable("id") String pid) {
         List<Object> result = new ArrayList<>();
-        menuService.queryChildren(pid)
+        sysMenuService.queryChildren(pid)
                 .forEach((o) -> {
                     Map<String, Object> one = new HashMap<>();
                     one.put("id", o.getId());
@@ -183,10 +217,11 @@ public class MenuController extends BaseController {
     @ResponseBody
     @PreAuthorize("hasPermission(null, 'sys.menu.edit')")
     public Results available(@PathVariable("id") String id, boolean available) {
-        menuService.updateAvailable(id, available);
+        sysMenuService.updateAvailable(id, available);
         return Results.success()
                 .setMessage(String.format("%s成功", available ? "开启" : "禁用"));
     }
+    
     
     /**
      * 渲染树形表格
@@ -195,7 +230,7 @@ public class MenuController extends BaseController {
      * @param permission
      * @return
      */
-    public String tr(Menu permission) {
+    public String tr(SysMenu permission) {
         String html = "<tr data-tt-id=\"%s\" data-tt-parent-id=\"%s\" data-tt-branch=\"%s\">\n" +
                 "                                        <td>%s%s</td>\n" +
                 "                                        <td>%s</td>\n" +
@@ -212,7 +247,7 @@ public class MenuController extends BaseController {
                 String.format("<span class=\"%s\"><span>", StringUtils.isEmpty(permission.getIcon()) ? "" : permission.getIcon()),
                 permission.getName(),
                 StringUtils.isEmpty(permission.getUrl()) ? htmlUtils.danger("暂无") : permission.getUrl(),
-                StringUtils.isEmpty(permission.getType()) ? htmlUtils.danger("暂无") : Menu.type(permission.getType()),
+                StringUtils.isEmpty(permission.getType()) ? htmlUtils.danger("暂无") : SysMenu.type(permission.getType()),
                 StringUtils.isEmpty(permission.getPermission()) ? htmlUtils.danger("暂无") : permission.getPermission(),
                 String.format("<i id=\"js-%s\" class=\"fa fa-circle %s\"></i>",
                         permission.getId(),

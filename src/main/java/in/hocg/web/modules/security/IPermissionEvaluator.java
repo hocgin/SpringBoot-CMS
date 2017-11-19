@@ -1,6 +1,6 @@
 package in.hocg.web.modules.security;
 
-import in.hocg.web.modules.domain.Menu;
+import in.hocg.web.modules.domain.SysMenu;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,7 +22,7 @@ public class IPermissionEvaluator implements PermissionEvaluator {
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         for (GrantedAuthority authority : authorities) {
             IGrantedAuthority iGrantedAuthority = (IGrantedAuthority) authority;
-            for (Menu permissionObject : iGrantedAuthority.getRole().getPermissions()) {
+            for (SysMenu permissionObject : iGrantedAuthority.getRole().getPermissions()) {
                 if (Objects.equals(permissionObject.getPermission(), permission)) {
                     return true;
                 }

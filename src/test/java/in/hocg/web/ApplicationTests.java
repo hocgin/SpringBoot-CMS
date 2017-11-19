@@ -1,9 +1,9 @@
 package in.hocg.web;
 
-import in.hocg.web.modules.domain.Menu;
+import in.hocg.web.modules.domain.SysMenu;
 import in.hocg.web.modules.domain.Role;
 import in.hocg.web.modules.domain.User;
-import in.hocg.web.modules.domain.repository.MenuRepository;
+import in.hocg.web.modules.domain.repository.SysMenuRepository;
 import in.hocg.web.modules.domain.repository.RoleRepository;
 import in.hocg.web.modules.domain.repository.UserRepository;
 import org.junit.Test;
@@ -30,12 +30,12 @@ public class ApplicationTests {
     @Autowired
     private RoleRepository roleRepository;
     @Autowired
-    private MenuRepository permissionRepository;
+    private SysMenuRepository permissionRepository;
     
     @Test
     public void testTestControllerIndex() throws Exception {
         User user = new User();
-        Menu permission = new Menu();
+        SysMenu permission = new SysMenu();
         permission.setName("用户添加");
         permission.setAvailable(true);
         permission.setPermission("user.add");
@@ -59,7 +59,7 @@ public class ApplicationTests {
     @Test
     public void testFindRole() {
         List<Role> all = roleRepository.findAll();
-        Collection<Menu> permissions = all.get(0).getPermissions();
+        Collection<SysMenu> permissions = all.get(0).getPermissions();
         System.out.println(permissions);
         
     }

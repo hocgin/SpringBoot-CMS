@@ -3,7 +3,7 @@
         xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta th:replace="/admin/fragments/meta::meta"/>
-    <title>权限管理</title>
+    <title>菜单管理</title>
     <css th:replace="/admin/fragments/all-css :: all-css"></css>
     <js th:replace="/admin/fragments/head-js :: head-js"></js>
 </head>
@@ -44,6 +44,10 @@
                                     <a th:href="@{/admin/system/menu/add-view.html}"
                                        class="btn btn-primary" data-pjax>
                                         <i class="fa fa-plus"></i> 新建菜单
+                                    </a>
+                                    <a th:href="@{/admin/system/menu/sort-view.html}"
+                                       class="btn btn-info" data-pjax>
+                                        <i class="fa fa-sort"></i> 排序
                                     </a>
                                 </div>
                             </header>

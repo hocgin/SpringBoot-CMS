@@ -10,10 +10,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * email: hocgin@gmail.com
  */
 @Data
-@Document(collection = "Menu")
-public class Menu extends BaseDomain {
+@Document(collection = "SysMenu")
+public class SysMenu extends BaseDomain {
     @Transient
-    public static String Document = "Menu";
+    public static String Document = "SysMenu";
     
     @Id
     private String id;
@@ -29,6 +29,7 @@ public class Menu extends BaseDomain {
     private Boolean available = Boolean.FALSE;// 是否可用, 默认保留, 不分配。
     private Boolean hasChildren = Boolean.FALSE; // 是否有子节点
     private Boolean builtIn = Boolean.FALSE; // 是否为内置, 默认False
+    private Integer location = 0;  // 排序, 一级
     
     
     public static String type(Integer type) {

@@ -1,6 +1,6 @@
 package in.hocg.web.modules.domain.repository.custom;
 
-import in.hocg.web.modules.domain.Menu;
+import in.hocg.web.modules.domain.SysMenu;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import java.util.List;
  * email: hocgin@gmail.com
  * 自定义接口 与 JPA 区分
  */
-public interface MenuRepositoryCustom {
+public interface SysMenuRepositoryCustom {
     void updateHasChildren(String id, boolean hasChildren);
     
     /**
@@ -24,8 +24,17 @@ public interface MenuRepositoryCustom {
      * @param regexPath
      * @return
      */
-    List<Menu> findAllByPathRegexOrderByPathDesc(String regexPath);
+    List<SysMenu> findAllByPathRegexOrderByPathDesc(String regexPath);
     
     
-    List<Menu> findAllByIdOrderByPathAes(String... id);
+    List<SysMenu> findAllByIdOrderByPathAsc(String... id);
+    
+    void updateLocation(String... ids);
+    
+    /**
+     * path 00010002 -> 00010001 -> 0001
+     * location 0 -> 1 -> 2
+     * @return
+     */
+    List<SysMenu> findAllOrderByLocationAscAndPathAsc();
 }
