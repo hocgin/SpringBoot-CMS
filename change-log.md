@@ -81,6 +81,9 @@
 - 修正目录结构
 - 标准化返回码
 - 文件管理
+- 公共API
+    - 下载 `/public/downalod/{id|kepp-name}?rename=xx&src=ID`
+    - 图片浏览 `/public/image/{id|kepp-name}?width=xx&height=xx&src=ID&force=true`
 
 
 
