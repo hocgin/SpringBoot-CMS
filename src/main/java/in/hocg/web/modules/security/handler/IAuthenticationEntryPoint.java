@@ -1,6 +1,7 @@
 package in.hocg.web.modules.security.handler;
 
 import com.google.gson.Gson;
+import in.hocg.web.lang.body.response.ResultCode;
 import in.hocg.web.lang.body.response.Results;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -40,7 +41,9 @@ public class IAuthenticationEntryPoint implements AuthenticationEntryPoint, Seri
         
         response.setHeader("Content-type", "text/html;charset=UTF-8");
         try (PrintWriter writer = response.getWriter()) {
-            writer.write(gson.toJson(Results.error(0, message).setData(authException)));
+            Results<Exception> result = Results.error(ResultCode.BAD_REQUEST, message);
+            result.setData(authException);
+            writer.write(gson.toJson(result));
         }
     }
 }

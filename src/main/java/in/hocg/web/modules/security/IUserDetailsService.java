@@ -1,8 +1,8 @@
 package in.hocg.web.modules.security;
 
 import in.hocg.web.lang.utils.RequestKit;
-import in.hocg.web.modules.admin.domain.User;
-import in.hocg.web.modules.admin.domain.repository.UserRepository;
+import in.hocg.web.modules.system.domain.User;
+import in.hocg.web.modules.system.domain.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

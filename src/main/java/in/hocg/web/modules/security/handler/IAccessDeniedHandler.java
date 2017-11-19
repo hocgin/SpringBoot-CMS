@@ -1,6 +1,7 @@
 package in.hocg.web.modules.security.handler;
 
 import com.google.gson.Gson;
+import in.hocg.web.lang.body.response.ResultCode;
 import in.hocg.web.lang.body.response.Results;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
@@ -28,7 +29,8 @@ public class IAccessDeniedHandler implements org.springframework.security.web.ac
     
         response.setHeader("Content-type", "text/html;charset=UTF-8");
         try (PrintWriter writer = response.getWriter()) {
-            writer.write(gson.toJson(Results.error(0, "权限不足").setData(accessDeniedException)));
+            writer.write(gson.toJson(Results.error(ResultCode.UNAUTHORIZED, "权限不足")
+                    .setData(accessDeniedException)));
         }
     }
 }

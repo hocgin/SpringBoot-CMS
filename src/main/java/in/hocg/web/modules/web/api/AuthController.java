@@ -2,10 +2,10 @@ package in.hocg.web.modules.web.api;
 
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.lang.body.response.Results;
-import in.hocg.web.modules.admin.domain.User;
+import in.hocg.web.modules.system.domain.User;
 import in.hocg.web.modules.security.JwtAuthenticationRequest;
 import in.hocg.web.modules.security.JwtAuthenticationResponse;
-import in.hocg.web.modules.admin.service.AuthService;
+import in.hocg.web.modules.system.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;

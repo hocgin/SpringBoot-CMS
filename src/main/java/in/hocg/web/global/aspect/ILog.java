@@ -1,6 +1,6 @@
 package in.hocg.web.global.aspect;
 
-import in.hocg.web.modules.admin.domain.SysLog;
+import in.hocg.web.modules.system.domain.SysLog;
 
 import java.lang.annotation.*;
 

@@ -1,9 +1,9 @@
 package in.hocg.web.database;
 
-import in.hocg.web.modules.admin.domain.Department;
-import in.hocg.web.modules.admin.domain.SysMenu;
-import in.hocg.web.modules.admin.domain.Role;
-import in.hocg.web.modules.admin.domain.User;
+import in.hocg.web.modules.system.domain.Department;
+import in.hocg.web.modules.system.domain.SysMenu;
+import in.hocg.web.modules.system.domain.Role;
+import in.hocg.web.modules.system.domain.User;
 
 import java.util.Collection;
 import java.util.Date;

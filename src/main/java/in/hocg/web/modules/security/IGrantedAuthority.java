@@ -1,6 +1,6 @@
 package in.hocg.web.modules.security;
 
-import in.hocg.web.modules.admin.domain.Role;
+import in.hocg.web.modules.system.domain.Role;
 import org.springframework.security.core.GrantedAuthority;
 
 /**

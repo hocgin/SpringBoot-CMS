@@ -50,7 +50,7 @@ public class Results<T> implements Serializable {
     
     
     public static Results success(Object data) {
-        return Results.result(200, "success", data);
+        return Results.result(ResultCode.SUCCESS, "success", data);
     }
     
     public static Results success() {
@@ -76,12 +76,12 @@ public class Results<T> implements Serializable {
             }
             return results;
         } else {
-            return Results.error(CheckError.CODE, checkError.getFirstErrorMessage());
+            return Results.error(ResultCode.PRECONDITION_FAILED, checkError.getFirstErrorMessage());
         }
     }
     
     public static Results check(BindingResult bindingResult) {
-        return Results.error(999, bindingResult.getFieldError().getDefaultMessage());
+        return Results.error(ResultCode.VERIFICATION_FAILED, bindingResult.getFieldError().getDefaultMessage());
     }
     
     public static Results check(CheckError checkError) {
