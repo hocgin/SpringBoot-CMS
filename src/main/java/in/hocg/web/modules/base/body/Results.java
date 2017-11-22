@@ -1,6 +1,7 @@
 package in.hocg.web.modules.base.body;
 
 import in.hocg.web.lang.CheckError;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 
@@ -86,5 +87,11 @@ public class Results<T> implements Serializable {
     
     public static Results check(CheckError checkError) {
         return check(checkError, null);
+    }
+    
+    public ResponseEntity<Results> asOkResponseEntity() {
+        return ResponseEntity
+                .ok()
+                .body(this);
     }
 }

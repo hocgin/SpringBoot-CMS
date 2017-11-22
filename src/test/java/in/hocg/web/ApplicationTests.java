@@ -1,10 +1,10 @@
 package in.hocg.web;
 
-import in.hocg.web.modules.system.domain.SysMenu;
 import in.hocg.web.modules.system.domain.Role;
+import in.hocg.web.modules.system.domain.SysMenu;
 import in.hocg.web.modules.system.domain.User;
-import in.hocg.web.modules.system.domain.repository.SysMenuRepository;
 import in.hocg.web.modules.system.domain.repository.RoleRepository;
+import in.hocg.web.modules.system.domain.repository.SysMenuRepository;
 import in.hocg.web.modules.system.domain.repository.UserRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.*;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -65,7 +66,12 @@ public class ApplicationTests {
     }
     
     @Test
-    public void testAdminHtml() {
-    
+    public void testAdminHtml() throws IOException {
+        File file = new File("/Users/hocgin/Desktop/cityidloc.csv");
+        FileReader reader = new FileReader(file);
+        BufferedReader bufferedReader = new BufferedReader(reader);
+        bufferedReader.lines().forEach(line -> {
+            System.out.println(line);
+        });
     }
 }

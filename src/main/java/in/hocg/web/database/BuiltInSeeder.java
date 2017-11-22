@@ -160,8 +160,8 @@ public class BuiltInSeeder {
         menu26 = sysMenuRepository.insert(menu26);
         SysMenu menu261 = DocumentFactory.data("清空日志", "000200060001", "safety.log.empty", menu26.getId());
         menu261 = sysMenuRepository.insert(menu261);
-        
-        
+    
+    
         // 仪表盘
         SysMenu menu3 = DocumentFactory.menu("仪表盘", "0003", "dashboard", "");
         menu3.setLocation(0);
@@ -171,6 +171,23 @@ public class BuiltInSeeder {
                 "dashboard.index", "/admin/dashboard/index.html");
         menu31.setParent(menu3.getId());
         menu31 = sysMenuRepository.insert(menu31);
+    
+    
+        // 天气服务
+        SysMenu menu4 = DocumentFactory.menu("天气服务", "0004", "weather", "");
+        menu4.setLocation(3);
+        menu4 = sysMenuRepository.insert(menu4);
+        // - 城市管理
+        SysMenu menu41 = DocumentFactory.menu("城市管理", "00040001",
+                "weather.city", "/admin/weather/city/index.html");
+        menu41.setParent(menu4.getId());
+        menu41 = sysMenuRepository.insert(menu41);
+        SysMenu menu411 = DocumentFactory.data("添加城市", "000400010001", "weather.city.add", menu41.getId());
+        menu411 = sysMenuRepository.insert(menu411);
+        SysMenu menu412 = DocumentFactory.data("删除城市", "000400010002", "weather.city.delete", menu41.getId());
+        menu412 = sysMenuRepository.insert(menu412);
+        SysMenu menu413 = DocumentFactory.data("修改城市", "000400010003", "weather.city.edit", menu41.getId());
+        menu413 = sysMenuRepository.insert(menu413);
         
         SysMenu[] role_admin = new SysMenu[]{
                 menu1,
@@ -180,10 +197,15 @@ public class BuiltInSeeder {
                 menu14, menu141, menu142, menu143,
                 menu15, menu151, menu152, menu153,
                 menu16, menu161, menu162, menu163,
+                
                 menu2,
                 menu26, menu261,
+                
                 menu3,
-                menu31
+                menu31,
+                
+                menu4,
+                menu41, menu411, menu412, menu413
         };
         
         SysMenu[] role_admin_old = new SysMenu[]{
@@ -192,7 +214,9 @@ public class BuiltInSeeder {
                 menu2,
                 menu26,
                 menu3,
-                menu31
+                menu31,
+                menu4,
+                menu41
         };
         
         /**

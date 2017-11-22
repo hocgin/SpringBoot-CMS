@@ -1,0 +1,98 @@
+<div class="modal-header">
+    <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+        <span aria-hidden="true">×</span></button>
+    <h4 class="modal-title">上传文件</h4>
+</div>
+<div class="modal-body">
+    <div class="form-group">
+        <table class="table table-bordered i-upload-box">
+            <tbody>
+            <tr>
+                <th style="width: 180px">选择文件</th>
+                <th>文件名</th>
+                <th>状态</th>
+            </tr>
+            <tr>
+                <td>
+                    <div id="i-upload-choose">选择文件</div>
+                </td>
+                <td class="i-upload-description">请选择上传文件...</td>
+                <td class="i-upload-status"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="modal-footer">
+    <input type="hidden" name="fid">
+    <button class="btn btn-default pull-left" data-dismiss="modal" type="button">取消</button>
+    <button class="btn btn-primary" onclick="handle()" type="submit">处理</button>
+</div>
+<script>
+    var $fid = $('input[name="fid"]');
+    function handle() {
+        var val = $fid.val();
+        if (!!val) {
+            $.post('/admin/weather/city/upload', {fid: val}, function (data) {
+                if (data.code === 200) {
+                    layer.msg(data.message);
+                    table.reloadAll();
+                    $('#js-upload-modal').modal('hide');
+                }else {
+                    layer.msg(data.message);
+                }
+            });
+        }else {
+            layer.msg('请选择文件进行上传');
+        }
+    }
+    $(function () {
+        var up = {
+            $el: $('.i-upload-box'),
+            $btnEl: $('.i-upload-btn'),
+            $description: $('.i-upload-description'),
+            $status: $('.i-upload-status'),
+            webUploader: null,
+            init: function () {
+                var that = this;
+                this.webUploader = WebUploader.create({
+                    auto: true,
+                    // swf文件路径
+                    swf: '/static/dist/webuploader/Uploader.swf',
+
+                    // 文件接收服务端。
+                    server: '/admin/system/file/upload',
+
+                    // 选择文件的按钮。可选。
+                    // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+                    pick: '#i-upload-choose',
+
+                    // 不压缩image, 默认如果是jpeg，文件上传前会压缩一把再上传！
+                    resize: false
+                }).on('fileQueued', function (file) {
+                    that.$description.empty().append('<div id="' + file.id + '" class="item">' +
+                        '<h4 class="info">' + file.name + '</h4>' +
+                        '</div>');
+                    that.$status.empty().text("等待上传");
+                }).on('uploadBeforeSend', function (object, data, headers) {
+                    var token = $("meta[name='_csrf']").attr("content");
+                    var header = $("meta[name='_csrf_header']").attr("content");
+                    headers[header] = token;
+                }).on('uploadProgress', function (file, percentage) {
+                    that.$status.empty().text("上传中");
+                }).on('uploadSuccess', function (file) {
+                    that.$status.empty().text("已上传");
+                }).on('uploadError', function (file) {
+                    that.$status.empty().text("上传出错, 请重试。");
+                }).on('uploadSuccess', function (file, data) {
+                    if (data.code === 200) {
+                        $fid.val(data.data.id);
+                    }else {
+                        layer.msg(data.message);
+                    }
+                });
+            }
+        };
+        up.init();
+    });
+</script>
