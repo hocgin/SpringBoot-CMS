@@ -21,19 +21,10 @@ public class SysLog extends BaseDomain {
     }
     
     public enum From {
-        Admin("后台"),
-        Web("前台"),
-        WeiXin("微信"),
-        Api("API");
-        String value;
-    
-        From(String value) {
-            this.value = value;
-        }
-    
-        public String getValue() {
-            return value;
-        }
+        Admin,
+        Web,
+        WeiXin,
+        Api
     }
     
     @Transient

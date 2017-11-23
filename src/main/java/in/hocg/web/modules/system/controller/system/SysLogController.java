@@ -1,13 +1,15 @@
 package in.hocg.web.modules.system.controller.system;
 
-import in.hocg.web.modules.base.body.Results;
-import in.hocg.web.modules.system.service.SysLogService;
 import in.hocg.web.modules.base.BaseController;
+import in.hocg.web.modules.base.body.Results;
+import in.hocg.web.modules.system.domain.SysLog;
+import in.hocg.web.modules.system.filter.SysLogDataTablesInputFilter;
+import in.hocg.web.modules.system.service.SysLogService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.datatables.mapping.DataTablesInput;
 import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -30,9 +32,16 @@ public class SysLogController extends BaseController {
         return String.format(BASE_TEMPLATES_PATH, "index");
     }
     
+    @GetMapping("/query-modal.html")
+    public String vQueryModal(Model model) {
+        model.addAttribute("froms", SysLog.From.values());
+        model.addAttribute("tags", sysLogService.getTags());
+        return String.format(BASE_TEMPLATES_PATH, "query-modal");
+    }
+    
     @PostMapping("/data")
     @ResponseBody
-    public DataTablesOutput data(@RequestBody DataTablesInput filter) {
+    public DataTablesOutput data(@RequestBody SysLogDataTablesInputFilter filter) {
         return sysLogService.data(filter);
     }
     

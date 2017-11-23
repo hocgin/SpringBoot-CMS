@@ -153,7 +153,7 @@ public class BuiltInSeeder {
         SysMenu menu2 = DocumentFactory.menu("系统安全", path, "safety", "");
         menu2.setLocation(2);
         menu2 = sysMenuRepository.insert(menu2);
-        // - 日志管理 todo 后续增加查询功能
+        // - 日志管理
         SysMenu menu26 = DocumentFactory.menu("系统日志", "00020006",
                 "safety.log", "/admin/system/log/index.html");
         menu26.setParent(menu2.getId());

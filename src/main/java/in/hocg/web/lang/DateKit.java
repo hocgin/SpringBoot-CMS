@@ -1,5 +1,9 @@
 package in.hocg.web.lang;
 
+import org.springframework.util.StringUtils;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -21,5 +25,12 @@ public class DateKit {
         date.setMinutes(59);
         date.setSeconds(59);
         return date;
+    }
+    
+    public static Date format(String dateStr) throws ParseException {
+        if (StringUtils.isEmpty(dateStr)) {
+            return null;
+        }
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateStr);
     }
 }

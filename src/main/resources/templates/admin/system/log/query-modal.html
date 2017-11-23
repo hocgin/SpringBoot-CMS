@@ -1,0 +1,79 @@
+<div class="modal-header">
+    <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+        <span aria-hidden="true">×</span></button>
+    <h4 class="modal-title">查询条件</h4>
+</div>
+<div class="modal-body"
+     xmlns:th="http://www.thymeleaf.org">
+    <div class="form-group">
+        <label for="regexMessage">记录内容搜索</label>
+        <input class="form-control" id="regexMessage"
+               placeholder="记录内容搜索"
+               type="text">
+    </div>
+    <div class="form-group">
+        <label for="from">平台类型</label>
+        <select class="form-control" id="from">
+            <option value="">无</option>
+            <th:block th:each="form, i:${froms}">
+                <option th:value="${form.name()}" th:text="${form.name()}">Form</option>
+            </th:block>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="tag">日志类型</label>
+        <select class="form-control" id="tag">
+            <option value="">无</option>
+            <th:block th:each="tag, i:${tags}">
+                <option th:value="${tag}" th:text="${tag}">Tag</option>
+            </th:block>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="createdAtRange">操作时间范围</label>
+        <div class="input-group">
+            <div class="input-group-addon">
+                <i class="fa fa-clock-o"></i>
+            </div>
+            <input type="text" class="form-control pull-right" id="createdAtRange">
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-default pull-left" data-dismiss="modal" type="button">取消</button>
+    <button class="btn btn-primary" onclick="query()" type="submit">查询</button>
+</div>
+<script>
+    function query() {
+        table.reloadAll();
+        $('#js-query-modal').modal('hide');
+    }
+
+    $(function () {
+        var $daterangepicker = $('#createdAtRange');
+        $daterangepicker.daterangepicker({
+            clearBtn: true,
+            locale: {
+                format: 'YYYY-MM-DD hh:mm:ss',
+                separator: ' 至 ',
+                applyLabel: "应用",
+                cancelLabel: "清除",
+                resetLabel: "重置",
+                fromLabel: '起始时间',
+                toLabel: '结束时间',
+                customRangeLabel: '自定义',
+                daysOfWeek: ['日', '一', '二', '三', '四', '五', '六'],
+                monthNames: ['一月', '二月', '三月', '四月', '五月', '六月',
+                    '七月', '八月', '九月', '十月', '十一月', '十二月'],
+                firstDay: 1
+            },
+            opens: 'right',
+            format: 'YYYY-MM-DD hh:mm:ss'
+        }).on('cancel.daterangepicker', function (ev, picker) {
+            $daterangepicker.val('');
+        });
+
+
+    });
+
+</script>

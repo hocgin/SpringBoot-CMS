@@ -96,7 +96,7 @@ public class ILogAspect {
                 gson.toJson(point.getArgs()),
                 gson.toJson(result),
                 SecurityKit.username(),
-                annotation.from().getValue());
+                annotation.from().name());
         sysLog.setUsageTime(System.currentTimeMillis() - start);
         sysLogService.save(sysLog);
     }
