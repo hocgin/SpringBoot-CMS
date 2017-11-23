@@ -1,4 +1,4 @@
-package in.hocg.web.modules.web.api;
+package in.hocg.web.modules.api;
 
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.modules.base.body.Results;

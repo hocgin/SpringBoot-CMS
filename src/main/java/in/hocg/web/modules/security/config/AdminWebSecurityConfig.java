@@ -1,5 +1,6 @@
-package in.hocg.web.modules.security;
+package in.hocg.web.modules.security.config;
 
+import in.hocg.web.modules.security.IUserDetailsService;
 import in.hocg.web.modules.security.handler.IAccessDeniedHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
