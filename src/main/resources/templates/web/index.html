@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>ai 天气</title>
+    <css th:replace="/web/fragments/all-css :: all-css"></css>
+</head>
+<body class="loading">
+<div id="loader-wrapper">
+    <div class="loader">
+        <div class="ball-clip-rotate-pulse">
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+<!-- 以上为加载框, 加载完成自动移除 -->
+
+<header th:replace="/web/fragments/top-menu :: top-menu"></header>
+<div id="pjax-web-container">
+    <main class="g-main">
+        <div class="container">
+            <div class="row">
+                <div class="g-weather-card col-sm-7 col-sm-offset-2">
+                    <div class="h g-color">中国, 福建, 厦门, 361024</div>
+                    <div class="g-color date-time">星期一 7:00 AM</div>
+                    <div>
+                        <span class="g-color sh description">小雨</span>
+                    </div>
+                    <!--天气图标-->
+                    <div style="font:16px arial,helvetica,sans-serif;padding:20px 0 0;-webkit-touch-callout:none;-webkit-user-select:none">
+                        <div class="weather-box">
+                            <img class="g-weather-img j-img"
+                                 src="//ssl.gstatic.com/onebox/weather/64/rain_s_cloudy.png">
+                            <div class="g-weather-temp-box">
+                                <div>
+                                    <div class="g-weather-tmp">
+                                        <span class="temp">21</span>
+                                    </div>
+                                    <div class="g-weather-unit">
+                                        <!--<span style="display: none;" aria-label="°Fahrenheit">°F</span>-->
+                                        <!--<a href="#">-->
+                                        <!--<span aria-label="°Fahrenheit">°F</span></a>&nbsp;|-->
+                                        <span aria-label="°Celsius">°C</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="g-weather-panel g-color">
+                                <div>降雨量: <span class="rain">30%</span></div>
+                                <div>湿度: <span class="humidity">68%</span></div>
+                                <div>风速: <span class="wind">19 km/h</span></div>
+                                <div class="g-weather-btn-group ">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clear-both"></div>
+
+                    <!--天气图表-->
+                    <div id="main" class="col-sm-12" style="height:230px;"></div>
+                    <!--天气预报-->
+                    <div class="g-weather-forecast col-sm-12">
+                        <div class="g-weather-forecast-card-group">
+
+                            <!-- JS .append-->
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <div class="g-download-panel">
+        <div class="container">
+            <hr class="half-rule">
+            <h2>下载体验</h2>
+            <p class="lead">全球数以百万计的网站都是基于 Bootstrap 构建的。你可以先参观一下我们提供的实例精选或者看一看我们粉丝的网站吧。</p>
+            <hr class="half-rule">
+            <div class="row">
+                <div class="col-sm-4">
+                    <img src="http://v3.bootcss.com/assets/img/sass-less.png" alt="" class="img-responsive">
+                    <h3>Chrome 插件</h3>
+                    <p class="c-gy">一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述</p>
+                </div>
+                <div class="col-sm-4">
+                    <img src="http://v3.bootcss.com/assets/img/sass-less.png" alt="" class="img-responsive">
+                    <h3>Chrome 插件</h3>
+                    <p class="c-gy">一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述</p>
+                </div>
+                <div class="col-sm-4">
+                    <img src="http://v3.bootcss.com/assets/img/sass-less.png" alt="" class="img-responsive">
+                    <h3>Chrome 插件</h3>
+                    <p class="c-gy">一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述</p>
+                </div>
+            </div>
+            <hr class="half-rule">
+        </div>
+    </div>
+</div>
+
+
+<div th:replace="/web/fragments/main-footer::main-footer"></div>
+<!-- 引入 -->
+<js th:replace="/web/fragments/footer-js::footer-js"></js>
+<script>
+    $(document).ready(function () {
+        $(window).on('load', function () {
+            $('body').removeClass('loading')
+                .addClass('loaded');
+            $('#loader-wrapper').remove();
+        });
+        var myChart = echarts.init(document.getElementById('main'));
+        var $forecastCardGroup = $('.g-weather-forecast-card-group');
+        var $forecastCard = $('.g-weather-forecast-card');
+        var list = null;
+        $.post('/public/weather/forecast', {
+            lon: 118.074,
+            lat: 24.636,
+            units: 'metric'
+        }, function (data) {
+            if (data.code === 200) {
+                /**
+                 * 温度
+                 * 湿度
+                 * 可见度
+                 * 时间
+                 */
+                var dtArr = [];
+                var tempArr = [];
+                var rain3hArr = [];
+                var days = [];
+                /**
+                 * all: 37
+                 * 2017-11-24: 5
+                 * 2017-11-25: 5
+                 * 2017-11-26: 5
+                 **/
+                var progress = {
+                    all: 0,
+                    dates: []
+                };
+                $.each(list = data.data.list, function (index, obj) {
+                    /**
+                     * 每天的第一个
+                     */
+                    var date = obj.dt_txt.substring(0, 10); // "2017-11-24 09:00:00" => "2017-11-24"
+                    progress.all += 1;
+                    if ($.inArray(date, days) === -1) {
+                        progress.dates.push(date);
+                        progress[date] = 1;
+                        days.push(date);
+                        var forecastCardNode = '<div class="g-weather-forecast-card" data-date="' + date + '" data-start="' + (progress.all - 1) + '">\n' +
+                            '                                <div class="g-weak g-color">' + DateKit.getCnDay(new Date(obj.dt_txt)) + '</div>\n' +
+                            '                                <div class="inline-block">\n' +
+                            '                                    <img class="g-img" src="' + Google.getIconSrc((obj.weather[0].main + '').toLocaleLowerCase()) + '">\n' +
+                            '                                </div>\n' +
+                            '                                <div class="g-temp">\n' +
+                            '                                    <div class="inline-block pr5">\n' +
+                            '                                        <span>' + Math.floor(obj.main.temp_max) + '</span>°\n' +
+                            '                                    </div>\n' +
+                            '                                    <div class="inline-block g-color">\n' +
+                            '                                        <span>' + Math.floor(obj.main.temp_min) + '</span>°\n' +
+                            '                                    </div>\n' +
+                            '                                </div>\n' +
+                            '                            </div>';
+                        $forecastCardGroup.append(forecastCardNode);
+                    } else {
+                        progress[date] += 1;
+                    }
+
+                    // 预测时间
+                    var time = parseInt(obj.dt_txt.substring(11, 13));// "2017-11-24 09:00:00" => "09:00"
+                    if (time >= 12) {
+                        time %= 12;
+                        time += ' PM';
+                    } else {
+                        time += ' AM';
+                    }
+                    dtArr.push(time);
+                    // 预测温度
+                    tempArr.push(obj.main.temp);
+                    rain3hArr.push(obj.rain._$3h);
+                });
+                $forecastCard = $('.g-weather-forecast-card');
+                $.each($forecastCard, function (index, card) {
+                    var $card = $(card);
+                    var date = $card.data('date');
+                    $card.data('all', progress.all);
+                    $card.data('val', progress[date]);
+                });
+
+                var option = {
+                    title: {
+//                text: '天气预报'
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'cross',
+                            crossStyle: {
+                                color: '#999'
+                            }
+                        }
+                    },
+                    toolbox: {
+                        feature: {
+                            saveAsImage: {
+                                show: true
+                            }
+                        }
+                    },
+                    dataZoom: [
+                        {   // 这个dataZoom组件，默认控制x轴。
+                            type: 'slider', // 这个 dataZoom 组件是 slider 型 dataZoom 组件
+                            start: 0,      // 左边在 10% 的位置。
+                            end: 100          // 右边在 60% 的位置。
+                        }
+                    ],
+                    legend: {
+                        data: ['温度', '降水量']
+                    },
+                    color: [
+                        '#4270f4',
+                        '#f7cf09'
+                    ],
+                    xAxis: [{
+                        type: 'category',
+                        data: dtArr
+                    }],
+                    yAxis: [{
+                        type: 'value',
+                        name: '降水量',
+                        min: function (value) {
+                            var val = value.min - 2;
+                            return Math.ceil(val < 0 ? 0 : val);
+                        },
+                        max: 'dataMax',
+                        splitNumber: 3,
+                        axisLabel: {
+                            formatter: '{value} ml'
+                        }
+                    }, {
+                        type: 'value',
+                        name: '温度',
+                        min: function (value) {
+                            return Math.ceil(value.min - 2);
+                        },
+                        max: function (value) {
+                            return Math.ceil(value.max + 2);
+                        },
+                        splitNumber: 3,
+                        axisLabel: {
+                            formatter: '{value} °C'
+                        }
+                    }],
+                    series: [{
+                        name: '降水量',
+                        type: 'bar',
+                        yAxisIndex: 0,
+                        data: rain3hArr
+                    }, {
+                        name: '温度',
+                        type: 'line',
+                        smooth: true,
+                        yAxisIndex: 1,
+                        data: tempArr
+                    }]
+                };
+                myChart.setOption(option);
+            }
+        });
+        /**
+         * 选中星期的事件
+         */
+        $(document).on('click', '.g-weather-forecast-card', function ($e) {
+            $forecastCard.removeClass('active');
+            var $this = $(this);
+            $this.addClass('active');
+            var start = $this.data('start');
+            var all = $this.data('all');
+            var val = $this.data('val');
+            myChart.dispatchAction({
+                type: 'dataZoom',
+                // 可选，dataZoom 组件的 index，多个 dataZoom 组件时有用，默认为 0
+                dataZoomIndex: 0,
+                // 开始位置的百分比，0 - 100
+                start: (start / all) * 100,
+                // 结束位置的百分比，0 - 100
+                end: ((start + val) / all) * 100
+            })
+        });
+
+        myChart.on('mousemove', function (params) {
+            if (!!list) {
+                var data = list[params.dataIndex];
+                setWeatherInfo(
+                    data.main.temp,
+                    data.wind.speed,
+                    data.rain._$3h,
+                    data.main.humidity,
+                    data.weather[0].main,
+                    data.dt_txt,
+                    data.weather[0].description
+                )
+            }
+        });
+
+        var $weatherBox = $('.weather-box');
+        var $description = $('.description');
+        var $dateTime = $('.date-time');
+        var $j_img = $('.j-img');
+
+        function setWeatherInfo(temp, windSpeed, rain, humidity, img, dt_txt, description) {
+            $weatherBox.find('.temp').text(Math.floor(temp));
+            $weatherBox.find('.wind').text(windSpeed + ' km/h');
+            $weatherBox.find('.rain').text((rain + '').substring(0, 6) + ' ml');
+            $weatherBox.find('.humidity').text(humidity + '%');
+            $description.text(description);
+            var date = new Date(dt_txt);
+            $j_img[0].src = Google.getIconSrc((img + '').toLocaleLowerCase());
+            $dateTime.text(DateKit.getCnDay(date) + ' ' + DateKit.getTimeAM_PM(date));
+        }
+
+    });
+</script>
+</body>
+</html>

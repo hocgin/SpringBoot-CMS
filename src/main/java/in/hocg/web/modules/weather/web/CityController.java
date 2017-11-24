@@ -131,8 +131,8 @@ public class CityController extends BaseController {
                 city.setCounty(args[1]);
                 city.setCity(args[2]);
                 city.setProvince(args[3]);
-                city.setLongitude(args[4]);
-                city.setLatitude(args[5]);
+                city.setLatitude(args[4]);
+                city.setLongitude(args[5]);
                 city.createdAt();
                 citySet.add(city);
             }

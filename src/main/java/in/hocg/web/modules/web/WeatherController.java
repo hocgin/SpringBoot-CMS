@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * email: hocgin@gmail.com
  */
 @Controller
-@RequestMapping("/weather")
+@RequestMapping("/public/weather")
 public class WeatherController extends BaseController{
     private RequestCacheService service;
     
@@ -45,4 +45,5 @@ public class WeatherController extends BaseController{
                 .setData(forecast)
                 .setMessage("天气预测");
     }
+    
 }

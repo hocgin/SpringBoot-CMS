@@ -37,6 +37,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/**/*.woff",
                         "/**/*.ttf",
                         "/**/*.jpg",
+                        "/**/*.png",
                         "/**/*.woff2"
                 ).permitAll()
                 

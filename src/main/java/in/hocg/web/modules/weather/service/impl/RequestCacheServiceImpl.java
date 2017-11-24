@@ -1,5 +1,6 @@
 package in.hocg.web.modules.weather.service.impl;
 
+import com.google.gson.Gson;
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.modules.weather.body.Forecast;
 import in.hocg.web.modules.weather.body.Weather;
@@ -25,11 +26,14 @@ import java.util.Optional;
 public class RequestCacheServiceImpl implements RequestCacheService {
     private RequestCacheRepository requestCacheRepository;
     private HttpService httpService;
+    private Gson gson;
     @Autowired
     public RequestCacheServiceImpl(RequestCacheRepository requestCacheRepository,
+                                   Gson gson,
                                    HttpService httpService) {
         this.requestCacheRepository = requestCacheRepository;
         this.httpService = httpService;
+        this.gson = gson;
     }
     
     /**
@@ -50,7 +54,7 @@ public class RequestCacheServiceImpl implements RequestCacheService {
         RequestCache todayWeather = requestCacheRepository.findByParamOnToday(param, RequestCache.Type.Current.name());
         // 2. 若无, 去请求并缓存
         if (ObjectUtils.isEmpty(todayWeather)) {
-            ResponseEntity<Weather> currentWeather = httpService.getCurrentWeather(units, lang, lon, lat);
+            ResponseEntity<Weather> currentWeather = httpService.getCurrentWeather(param);
             if (!ObjectUtils.isEmpty(currentWeather)) {
                 _insertWeather(new Point(Double.valueOf(lon), Double.valueOf(lat)), currentWeather, param);
                 result = currentWeather.getBody();
@@ -85,10 +89,11 @@ public class RequestCacheServiceImpl implements RequestCacheService {
         RequestCache todayWeather = requestCacheRepository.findByParamOnToday(param, RequestCache.Type.Forecast.name());
         // 2. 若无, 去请求并缓存
         if (ObjectUtils.isEmpty(todayWeather)) {
-            ResponseEntity<Forecast> forecastWeather = httpService.getForecastWeather(units, lang, lon, lat);
+            ResponseEntity<String> forecastWeatherString = httpService.getForecastWeather(param);
+            Forecast forecastWeather = gson.fromJson(forecastWeatherString.getBody(), Forecast.class);
             if (!ObjectUtils.isEmpty(forecastWeather)) {
                 _insertForecast(new Point(Double.valueOf(lon), Double.valueOf(lat)), forecastWeather, param);
-                result = forecastWeather.getBody();
+                result = forecastWeather;
             } else {
                 checkError.putError("请求服务器异常");
             }
@@ -122,11 +127,10 @@ public class RequestCacheServiceImpl implements RequestCacheService {
     }
     
     private void _insertForecast(Point point,
-                                 ResponseEntity<Forecast> forecastResponseEntity,
+                                 Forecast forecast,
                                  String param) {
-        Forecast body = forecastResponseEntity.getBody();
         RequestCache requestCache = new RequestCache()
-                .asForecast(body);
+                .asForecast(forecast);
         requestCache.setPoint(point);
         requestCache.setParam(param);
         requestCacheRepository.insert(requestCache);

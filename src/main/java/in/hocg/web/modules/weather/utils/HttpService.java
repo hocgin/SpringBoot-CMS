@@ -1,6 +1,5 @@
 package in.hocg.web.modules.weather.utils;
 
-import in.hocg.web.modules.weather.body.Forecast;
 import in.hocg.web.modules.weather.body.Weather;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,17 +19,17 @@ public class HttpService {
         this.restTemplate = restTemplate;
     }
     
-    public ResponseEntity<Weather> getCurrentWeather(String unit, String lang, String lon, String lat) {
-        String url = OpenWeatherMap.weather(getAppId(), unit, lang, lat, lon);
+    public ResponseEntity<Weather> getCurrentWeather(String param) {
+        String url = OpenWeatherMap.weather(getAppId(), param);
         ResponseEntity<Weather> responseEntity = restTemplate.getForEntity(url, Weather.class);
         if (!HttpStatus.OK.equals(responseEntity.getStatusCode())) {
             return null;
         }
         return responseEntity;
     }
-    public ResponseEntity<Forecast> getForecastWeather(String unit, String lang, String lon, String lat) {
-        String url = OpenWeatherMap.forecast(getAppId(), unit, lang, lat, lon);
-        ResponseEntity<Forecast> responseEntity = restTemplate.getForEntity(url, Forecast.class);
+    public ResponseEntity<String> getForecastWeather(String param) {
+        String url = OpenWeatherMap.forecast(getAppId(), param);
+        ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
         if (!HttpStatus.OK.equals(responseEntity.getStatusCode())) {
             return null;
         }

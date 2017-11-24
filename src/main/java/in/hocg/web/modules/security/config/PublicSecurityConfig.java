@@ -19,10 +19,10 @@ public class PublicSecurityConfig extends WebSecurityConfigurerAdapter {
     
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.antMatcher("/public/**").
-                csrf().disable()
+        http.antMatcher("/public/**")
+                .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/public/**")
+                .antMatchers("/public/**/**")
                 .permitAll();
         
     }
