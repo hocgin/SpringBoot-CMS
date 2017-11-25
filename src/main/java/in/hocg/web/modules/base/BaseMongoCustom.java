@@ -126,6 +126,6 @@ public abstract class BaseMongoCustom<T, ID extends Serializable> {
     }
     
     public void doLog(Query query) {
-        logger.info("查询NoSQL: (%s)", query.toString());
+        logger.info("查询NoSQL: {}", query.toString());
     }
 }
