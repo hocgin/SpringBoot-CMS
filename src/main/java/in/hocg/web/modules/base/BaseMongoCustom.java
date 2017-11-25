@@ -1,8 +1,10 @@
 package in.hocg.web.modules.base;
 
 import com.mongodb.WriteResult;
-import in.hocg.web.modules.base.body.Page;
 import in.hocg.web.lang.utils.Clazz;
+import in.hocg.web.modules.base.body.Page;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
@@ -16,6 +18,7 @@ import java.util.List;
  * email: hocgin@gmail.com
  */
 public abstract class BaseMongoCustom<T, ID extends Serializable> {
+    final Logger logger = LoggerFactory.getLogger(getClass());
     /**
      * 实体类
      */
@@ -39,6 +42,7 @@ public abstract class BaseMongoCustom<T, ID extends Serializable> {
     }
     
     public WriteResult remove(Query query) {
+        doLog(query);
         return mongoTemplate().remove(query, getEntityClass());
     }
     
@@ -55,6 +59,7 @@ public abstract class BaseMongoCustom<T, ID extends Serializable> {
     }
     
     public List<T> find(Query query) {
+        doLog(query);
         return mongoTemplate().find(query, getEntityClass());
     }
     
@@ -71,6 +76,7 @@ public abstract class BaseMongoCustom<T, ID extends Serializable> {
     }
     
     public T findOne(Query query) {
+        doLog(query);
         return mongoTemplate().findOne(query, getEntityClass());
     }
     
@@ -79,10 +85,12 @@ public abstract class BaseMongoCustom<T, ID extends Serializable> {
     }
     
     public long count(Query query) {
+        doLog(query);
         return mongoTemplate().count(query, getEntityClass());
     }
     
     public boolean exists(Query query) {
+        doLog(query);
         return mongoTemplate().exists(query, getEntityClass());
     }
     
@@ -95,7 +103,9 @@ public abstract class BaseMongoCustom<T, ID extends Serializable> {
      * @return
      */
     public List<T> page(Query query, int page, int size) {
-        return find(query.skip(page * size).limit(size));
+        query = query.skip(page * size).limit(size);
+        doLog(query);
+        return find(query);
     }
     
     /**
@@ -113,5 +123,9 @@ public abstract class BaseMongoCustom<T, ID extends Serializable> {
     
     public Class<T> getEntityClass() {
         return entityClass;
+    }
+    
+    public void doLog(Query query) {
+        logger.info("查询NoSQL: (%s)", query.toString());
     }
 }

@@ -7,6 +7,7 @@ import in.hocg.web.modules.weather.filter.CityFilter;
 import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by hocgin on 2017/11/21.
@@ -25,4 +26,9 @@ public interface CityService {
     void inserts(Collection<City> citySet);
     
     void deleteAll();
+    
+    List<City> searchForCity(String q, int size);
+    List<City> searchForCity(String q);
+    
+    City findById(String id);
 }

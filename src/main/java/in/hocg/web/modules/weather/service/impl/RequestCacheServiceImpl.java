@@ -27,6 +27,7 @@ public class RequestCacheServiceImpl implements RequestCacheService {
     private RequestCacheRepository requestCacheRepository;
     private HttpService httpService;
     private Gson gson;
+    
     @Autowired
     public RequestCacheServiceImpl(RequestCacheRepository requestCacheRepository,
                                    Gson gson,
@@ -38,6 +39,7 @@ public class RequestCacheServiceImpl implements RequestCacheService {
     
     /**
      * 获取指定参数的天气状况
+     *
      * @param units
      * @param lang
      * @param lat
@@ -52,12 +54,14 @@ public class RequestCacheServiceImpl implements RequestCacheService {
         // 1. 查看缓存是否有
         // todo 把创建时间改成dt范围内
         RequestCache todayWeather = requestCacheRepository.findByParamOnToday(param, RequestCache.Type.Current.name());
+        
         // 2. 若无, 去请求并缓存
         if (ObjectUtils.isEmpty(todayWeather)) {
-            ResponseEntity<Weather> currentWeather = httpService.getCurrentWeather(param);
+            ResponseEntity<String> currentWeatherStr = httpService.getCurrentWeather(param);
+            Weather currentWeather = gson.fromJson(currentWeatherStr.getBody(), Weather.class);
             if (!ObjectUtils.isEmpty(currentWeather)) {
                 _insertWeather(new Point(Double.valueOf(lon), Double.valueOf(lat)), currentWeather, param);
-                result = currentWeather.getBody();
+                result = currentWeather;
             } else {
                 checkError.putError("请求服务器异常");
             }
@@ -110,19 +114,19 @@ public class RequestCacheServiceImpl implements RequestCacheService {
     
     /**
      * 插入当前天气缓存
+     *
      * @param point
-     * @param weatherResponseEntity
+     * @param weather
      * @param param
      */
     private void _insertWeather(Point point,
-                                ResponseEntity<Weather> weatherResponseEntity,
+                                Weather weather,
                                 String param) {
-        Weather body = weatherResponseEntity.getBody();
         RequestCache requestCache = new RequestCache()
-                .asCurrent(body);
+                .asCurrent(weather);
         requestCache.setPoint(point);
         requestCache.setParam(param);
-        requestCache.setDt(body.getDt());
+        requestCache.setDt(weather.getDt());
         requestCacheRepository.insert(requestCache);
     }
     

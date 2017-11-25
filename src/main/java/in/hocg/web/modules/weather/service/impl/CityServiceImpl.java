@@ -14,6 +14,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by hocgin on 2017/11/21.
@@ -73,5 +74,19 @@ public class CityServiceImpl implements CityService {
     @Override
     public void deleteAll() {
         cityRepository.deleteAll();
+    }
+    
+    @Override
+    public List<City> searchForCity(String q, int size) {
+        return cityRepository.queryForCity(q, size);
+    }
+    @Override
+    public List<City> searchForCity(String q) {
+        return cityRepository.queryForCity(q, -1);
+    }
+    
+    @Override
+    public City findById(String id) {
+        return cityRepository.findOne(id);
     }
 }

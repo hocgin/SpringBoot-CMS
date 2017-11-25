@@ -3,6 +3,9 @@
       xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <!-- default header name is X-CSRF-TOKEN -->
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>ai 天气</title>
     <css th:replace="/web/fragments/all-css :: all-css"></css>
 </head>
@@ -23,7 +26,29 @@
         <div class="container">
             <div class="row">
                 <div class="g-weather-card col-sm-7 col-sm-offset-2">
-                    <div class="h g-color">中国, 福建, 厦门, 361024</div>
+                    <form method="POST" action="/">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                        <div class="search-wrapper pull-right">
+                            <div class="search-box">
+                                <div class="search-widget">
+                                    <input id="search-input" type="text" placeholder="城市搜索" th:value="${city}">
+                                    <input id="city-id" name="city" type="hidden" th:value="${cityId}">
+                                    <div class="search-btn">
+                                    <span class="icon" onclick="submit()">
+                                        <svg focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path
+                                                d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path></svg>
+                                    </span>
+                                    </div>
+                                </div>
+                                <div class="search-tips">
+                                    <ul style="overflow-y: scroll; max-height: 6em;">
+                                        <li><!--福建, 泉州, 南安--></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="h g-color location">中国, 福建, 厦门, 361024</div>
                     <div class="g-color date-time">星期一 7:00 AM</div>
                     <div>
                         <span class="g-color sh description">小雨</span>
@@ -103,172 +128,237 @@
 <div th:replace="/web/fragments/main-footer::main-footer"></div>
 <!-- 引入 -->
 <js th:replace="/web/fragments/footer-js::footer-js"></js>
-<script>
+<script type="text/javascript" th:inline="javascript">
+
+
+    /*<![CDATA[*/
+    var lon = /*[[${lon}]]*/ '';
+    var lat = /*[[${lat}]]*/ '';
+
+    function locationBefore(callback) {
+        if (navigator.geolocation && !lon && !lat) { // 支持定位
+            navigator.geolocation.getCurrentPosition(function (position) {
+                lat = position.coords.latitude;
+                lon = position.coords.longitude;
+                callback(lat, lon);
+            }, function (error) {
+                callback(24.636, 118.074);
+                console.log('[错误日志] Error occurred. Error code: ' + error.code);
+                // error.code can be:
+                //   0: unknown error
+                //   1: permission denied
+                //   2: position unavailable (error response from locaton provider)
+                //   3: timed out
+            });
+        } else {
+            callback(lat, lon);
+        }
+    }
+
+    /*]]>*/
+
+    function done() {
+        $('body').removeClass('loading')
+            .addClass('loaded');
+        $('#loader-wrapper').remove();
+    }
+    
+    function submit() {
+        if (!!$('#city-id').val()) {
+            $('form').submit();
+        } else {
+            layer.msg('请选择城市', {icon: 2});
+        }
+    }
+
     $(document).ready(function () {
-        $(window).on('load', function () {
-            $('body').removeClass('loading')
-                .addClass('loaded');
-            $('#loader-wrapper').remove();
-        });
         var myChart = echarts.init(document.getElementById('main'));
         var $forecastCardGroup = $('.g-weather-forecast-card-group');
         var $forecastCard = $('.g-weather-forecast-card');
+        var $location = $('.location');
         var list = null;
-        $.post('/public/weather/forecast', {
-            lon: 118.074,
-            lat: 24.636,
-            units: 'metric'
-        }, function (data) {
-            if (data.code === 200) {
-                /**
-                 * 温度
-                 * 湿度
-                 * 可见度
-                 * 时间
-                 */
-                var dtArr = [];
-                var tempArr = [];
-                var rain3hArr = [];
-                var days = [];
-                /**
-                 * all: 37
-                 * 2017-11-24: 5
-                 * 2017-11-25: 5
-                 * 2017-11-26: 5
-                 **/
-                var progress = {
-                    all: 0,
-                    dates: []
-                };
-                $.each(list = data.data.list, function (index, obj) {
+        locationBefore(function (lat, lon) {
+            // 当前天气
+            $.post('/public/weather/current', {
+                lon: lon,
+                lat: lat,
+                units: 'metric'
+            }, function (data) {
+                if (data.code === 200) {
+                    var data = data.data;
+                    $location.text('中国, ' + data.name);
+                    setWeatherInfo(
+                        data.main.temp,
+                        data.wind.speed,
+                        data.sys.message,
+                        data.main.humidity,
+                        data.weather[0].main,
+                        data.dt,
+                        data.weather[0].description);
+                } else {
+                    layer.msg(data.message)
+                }
+            });
+            // 天气预报
+            $.post('/public/weather/forecast', {
+                lon: lon,
+                lat: lat,
+                units: 'metric'
+            }, function (data) {
+                done();
+                if (data.code === 200) {
                     /**
-                     * 每天的第一个
+                     * 温度
+                     * 湿度
+                     * 可见度
+                     * 时间
                      */
-                    var date = obj.dt_txt.substring(0, 10); // "2017-11-24 09:00:00" => "2017-11-24"
-                    progress.all += 1;
-                    if ($.inArray(date, days) === -1) {
-                        progress.dates.push(date);
-                        progress[date] = 1;
-                        days.push(date);
-                        var forecastCardNode = '<div class="g-weather-forecast-card" data-date="' + date + '" data-start="' + (progress.all - 1) + '">\n' +
-                            '                                <div class="g-weak g-color">' + DateKit.getCnDay(new Date(obj.dt_txt)) + '</div>\n' +
-                            '                                <div class="inline-block">\n' +
-                            '                                    <img class="g-img" src="' + Google.getIconSrc((obj.weather[0].main + '').toLocaleLowerCase()) + '">\n' +
-                            '                                </div>\n' +
-                            '                                <div class="g-temp">\n' +
-                            '                                    <div class="inline-block pr5">\n' +
-                            '                                        <span>' + Math.floor(obj.main.temp_max) + '</span>°\n' +
-                            '                                    </div>\n' +
-                            '                                    <div class="inline-block g-color">\n' +
-                            '                                        <span>' + Math.floor(obj.main.temp_min) + '</span>°\n' +
-                            '                                    </div>\n' +
-                            '                                </div>\n' +
-                            '                            </div>';
-                        $forecastCardGroup.append(forecastCardNode);
-                    } else {
-                        progress[date] += 1;
-                    }
+                    var dtArr = [];
+                    var tempArr = [];
+                    var rain3hArr = [];
+                    var days = [];
+                    /**
+                     * all: 37
+                     * 2017-11-24: 5
+                     * 2017-11-25: 5
+                     * 2017-11-26: 5
+                     **/
+                    var progress = {
+                        all: 0,
+                        dates: []
+                    };
+                    $.each(list = data.data.list, function (index, obj) {
+                        /**
+                         * 每天的第一个
+                         */
+                        var date = obj.dt_txt.substring(0, 10); // "2017-11-24 09:00:00" => "2017-11-24"
+                        progress.all += 1;
+                        if ($.inArray(date, days) === -1) {
+                            progress.dates.push(date);
+                            progress[date] = 1;
+                            days.push(date);
+                            var forecastCardNode = '<div class="g-weather-forecast-card" data-date="' + date + '" data-start="' + (progress.all - 1) + '">\n' +
+                                '                                <div class="g-weak g-color">' + DateKit.getCnDay(new Date(obj.dt_txt)) + '</div>\n' +
+                                '                                <div class="inline-block">\n' +
+                                '                                    <img class="g-img" src="' + Google.getIconSrc((obj.weather[0].main + '').toLocaleLowerCase()) + '">\n' +
+                                '                                </div>\n' +
+                                '                                <div class="g-temp">\n' +
+                                '                                    <div class="inline-block pr5">\n' +
+                                '                                        <span>' + Math.floor(obj.main.temp_max) + '</span>°\n' +
+                                '                                    </div>\n' +
+                                '                                    <div class="inline-block g-color">\n' +
+                                '                                        <span>' + Math.floor(obj.main.temp_min) + '</span>°\n' +
+                                '                                    </div>\n' +
+                                '                                </div>\n' +
+                                '                            </div>';
+                            $forecastCardGroup.append(forecastCardNode);
+                        } else {
+                            progress[date] += 1;
+                        }
 
-                    // 预测时间
-                    var time = parseInt(obj.dt_txt.substring(11, 13));// "2017-11-24 09:00:00" => "09:00"
-                    if (time >= 12) {
-                        time %= 12;
-                        time += ' PM';
-                    } else {
-                        time += ' AM';
-                    }
-                    dtArr.push(time);
-                    // 预测温度
-                    tempArr.push(obj.main.temp);
-                    rain3hArr.push(obj.rain._$3h);
-                });
-                $forecastCard = $('.g-weather-forecast-card');
-                $.each($forecastCard, function (index, card) {
-                    var $card = $(card);
-                    var date = $card.data('date');
-                    $card.data('all', progress.all);
-                    $card.data('val', progress[date]);
-                });
+                        // 预测时间
+                        var time = parseInt(obj.dt_txt.substring(11, 13));// "2017-11-24 09:00:00" => "09:00"
+                        if (time >= 12) {
+                            time %= 12;
+                            time += ' PM';
+                        } else {
+                            time += ' AM';
+                        }
+                        dtArr.push(time);
+                        // 预测温度
+                        tempArr.push(obj.main.temp);
+                        rain3hArr.push(obj.rain._$3h);
+                    });
+                    $forecastCard = $('.g-weather-forecast-card');
+                    $.each($forecastCard, function (index, card) {
+                        var $card = $(card);
+                        var date = $card.data('date');
+                        $card.data('all', progress.all);
+                        $card.data('val', progress[date]);
+                    });
 
-                var option = {
-                    title: {
+                    var option = {
+                        title: {
 //                text: '天气预报'
-                    },
-                    tooltip: {
-                        trigger: 'axis',
-                        axisPointer: {
-                            type: 'cross',
-                            crossStyle: {
-                                color: '#999'
+                        },
+                        tooltip: {
+                            trigger: 'axis',
+                            axisPointer: {
+                                type: 'cross',
+                                crossStyle: {
+                                    color: '#999'
+                                }
                             }
-                        }
-                    },
-                    toolbox: {
-                        feature: {
-                            saveAsImage: {
-                                show: true
+                        },
+                        toolbox: {
+                            feature: {
+                                saveAsImage: {
+                                    show: true
+                                }
                             }
-                        }
-                    },
-                    dataZoom: [
-                        {   // 这个dataZoom组件，默认控制x轴。
-                            type: 'slider', // 这个 dataZoom 组件是 slider 型 dataZoom 组件
-                            start: 0,      // 左边在 10% 的位置。
-                            end: 100          // 右边在 60% 的位置。
-                        }
-                    ],
-                    legend: {
-                        data: ['温度', '降水量']
-                    },
-                    color: [
-                        '#4270f4',
-                        '#f7cf09'
-                    ],
-                    xAxis: [{
-                        type: 'category',
-                        data: dtArr
-                    }],
-                    yAxis: [{
-                        type: 'value',
-                        name: '降水量',
-                        min: function (value) {
-                            var val = value.min - 2;
-                            return Math.ceil(val < 0 ? 0 : val);
                         },
-                        max: 'dataMax',
-                        splitNumber: 3,
-                        axisLabel: {
-                            formatter: '{value} ml'
-                        }
-                    }, {
-                        type: 'value',
-                        name: '温度',
-                        min: function (value) {
-                            return Math.ceil(value.min - 2);
+                        dataZoom: [
+                            {   // 这个dataZoom组件，默认控制x轴。
+                                type: 'slider', // 这个 dataZoom 组件是 slider 型 dataZoom 组件
+                                start: 0,      // 左边在 10% 的位置。
+                                end: 100          // 右边在 60% 的位置。
+                            }
+                        ],
+                        legend: {
+                            data: ['温度', '降水量']
                         },
-                        max: function (value) {
-                            return Math.ceil(value.max + 2);
-                        },
-                        splitNumber: 3,
-                        axisLabel: {
-                            formatter: '{value} °C'
-                        }
-                    }],
-                    series: [{
-                        name: '降水量',
-                        type: 'bar',
-                        yAxisIndex: 0,
-                        data: rain3hArr
-                    }, {
-                        name: '温度',
-                        type: 'line',
-                        smooth: true,
-                        yAxisIndex: 1,
-                        data: tempArr
-                    }]
-                };
-                myChart.setOption(option);
-            }
+                        color: [
+                            '#4270f4',
+                            '#f7cf09'
+                        ],
+                        xAxis: [{
+                            type: 'category',
+                            data: dtArr
+                        }],
+                        yAxis: [{
+                            type: 'value',
+                            name: '降水量',
+                            min: function (value) {
+                                var val = value.min - 2;
+                                return Math.ceil(val < 0 ? 0 : val);
+                            },
+                            max: 'dataMax',
+                            splitNumber: 3,
+                            axisLabel: {
+                                formatter: '{value} ml'
+                            }
+                        }, {
+                            type: 'value',
+                            name: '温度',
+                            min: function (value) {
+                                return Math.ceil(value.min - 2);
+                            },
+                            max: function (value) {
+                                return Math.ceil(value.max + 2);
+                            },
+                            splitNumber: 3,
+                            axisLabel: {
+                                formatter: '{value} °C'
+                            }
+                        }],
+                        series: [{
+                            name: '降水量',
+                            type: 'bar',
+                            yAxisIndex: 0,
+                            data: rain3hArr
+                        }, {
+                            name: '温度',
+                            type: 'line',
+                            smooth: true,
+                            yAxisIndex: 1,
+                            data: tempArr
+                        }]
+                    };
+                    myChart.setOption(option);
+                } else {
+                    layer.msg(data.message);
+                }
+            });
         });
         /**
          * 选中星期的事件
@@ -322,6 +412,32 @@
             $dateTime.text(DateKit.getCnDay(date) + ' ' + DateKit.getTimeAM_PM(date));
         }
 
+        /**
+         * 搜索相关
+         */
+
+            // 监听文字输入
+        var $searchInput = $('#search-input');
+        $searchInput.on('input propertychange', function () {
+            var $searchTips = $('.search-tips');
+            if (!$searchTips.hasClass('active')) {
+                var width = $('.search-box').width();
+                $searchTips.css('min-width', width).addClass('active')
+            }
+            $.post('/public/city/search', {q: $(this).val()}, function (data) {
+                $('.search-tips ul').empty();
+                if (data.code === 200) {
+                    $.each(data.data, function (index, obj) {
+                        $('.search-tips ul').append('<li data-id="' + obj.id + '">' + obj.province + ', ' + obj.city + ', ' + obj.county + '</li>');
+                    });
+                }
+            });
+        });
+        $(document).on('click', '.search-tips li', function () {
+            var $this = $(this);
+            $searchInput.val($this.text());
+            $('#city-id').val($this.data('id'));
+        });
     });
 </script>
 </body>
