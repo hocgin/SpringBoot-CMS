@@ -40,7 +40,11 @@
 .align-right {
     text-align: right;
 }
-
+/* TOP-Menus */
+.g-main-color,
+.g-main-color a {
+    color: #878FD6;
+}
 /* -- */
 .g-color {
     color: rgba(0, 0, 0, 0.58) !important;

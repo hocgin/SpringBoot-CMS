@@ -31,7 +31,7 @@
                         <div class="search-wrapper pull-right">
                             <div class="search-box">
                                 <div class="search-widget">
-                                    <input id="search-input" type="text" placeholder="城市搜索" th:value="${city}">
+                                    <input id="search-input" type="text" placeholder="城市搜索" autocomplete="off" th:value="${city}">
                                     <input id="city-id" name="city" type="hidden" th:value="${cityId}">
                                     <div class="search-btn">
                                     <span class="icon" onclick="submit()">
@@ -48,7 +48,7 @@
                             </div>
                         </div>
                     </form>
-                    <div class="h g-color location">中国, 福建, 厦门, 361024</div>
+                    <div class="h g-color location" th:text="${city}"></div>
                     <div class="g-color date-time">星期一 7:00 AM</div>
                     <div>
                         <span class="g-color sh description">小雨</span>
@@ -186,7 +186,9 @@
             }, function (data) {
                 if (data.code === 200) {
                     var data = data.data;
-                    $location.text('中国, ' + data.name);
+                    if (!$location.text()) {
+                        $location.text('中国, ' + data.name);
+                    }
                     setWeatherInfo(
                         data.main.temp,
                         data.wind.speed,
@@ -433,10 +435,14 @@
                 }
             });
         });
-        $(document).on('click', '.search-tips li', function () {
+        $(document).on('mouseover', '.search-tips li', function () {
             var $this = $(this);
             $searchInput.val($this.text());
             $('#city-id').val($this.data('id'));
+        }).on('click', '.search-tips li', function () {
+            submit();
+        }).on('mouseleave', '.search-tips', function () {
+            $('.search-tips ul').empty();
         });
     });
 </script>
