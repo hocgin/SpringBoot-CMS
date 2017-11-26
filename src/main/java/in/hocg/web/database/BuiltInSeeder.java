@@ -72,11 +72,11 @@ public class BuiltInSeeder {
          * 系统安全
          *   - 系统日志
          */
+        // 系统管理
         SysMenu menu1 = DocumentFactory.menu("系统管理", "0001", "sys", "");
         menu1.setLocation(1);
         menu1 = sysMenuRepository.insert(menu1);
-        
-        // - 系统变量管理
+        // 系统管理 - 系统变量管理
         SysMenu menu11 = DocumentFactory.menu("系统变量", "00010001",
                 "sys.variable",
                 "/admin/system/variable/index.html");
@@ -88,8 +88,7 @@ public class BuiltInSeeder {
         menu112 = sysMenuRepository.insert(menu112);
         SysMenu menu113 = DocumentFactory.data("修改系统变量", "000100010003", "sys.variable.edit", menu11.getId());
         menu113 = sysMenuRepository.insert(menu113);
-        
-        // - 单位管理
+        // 系统管理 - 单位管理
         SysMenu menu12 = DocumentFactory.menu("单位管理", "00010002",
                 "sys.department", "/admin/system/department/index.html");
         menu12.setParent(menu1.getId());
@@ -100,8 +99,7 @@ public class BuiltInSeeder {
         menu122 = sysMenuRepository.insert(menu122);
         SysMenu menu123 = DocumentFactory.data("修改单位", "000100020003", "sys.department.edit", menu12.getId());
         menu123 = sysMenuRepository.insert(menu123);
-        
-        // - 菜单管理
+        // 系统管理 - 菜单管理
         SysMenu menu13 = DocumentFactory.menu("菜单管理", "00010003",
                 "sys.menu", "/admin/system/menu/index.html");
         menu13.setParent(menu1.getId());
@@ -112,8 +110,7 @@ public class BuiltInSeeder {
         menu132 = sysMenuRepository.insert(menu132);
         SysMenu menu133 = DocumentFactory.data("修改菜单", "000100030003", "sys.menu.edit", menu13.getId());
         menu133 = sysMenuRepository.insert(menu133);
-        
-        // - 角色管理
+        // 系统管理 - 角色管理
         SysMenu menu14 = DocumentFactory.menu("角色管理", "00010004",
                 "sys.role", "/admin/system/role/index.html");
         menu14.setParent(menu1.getId());
@@ -124,8 +121,7 @@ public class BuiltInSeeder {
         menu142 = sysMenuRepository.insert(menu142);
         SysMenu menu143 = DocumentFactory.data("修改角色", "000100040003", "sys.role.edit", menu14.getId());
         menu143 = sysMenuRepository.insert(menu143);
-        
-        // - 用户管理
+        // 系统管理 - 用户管理
         SysMenu menu15 = DocumentFactory.menu("用户管理", "00010005",
                 "sys.user", "/admin/system/user/index.html");
         menu15.setParent(menu1.getId());
@@ -136,7 +132,7 @@ public class BuiltInSeeder {
         menu152 = sysMenuRepository.insert(menu152);
         SysMenu menu153 = DocumentFactory.data("修改用户", "000100050003", "sys.user.edit", menu15.getId());
         menu153 = sysMenuRepository.insert(menu153);
-        
+        // 系统管理 - 文件管理
         SysMenu menu16 = DocumentFactory.menu("文件管理", "00010006", "sys.file", "/admin/system/file/index.html");
         menu16.setParent(menu1.getId());
         menu16 = sysMenuRepository.insert(menu16);
@@ -146,8 +142,20 @@ public class BuiltInSeeder {
         menu162 = sysMenuRepository.insert(menu162);
         SysMenu menu163 = DocumentFactory.data("修改文件", "000100060003", "sys.file.edit", menu16.getId());
         menu163 = sysMenuRepository.insert(menu163);
-        
-        
+        // 系统管理 - 会员管理
+        SysMenu menu17 = DocumentFactory.menu("会员管理", "00010007",
+                "sys.member", "/admin/system/member/index.html");
+        menu17.setParent(menu1.getId());
+        menu17 = sysMenuRepository.insert(menu17);
+        SysMenu menu171 = DocumentFactory.data("添加会员", "000100070001", "sys.member.add", menu17.getId());
+        menu171 = sysMenuRepository.insert(menu171);
+        SysMenu menu172 = DocumentFactory.data("删除会员", "000100070002", "sys.member.delete", menu17.getId());
+        menu172 = sysMenuRepository.insert(menu172);
+        SysMenu menu173 = DocumentFactory.data("修改会员", "000100070003", "sys.member.edit", menu17.getId());
+        menu173 = sysMenuRepository.insert(menu173);
+    
+    
+    
         // 系统安全
         String path = "0002";
         SysMenu menu2 = DocumentFactory.menu("系统安全", path, "safety", "");
@@ -197,6 +205,7 @@ public class BuiltInSeeder {
                 menu14, menu141, menu142, menu143,
                 menu15, menu151, menu152, menu153,
                 menu16, menu161, menu162, menu163,
+                menu17, menu171, menu172, menu173,
                 
                 menu2,
                 menu26, menu261,
@@ -210,7 +219,7 @@ public class BuiltInSeeder {
         
         SysMenu[] role_admin_old = new SysMenu[]{
                 menu1,
-                menu11, menu12, menu13, menu14, menu15, menu16,
+                menu11, menu12, menu13, menu14, menu15, menu16, menu17,
                 menu2,
                 menu26,
                 menu3,

@@ -16,6 +16,7 @@ public class FileKit {
     
     /**
      * 获取文件MD5
+     *
      * @param file
      * @return
      * @throws IOException
@@ -45,5 +46,13 @@ public class FileKit {
                 e.printStackTrace();
             }
         }
+    }
+    
+    public static String read(File file) throws IOException {
+        byte[] buffer = new byte[(int) file.length()];
+        FileInputStream is = new FileInputStream(file);
+        is.read(buffer, 0, buffer.length);
+        is.close();
+        return new String(buffer);
     }
 }
