@@ -1,5 +1,9 @@
 package in.hocg.web.modules.security.config;
 
+import in.hocg.web.modules.security.details.member.IMemberDetailsService;
+import in.hocg.web.modules.security.handler.IAjaxWebSuccessHandler;
+import in.hocg.web.modules.security.handler.IWebUnauthorizedEntryPoint;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
@@ -11,26 +15,28 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 /**
  * Created by hocgin on 2017/11/23.
  * email: hocgin@gmail.com
+ * 会员登陆配置
  */
 @Configuration
 @EnableWebSecurity
 @Order(4)
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+    @Autowired
+    private IMemberDetailsService memberDetailsService;
     
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
-                .antMatcher("/**")
-                .csrf().and()
+        http.antMatcher("/**")
+                .exceptionHandling()
+                .authenticationEntryPoint(new IWebUnauthorizedEntryPoint()).and()
+                .csrf().disable() //TODO 临时关闭, 调试
                 .authorizeRequests()
                 
                 // 允许对于网站静态资源的无授权访问
                 .antMatchers(
                         HttpMethod.GET,
                         // 静态资源
-//                        "/*.html",
-//                        "/**/*.html",
                         "/favicon.ico",
                         "/**/*.css",
                         "/**/*.js",
@@ -41,24 +47,32 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/**/*.woff2"
                 ).permitAll()
                 
-                // 允许匿名访问(后台登陆)
-                .antMatchers("/",
+                // 允许匿名访问(前台登陆)
+                .antMatchers(
+                        "/login-modal.html",
+                        "/register-modal.html",
+                        "/",
                         "/index.html",
                         "/login",
                         "/login.html"
                 ).permitAll()
                 
                 // 除以上连接, 其余都要认证
-                .anyRequest().authenticated().and();
-                
-//                // 后台登陆页面
-//                .formLogin()
-//                // 拦截表单登陆的action
-//                .loginProcessingUrl("/admin/login")
+                .anyRequest().authenticated().and()
+                .userDetailsService(memberDetailsService)
+
 //                // 登陆页面
-//                .loginPage("/admin/login.html")
-//                .usernameParameter("username")
-//                .passwordParameter("password")
+                .formLogin()
+//                // 拦截表单登陆的action
+                .loginProcessingUrl("/login")
+//                // 登陆页面
+                .loginPage("/login.html")
+                .usernameParameter("username")
+                .passwordParameter("password")
+                .successHandler(new IAjaxWebSuccessHandler()).and()
+                .logout()
+                .logoutUrl("/logout")
+                .permitAll();
 //                // false 为登陆后跳转至之前访问的界面
 //                .defaultSuccessUrl("/admin/dashboard/index.html", false)
 //                // 登陆失败跳转

@@ -1,4 +1,4 @@
-package in.hocg.web.modules.security;
+package in.hocg.web.modules.security.details.user;
 
 import in.hocg.web.lang.utils.RequestKit;
 import in.hocg.web.modules.system.domain.User;
@@ -18,7 +18,7 @@ import java.util.Date;
  * email: hocgin@gmail.com
  * 获取 后台用户 详细信息
  */
-@Service
+@Service("IUserDetailsService")
 public class IUserDetailsService implements UserDetailsService{
     private UserRepository userRepository;
     private HttpServletRequest request;

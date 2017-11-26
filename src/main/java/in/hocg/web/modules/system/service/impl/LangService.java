@@ -2,7 +2,7 @@ package in.hocg.web.modules.system.service.impl;
 
 import in.hocg.web.modules.system.body.LeftMenu;
 import in.hocg.web.lang.utils.SecurityKit;
-import in.hocg.web.modules.security.IUser;
+import in.hocg.web.modules.security.details.user.IUser;
 import in.hocg.web.modules.system.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

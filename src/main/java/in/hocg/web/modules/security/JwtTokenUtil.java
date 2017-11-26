@@ -1,5 +1,6 @@
 package in.hocg.web.modules.security;
 
+import in.hocg.web.modules.security.details.user.IUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

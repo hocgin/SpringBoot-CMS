@@ -1,5 +1,6 @@
 package in.hocg.web.modules.security;
 
+import in.hocg.web.modules.security.details.user.IUserDetailsService;
 import in.hocg.web.modules.security.handler.IAuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -7,7 +8,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -25,7 +25,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private IAuthenticationEntryPoint unauthorizedHandler;
     @Autowired
-    private UserDetailsService userDetailsService;
+    private IUserDetailsService userDetailsService;
     
     /**
      * 用于配置需要认证 or 不需要认证的URL

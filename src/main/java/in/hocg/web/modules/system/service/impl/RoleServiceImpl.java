@@ -106,6 +106,11 @@ public class RoleServiceImpl implements RoleService {
     }
     
     @Override
+    public Role findByRole(String role) {
+        return roleRepository.findTopByRole(role);
+    }
+    
+    @Override
     public void updateDescription(RoleFilter filter,
                                   CheckError checkError) {
         Role role = roleRepository.findOne(filter.getId());

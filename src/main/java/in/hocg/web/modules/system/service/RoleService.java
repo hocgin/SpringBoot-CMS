@@ -22,6 +22,8 @@ public interface RoleService {
     
     Role find(String id);
     
+    Role findByRole(String role);
+    
     void updateDescription(RoleFilter filter, CheckError checkError);
     
     void updatePermission(RoleFilter filter, CheckError checkError);

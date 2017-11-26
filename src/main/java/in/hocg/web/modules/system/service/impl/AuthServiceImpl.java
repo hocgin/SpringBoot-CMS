@@ -1,12 +1,13 @@
 package in.hocg.web.modules.system.service.impl;
 
 import in.hocg.web.lang.CheckError;
+import in.hocg.web.modules.security.JwtTokenUtil;
+import in.hocg.web.modules.security.details.user.IUser;
+import in.hocg.web.modules.security.details.user.IUserDetailsService;
 import in.hocg.web.modules.system.domain.Role;
 import in.hocg.web.modules.system.domain.User;
 import in.hocg.web.modules.system.domain.repository.RoleRepository;
 import in.hocg.web.modules.system.domain.repository.UserRepository;
-import in.hocg.web.modules.security.IUser;
-import in.hocg.web.modules.security.JwtTokenUtil;
 import in.hocg.web.modules.system.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,7 +15,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -30,14 +30,14 @@ import java.util.Date;
 public class AuthServiceImpl implements AuthService {
     private UserRepository userRepository;
     private RoleRepository roleRepository;
-    private UserDetailsService userDetailsService;
+    private IUserDetailsService userDetailsService;
     private AuthenticationManager authenticationManager;
     private JwtTokenUtil tokenUtil;
     
     @Autowired
     public AuthServiceImpl(UserRepository userRepository,
                            AuthenticationManager authenticationManager,
-                           UserDetailsService userDetailsService,
+                           IUserDetailsService userDetailsService,
                            RoleRepository roleRepository,
                            JwtTokenUtil tokenUtil) {
         this.userRepository = userRepository;

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="_csrf" th:content="xx"/>
+    <!-- default header name is X-CSRF-TOKEN -->
+    <meta name="_csrf_header" th:content="xx"/>
+    <title>Title</title>
+    <css th:replace="/web/fragments/all-css :: all-css"></css>
+</head>
+<body>
+<header th:include="/web/fragments/top-menu::top-menu"></header>
+<form method="post" action="/login">
+    用户名:<input type="text" name="username"><br>
+    密码:<input type="text" name="password"><br>
+    <button type="submit">登陆</button>
+</form>
+<div th:replace="/web/fragments/main-footer::main-footer"></div>
+<!-- 引入 -->
+<js th:replace="/web/fragments/footer-js::footer-js"></js>
+<script></script>
+</body>
+</html>

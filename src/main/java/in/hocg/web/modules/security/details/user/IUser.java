@@ -1,15 +1,14 @@
-package in.hocg.web.modules.security;
+package in.hocg.web.modules.security.details.user;
 
-import in.hocg.web.modules.system.domain.Custom;
+import in.hocg.web.modules.security.IGrantedAuthority;
 import in.hocg.web.modules.system.domain.Role;
+import in.hocg.web.modules.system.domain.User;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -17,35 +16,31 @@ import java.util.stream.Collectors;
  * email: hocgin@gmail.com
  * 用户细节信息
  */
-public class ICustom implements UserDetails {
+@Data
+public class IUser implements UserDetails {
     private final String username;
     private final String password;
     private final Collection<? extends GrantedAuthority> authorities;
-    private final Date lastPasswordResetAt;
+    private final Date lastPasswordResetDate;
+    private String id;
     
-    private ICustom(String username,
-                    String password,
-                    Collection<? extends GrantedAuthority> authorities,
-                    Date lastPasswordResetAt) {
+    private IUser(
+            String id,
+            String username,
+            String password,
+            Collection<? extends GrantedAuthority> authorities,
+            
+            Date lastPasswordResetDate) {
+        this.id = id;
         this.username = username;
         this.password = password;
         this.authorities = authorities;
-        this.lastPasswordResetAt = lastPasswordResetAt;
+        this.lastPasswordResetDate = lastPasswordResetDate;
     }
     
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
-    }
-    
-    @Override
-    public String getPassword() {
-        return password;
-    }
-    
-    @Override
-    public String getUsername() {
-        return username;
     }
     
     @Override
@@ -68,15 +63,16 @@ public class ICustom implements UserDetails {
         return true;
     }
     
-    public Date getLastPasswordResetAt() {
-        return lastPasswordResetAt;
+    public Date getLastPasswordResetDate() {
+        return lastPasswordResetDate;
     }
     
-    public static ICustom toICustom(Custom custom) {
-        return new ICustom(custom.getEmail(),
-                custom.getPassword(),
-                getGrantedAuthority(custom.getRole()),
-                custom.getLastPasswordResetAt());
+    public static IUser toIUser(User user) {
+        return new IUser(user.getId(),
+                user.getUsername(),
+                user.getPassword(),
+                getGrantedAuthority(user.getRole()),
+                user.getLastPasswordResetAt());
     }
     
     private static List<? extends GrantedAuthority> getGrantedAuthority(Collection<Role> roles) {

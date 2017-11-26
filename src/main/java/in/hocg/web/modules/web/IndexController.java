@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -36,5 +37,20 @@ public class IndexController extends BaseController {
             }
         }
         return String.format(BASE_TEMPLATES_PATH, "index");
+    }
+    
+    @GetMapping("/login.html")
+    public String login() {
+        return String.format(BASE_TEMPLATES_PATH, "login");
+    }
+    
+    @GetMapping("/login-modal.html")
+    public String vLoginModal() {
+        return String.format(BASE_TEMPLATES_PATH, "login-modal");
+    }
+    
+    @GetMapping("/register-modal.html")
+    public String vRegisterModal() {
+        return String.format(BASE_TEMPLATES_PATH, "register-modal");
     }
 }

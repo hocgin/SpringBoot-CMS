@@ -1,0 +1,31 @@
+<div class="modal-header">
+    <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+        <span aria-hidden="true">×</span></button>
+    <h4 class="modal-title">查询条件</h4>
+</div>
+<div class="modal-body">
+    <div class="form-group">
+        <label for="regexNickname">用户名/昵称</label>
+        <input class="form-control" id="regexNickname"
+               placeholder="昵称"
+               required
+               type="text">
+    </div>
+    <div class="form-group">
+        <label for="regexEmail">邮箱</label>
+        <input class="form-control" id="regexEmail"
+               placeholder="邮箱"
+               required
+               type="text">
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-default pull-left" data-dismiss="modal" type="button">取消</button>
+    <button class="btn btn-primary" onclick="query()" type="submit">查询</button>
+</div>
+<script>
+    function query() {
+        table.reloadAll();
+        $('#js-query-modal').modal('hide');
+    }
+</script>

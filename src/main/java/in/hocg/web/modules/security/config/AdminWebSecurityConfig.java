@@ -1,6 +1,6 @@
 package in.hocg.web.modules.security.config;
 
-import in.hocg.web.modules.security.IUserDetailsService;
+import in.hocg.web.modules.security.details.member.IMemberDetailsService;
 import in.hocg.web.modules.security.handler.IAccessDeniedHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -25,7 +25,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 public class AdminWebSecurityConfig extends WebSecurityConfigurerAdapter {
     
     @Autowired
-    private IUserDetailsService userDetailsService;
+    private IMemberDetailsService memberDetailsService;
     @Autowired
     private IAccessDeniedHandler accessDeniedHandler;
     
@@ -42,9 +42,6 @@ public class AdminWebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(
                         HttpMethod.GET,
                         "/",
-                        // 静态资源
-//                        "/*.html",
-//                        "/**/*.html",
                         "/favicon.ico",
                         "/**/*.css",
                         "/**/*.js",
@@ -79,7 +76,7 @@ public class AdminWebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // 自动登陆
                 .rememberMe()
                 .rememberMeParameter("remember-me")
-                .userDetailsService(userDetailsService)
+                .userDetailsService(memberDetailsService)
                 .and()
             
                 // 后台退出登陆

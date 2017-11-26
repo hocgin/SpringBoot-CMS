@@ -1,6 +1,6 @@
 package in.hocg.web.lang.utils;
 
-import in.hocg.web.modules.security.IUser;
+import in.hocg.web.modules.security.details.user.IUser;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.security.Principal;
