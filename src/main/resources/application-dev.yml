@@ -54,7 +54,8 @@ spring:
   mail:
     host: smtp.163.com
     username: 13600747016@163.com
-    password: 123456a
+    # 此处 password 为授权码
+    password: 123456qA
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true

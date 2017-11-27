@@ -27,4 +27,6 @@ public class Beans {
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
+    
+   
 }

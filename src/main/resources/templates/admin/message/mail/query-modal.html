@@ -1,0 +1,24 @@
+<div class="modal-header">
+    <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+        <span aria-hidden="true">×</span></button>
+    <h4 class="modal-title">查询条件</h4>
+</div>
+<div class="modal-body">
+    <div class="form-group">
+        <label for="regexSearch">关键词搜索</label>
+        <input class="form-control" id="regexSearch"
+               placeholder="模版名称/主题名/描述/模版文件名"
+               required
+               type="text">
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-default pull-left" data-dismiss="modal" type="button">取消</button>
+    <button class="btn btn-primary" onclick="query()" type="submit">查询</button>
+</div>
+<script>
+    function query() {
+        table.reloadAll();
+        $('#js-query-modal').modal('hide');
+    }
+</script>

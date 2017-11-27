@@ -1,16 +1,16 @@
-package in.hocg.web.modules.system.controller.system;
+package in.hocg.web.modules.system.controller.message;
 
+import in.hocg.web.global.component.MailService;
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.modules.base.BaseController;
 import in.hocg.web.modules.base.body.Results;
 import in.hocg.web.modules.base.filter.group.Insert;
 import in.hocg.web.modules.base.filter.group.Update;
 import in.hocg.web.modules.base.filter.lang.IdsFilter;
-import in.hocg.web.modules.system.domain.Member;
-import in.hocg.web.modules.system.filter.MemberDataTablesInputFilter;
-import in.hocg.web.modules.system.filter.MemberFilter;
-import in.hocg.web.modules.system.service.MemberService;
-import org.springframework.beans.factory.annotation.Autowired;
+import in.hocg.web.modules.system.domain.MailTemplate;
+import in.hocg.web.modules.system.filter.MailTemplateDataTablesInputFilter;
+import in.hocg.web.modules.system.filter.MailTemplateFilter;
+import in.hocg.web.modules.system.service.MailTemplateService;
 import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -19,25 +19,35 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 /**
  * Created by hocgin on 2017/11/26.
  * email: hocgin@gmail.com
  */
 @Controller
-@RequestMapping("/admin/system/member")
-public class MemberController extends BaseController {
-    public final String BASE_TEMPLATES_PATH = "/admin/system/member/%s";
+@RequestMapping("/admin/message/mail")
+public class MailTemplateController extends BaseController {
+    public final String BASE_TEMPLATES_PATH = "/admin/message/mail/%s";
     
-    private MemberService memberService;
-    @Autowired
-    public MemberController(MemberService memberSercice) {
-        this.memberService = memberSercice;
+    private MailTemplateService mailTemplateService;
+    private MailService mailService;
+    
+    public MailTemplateController(MailTemplateService mailTemplateService,
+                                  MailService mailService) {
+        this.mailTemplateService = mailTemplateService;
+        this.mailService = mailService;
     }
-    
     
     @GetMapping({"/index.html", "/"})
     public String vIndex(Model model) {
         return String.format(BASE_TEMPLATES_PATH, "index");
+    }
+    
+    
+    @GetMapping("/add-view.html")
+    public String vAdd(Model model) {
+        return String.format(BASE_TEMPLATES_PATH, "add-view");
     }
     
     @GetMapping("/query-modal.html")
@@ -45,25 +55,18 @@ public class MemberController extends BaseController {
         return String.format(BASE_TEMPLATES_PATH, "query-modal");
     }
     
-    @PostMapping("/data")
-    @ResponseBody
-    public DataTablesOutput<Member> data(@RequestBody MemberDataTablesInputFilter input) {
-        return memberService.data(input);
-    }
-    
-    @GetMapping("/add-view.html")
-    public String vAdd(Model model) {
-        return String.format(BASE_TEMPLATES_PATH, "add-view");
-    }
-    
     @GetMapping("/update-view/{id}")
     public String vUpdate(@PathVariable("id") String id, Model model) {
-        Member member = memberService.find(id);
-        model.addAttribute("member", member);
+        MailTemplate mailTemplate = mailTemplateService.find(id);
+        model.addAttribute("mailTemplate", mailTemplate);
         return String.format(BASE_TEMPLATES_PATH, "update-view");
     }
     
-    
+    @PostMapping("/data")
+    @ResponseBody
+    public DataTablesOutput<MailTemplate> data(@RequestBody MailTemplateDataTablesInputFilter filter) {
+        return mailTemplateService.data(filter);
+    }
     /**
      * 删除
      *
@@ -72,64 +75,48 @@ public class MemberController extends BaseController {
      */
     @RequestMapping("/delete")
     @ResponseBody
-    @PreAuthorize("hasPermission(null, 'sys.member.delete')")
+    @PreAuthorize("hasPermission(null, 'message.mail.delete')")
     public Results delete(@Validated IdsFilter filter,
                           BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return Results.check(bindingResult);
         }
         CheckError checkError = CheckError.get();
-        memberService.delete(checkError, filter.getId());
+        mailTemplateService.delete(checkError, filter.getId());
         return Results.check(checkError, "删除成功");
     }
     
-    /**
-     * 新建
-     *
-     * @param filter
-     * @return
-     */
     @RequestMapping("/insert")
     @ResponseBody
-    @PreAuthorize("hasPermission(null, 'sys.member.add')")
-    public Results insert(@Validated({Insert.class}) MemberFilter filter,
+    @PreAuthorize("hasPermission(null, 'message.mail.add')")
+    public Results insert(@Validated({Insert.class}) MailTemplateFilter filter,
                           BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return Results.check(bindingResult);
         }
         CheckError checkError = CheckError.get();
-        memberService.insert(filter, checkError);
+        mailTemplateService.insert(filter, checkError);
         return Results.check(checkError, "增加成功");
     }
     
-    @PostMapping("/available/{id}")
-    @ResponseBody
-    @PreAuthorize("hasPermission(null, 'sys.member.edit')")
-    public Results available(@PathVariable("id") String id, boolean available) {
-        memberService.updateAvailable(id, available);
-        return Results.success()
-                .setMessage(String.format("%s成功", available ? "开启" : "禁用"));
-    }
-    
-    
     @RequestMapping("/detail/{id}")
-    public String vDetail(@PathVariable("id") String id, Model model) {
-        Member member = memberService.find(id);
-        model.addAttribute("member", member);
+    public String vDetail(@PathVariable("id") String id, Model model) throws IOException {
+        MailTemplate mailTemplate = mailTemplateService.find(id);
+        model.addAttribute("mailTemplate", mailTemplate);
+        model.addAttribute("content", mailService.thymeleaf(mailTemplate.getTemplate().getPath(), mailTemplate.getParam()));
         return String.format(BASE_TEMPLATES_PATH, "detail-modal");
     }
     
     @RequestMapping("/update")
     @ResponseBody
-    @PreAuthorize("hasPermission(null, 'sys.member.edit')")
-    public Results update(@Validated({Update.class}) MemberFilter filter,
+    @PreAuthorize("hasPermission(null, 'message.mail.edit')")
+    public Results update(@Validated({Update.class}) MailTemplateFilter filter,
                           BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return Results.check(bindingResult);
         }
         CheckError checkError = CheckError.get();
-        memberService.update(filter, checkError);
-        return Results.check(checkError, "修改信息成功");
+        mailTemplateService.update(filter, checkError);
+        return Results.check(checkError, "修改成功");
     }
-    
 }

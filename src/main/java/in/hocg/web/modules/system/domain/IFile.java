@@ -7,6 +7,8 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * Created by hocgin on 2017/11/19.
@@ -47,5 +49,13 @@ public class IFile extends BaseDomain {
     
     public File getFile() {
         return new File(keepPath, keepName);
+    }
+    
+    public boolean exists() {
+        return getFile().exists();
+    }
+    
+    public Path getPath() {
+        return Paths.get(keepPath, keepName);
     }
 }

@@ -197,6 +197,22 @@ public class BuiltInSeeder {
         SysMenu menu413 = DocumentFactory.data("修改城市", "000400010003", "weather.city.edit", menu41.getId());
         menu413 = sysMenuRepository.insert(menu413);
         
+        // 消息系统
+        SysMenu menu5 = DocumentFactory.menu("消息系统", "0005", "message", "");
+        menu5.setLocation(4);
+        menu5 = sysMenuRepository.insert(menu5);
+        // - 城市管理
+        SysMenu menu51 = DocumentFactory.menu("邮件模版管理", "00050001",
+                "message.mail", "/admin/message/mail/index.html");
+        menu51.setParent(menu5.getId());
+        menu51 = sysMenuRepository.insert(menu51);
+        SysMenu menu511 = DocumentFactory.data("添加邮件模版", "000500010001", "message.mail.add", menu51.getId());
+        menu511 = sysMenuRepository.insert(menu511);
+        SysMenu menu512 = DocumentFactory.data("删除邮件模版", "000500010002", "message.mail.delete", menu51.getId());
+        menu512 = sysMenuRepository.insert(menu512);
+        SysMenu menu513 = DocumentFactory.data("修改邮件模版", "000500010003", "message.mail.edit", menu51.getId());
+        menu513 = sysMenuRepository.insert(menu513);
+        
         SysMenu[] role_admin = new SysMenu[]{
                 menu1,
                 menu11, menu111, menu112, menu113,
@@ -212,9 +228,12 @@ public class BuiltInSeeder {
                 
                 menu3,
                 menu31,
-                
+        
                 menu4,
-                menu41, menu411, menu412, menu413
+                menu41, menu411, menu412, menu413,
+        
+                menu5,
+                menu51, menu511, menu512, menu513
         };
         
         SysMenu[] role_admin_old = new SysMenu[]{
@@ -225,7 +244,9 @@ public class BuiltInSeeder {
                 menu3,
                 menu31,
                 menu4,
-                menu41
+                menu41,
+                menu5,
+                menu51
         };
         
         /**

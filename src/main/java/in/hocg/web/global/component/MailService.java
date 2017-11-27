@@ -1,7 +1,8 @@
 package in.hocg.web.global.component;
 
 import com.sun.istack.internal.NotNull;
-import com.sun.xml.internal.messaging.saaj.packaging.mime.MessagingException;
+import in.hocg.web.global.StringTemplateResolver;
+import in.hocg.web.modules.system.domain.MailTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +10,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.IContext;
 import org.thymeleaf.context.WebContext;
+import org.thymeleaf.spring4.SpringTemplateEngine;
+import org.thymeleaf.templateresolver.TemplateResolver;
 
+import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +22,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 
@@ -35,30 +41,41 @@ public class MailService {
     private String personal = "hocg.in 官方邮件";
     
     private JavaMailSender mailSender;
-    private TemplateEngine templateEngine;
-    HttpServletRequest request;
-    ServletContext servletContext;
-    HttpServletResponse response;
+    private HttpServletRequest request;
+    private ServletContext servletContext;
+    private HttpServletResponse response;
+    private SpringTemplateEngine springTemplateEngine;
     
     @Autowired
     public MailService(JavaMailSender mailSender,
-                       TemplateEngine templateEngine,
                        HttpServletRequest request,
                        ServletContext servletContext,
                        HttpServletResponse response) {
         this.mailSender = mailSender;
-        this.templateEngine = templateEngine;
         this.servletContext = servletContext;
         this.request = request;
         this.response = response;
+        
+        
+        TemplateResolver resolver = new TemplateResolver();
+        resolver.setResourceResolver(new StringTemplateResolver());
+        resolver.setPrefix("_mail/"); // src/main/resources/_mail
+        resolver.setSuffix(".html");
+        resolver.setTemplateMode("LEGACYHTML5");
+        resolver.setCharacterEncoding("UTF-8");
+        resolver.setOrder(1);
+        
+        springTemplateEngine = new SpringTemplateEngine();
+        springTemplateEngine.setTemplateResolver(resolver);
     }
     
     /**
      * 邮件发送
-     * @param to 收件人
-     * @param subject 标题
-     * @param text 内容
-     * @param inline 图片
+     *
+     * @param to         收件人
+     * @param subject    标题
+     * @param text       内容
+     * @param inline     图片
      * @param attachment 附件
      * @throws javax.mail.MessagingException
      * @throws UnsupportedEncodingException
@@ -66,7 +83,7 @@ public class MailService {
     public void send(@NotNull String to, @NotNull String subject, @NotNull String text,
                      Map<String, File> inline,
                      Map<String, File> attachment) throws javax.mail.MessagingException, UnsupportedEncodingException {
-    
+        
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true);
         messageHelper.setTo(to);
@@ -100,28 +117,81 @@ public class MailService {
     }
     
     /**
-     * 使用 Thymeleaf 解析后进行发送
-     * @param to 收件人
-     * @param subject 标题
+     * 使用 src/main/resources/_mail/ 内置模版解析后发送
+     *
+     * @param to           收件人
+     * @param subject      标题
      * @param templateName 模版
-     * @param params 自定义参数
-     * @param inline 图片
-     * @param attachment 附件
+     * @param params       自定义参数
+     * @param inline       图片
+     * @param attachment   附件
      * @throws UnsupportedEncodingException
      * @throws javax.mail.MessagingException
      */
-    public void sendUseTemplate(@NotNull String to, @NotNull String subject, @NotNull String templateName, Map<String, Object> params,
-                     Map<String, File> inline,
-                     Map<String, File> attachment) throws UnsupportedEncodingException, javax.mail.MessagingException {
+    public void sendUseTemplate(@NotNull String to, @NotNull String subject, @NotNull String templateName,
+                                Map<String, Object> params,
+                                Map<String, File> inline,
+                                Map<String, File> attachment) throws UnsupportedEncodingException, javax.mail.MessagingException {
         // 解析邮件
         WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
         // .. 还可以存储一些内置变量
-        Optional.ofNullable(params).ifPresent(param -> ctx.setVariables(params));
-        String text = templateEngine.process(templateName, ctx);
+        Optional.ofNullable(params).ifPresent(ctx::setVariables);
+        String text = springTemplateEngine.process(templateName, ctx);
         send(to, subject, text, inline, attachment);
     }
     
-    public void sendseTemplate(@NotNull String to, @NotNull String subject, @NotNull String templateName, Map<String, Object> params) throws UnsupportedEncodingException, javax.mail.MessagingException {
-        sendUseTemplate(to, subject, templateName, params, null, null);
+    /**
+     * 解析 Thymeleaf 文本进行发送
+     * @param to
+     * @param subject
+     * @param thymeleafText
+     * @param params
+     * @param inline
+     * @param attachment
+     * @throws UnsupportedEncodingException
+     * @throws MessagingException
+     */
+    public void sendUseThymeleafText(@NotNull String to, @NotNull String subject, @NotNull String thymeleafText,
+                                     Map<String, Object> params,
+                                     Map<String, File> inline,
+                                     Map<String, File> attachment) throws UnsupportedEncodingException, MessagingException {
+        send(to, subject, thymeleaf(thymeleafText, params), inline, attachment);
+    }
+    
+    /**
+     * 文件路径
+     * @param to
+     * @param subject
+     * @param thymeleafFilePath
+     * @param params
+     * @param inline
+     * @param attachment
+     * @throws IOException
+     * @throws MessagingException
+     */
+    public void sendUseThymeleafFile(@NotNull String to, @NotNull String subject, @NotNull Path thymeleafFilePath,
+                                     Map<String, Object> params,
+                                     Map<String, File> inline,
+                                     Map<String, File> attachment) throws IOException, MessagingException {
+        send(to, subject, thymeleaf(thymeleafFilePath, params), inline, attachment);
+    }
+    
+    /**
+     * 解析 thymeleaf 语法
+     */
+    public String thymeleafTemplate(String templateName, Map<String, Object> params) {
+        WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+        Optional.ofNullable(params).ifPresent(ctx::setVariables);
+        return springTemplateEngine.process(templateName, ctx);
+    }
+    
+    public String thymeleaf(String text, Map<String, Object> params) {
+        StringTemplateResolver.StringContext ctx = new StringTemplateResolver.StringContext(text);
+        Optional.ofNullable(params).ifPresent(map -> ctx.getVariables().putAll(params));
+        return springTemplateEngine.process("_all_", ctx);
+    }
+    
+    public String thymeleaf(Path path, Map<String, Object> params) throws IOException {
+        return thymeleaf(new String(Files.readAllBytes(path)), params);
     }
 }

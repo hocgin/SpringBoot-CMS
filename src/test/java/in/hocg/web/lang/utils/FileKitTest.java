@@ -51,4 +51,10 @@ public class FileKitTest {
     
         System.out.println(String.format("数量: %s", String.valueOf(count[0])));
     }
+    
+    @Test
+    public void testLines() {
+        List<String> lines = StringKit.lines("sdsa\ndfas\r\nsda");
+        System.out.println(lines);
+    }
 }
