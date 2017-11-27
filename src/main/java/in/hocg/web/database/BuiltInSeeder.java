@@ -292,7 +292,7 @@ public class BuiltInSeeder {
          */
         Variable variable = DocumentFactory.variable(Variable.FILE_UPLOAD_DIR, "/Users/hocgin/Desktop/FileUpload", "文件上传目录");
         variableRepository.insert(variable);
-        Variable variable2 = DocumentFactory.variable(Variable.HOST, "http://127.0.0.1", "域名");
+        Variable variable2 = DocumentFactory.variable(Variable.HOST, "http://127.0.0.1:8080", "域名");
         variableRepository.insert(variable2);
     }
 }

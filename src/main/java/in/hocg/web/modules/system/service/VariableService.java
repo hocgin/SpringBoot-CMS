@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
 /**
  * Created by hocgin on 2017/11/6.
  * email: hocgin@gmail.com
+ * todo 后期进行 redis 缓存
  */
 public interface VariableService {
     DataTablesOutput data(DataTablesInput input);

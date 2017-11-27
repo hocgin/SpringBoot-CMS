@@ -6,12 +6,14 @@ import in.hocg.web.lang.utils.RequestKit;
 import in.hocg.web.modules.system.domain.Member;
 import in.hocg.web.modules.system.domain.Role;
 import in.hocg.web.modules.system.domain.SysMenu;
+import in.hocg.web.modules.system.domain.Variable;
 import in.hocg.web.modules.system.domain.repository.MemberRepository;
 import in.hocg.web.modules.system.filter.MemberDataTablesInputFilter;
 import in.hocg.web.modules.system.filter.MemberFilter;
 import in.hocg.web.modules.system.service.DepartmentService;
 import in.hocg.web.modules.system.service.MemberService;
 import in.hocg.web.modules.system.service.RoleService;
+import in.hocg.web.modules.system.service.VariableService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
@@ -35,25 +37,22 @@ import java.util.stream.Collectors;
 @Service
 public class MemberServiceImpl implements MemberService {
     private MemberRepository memberRepository;
-    private DepartmentService departmentService;
-    private RoleService roleService;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     private HttpServletRequest request;
     private MailService mailService;
+    private VariableService variableService;
     
     @Autowired
     MemberServiceImpl(MemberRepository memberRepository,
-                      RoleService roleService,
+                      VariableService variableService,
                       MailService mailService,
                       BCryptPasswordEncoder bCryptPasswordEncoder,
-                      DepartmentService departmentService,
                       HttpServletRequest request) {
         this.memberRepository = memberRepository;
-        this.departmentService = departmentService;
-        this.roleService = roleService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.request = request;
         this.mailService = mailService;
+        this.variableService = variableService;
     }
     
     @Override
@@ -189,7 +188,7 @@ public class MemberServiceImpl implements MemberService {
         // 邮箱认证
         Map<String, Object> params = new HashMap<>();
         params.put("verifyUrl",
-                String.format("%s/public/verify-email.html?id=%s", "http://127.0.0.1:8080", member.getId()));
+                String.format("%s/public/verify-email.html?id=%s", variableService.getValue(Variable.HOST, "http://127.0.0.1:8080"), member.getId()));
         try {
             mailService.sendUseTemplate(member.getEmail(), String.format("邮箱验证 (%s)", member.getNickname()),"verify-email",
                     params, null, null);
