@@ -134,7 +134,7 @@ public class MemberServiceImpl implements MemberService {
         }
         
         member.setIsVerifyEmail(false);
-        member.setRole(Collections.singleton(Member.ROLE_USER));
+        member.setRole(Member.ROLE_USER);
         member.setSignUpIP(RequestKit.getClientIP(request));
         // 密码加密
         member.setPassword(bCryptPasswordEncoder.encode(filter.getPassword()));

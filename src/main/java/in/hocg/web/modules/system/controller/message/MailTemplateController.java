@@ -2,6 +2,7 @@ package in.hocg.web.modules.system.controller.message;
 
 import in.hocg.web.global.component.MailService;
 import in.hocg.web.lang.CheckError;
+import in.hocg.web.lang.iText;
 import in.hocg.web.modules.base.BaseController;
 import in.hocg.web.modules.base.body.Results;
 import in.hocg.web.modules.base.filter.group.Insert;
@@ -15,6 +16,7 @@ import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.ObjectUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -32,11 +34,14 @@ public class MailTemplateController extends BaseController {
     
     private MailTemplateService mailTemplateService;
     private MailService mailService;
+    private iText iText;
     
     public MailTemplateController(MailTemplateService mailTemplateService,
-                                  MailService mailService) {
+                                  MailService mailService,
+                                  iText iText) {
         this.mailTemplateService = mailTemplateService;
         this.mailService = mailService;
+        this.iText = iText;
     }
     
     @GetMapping({"/index.html", "/"})
@@ -99,12 +104,26 @@ public class MailTemplateController extends BaseController {
         return Results.check(checkError, "增加成功");
     }
     
-    @RequestMapping("/detail/{id}")
+    @GetMapping("/detail/{id}")
     public String vDetail(@PathVariable("id") String id, Model model) throws IOException {
         MailTemplate mailTemplate = mailTemplateService.find(id);
         model.addAttribute("mailTemplate", mailTemplate);
-        model.addAttribute("content", mailService.thymeleaf(mailTemplate.getTemplate().getPath(), mailTemplate.getParam()));
         return String.format(BASE_TEMPLATES_PATH, "detail-modal");
+    }
+    
+    @GetMapping("/browser/{id}")
+    public String vBrowser(@PathVariable("id") String id, Model model) throws IOException {
+        MailTemplate mailTemplate = mailTemplateService.find(id);
+        String content;
+        if (ObjectUtils.isEmpty(mailTemplate)
+                || !mailTemplate.getTemplate().exists()) {
+            content = iText.danger("模版文件异常");
+        } else {
+            content = mailService.thymeleaf(mailTemplate.getTemplate().getPath(), mailTemplate.getParam());
+        }
+        model.addAttribute("content", content);
+        model.addAttribute("mailTemplate", mailTemplate);
+        return String.format(BASE_TEMPLATES_PATH, "browser-modal");
     }
     
     @RequestMapping("/update")
@@ -119,4 +138,5 @@ public class MailTemplateController extends BaseController {
         mailTemplateService.update(filter, checkError);
         return Results.check(checkError, "修改成功");
     }
+    
 }

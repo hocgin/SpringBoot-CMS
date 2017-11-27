@@ -10,7 +10,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.SerializationUtils;
 
-import java.util.Collection;
 import java.util.Date;
 
 /**
@@ -46,7 +45,7 @@ public class Member extends BaseDomain {
     private Boolean isVerifyEmail = Boolean.FALSE; // Email是否校验
     private Date verifyEmailAt; // 校验截止日期, 为 null 或 过期 为失效
     
-    private Collection<String> role; // 角色
+    private String role; // 角色
     
     
     @Data
@@ -71,7 +70,7 @@ public class Member extends BaseDomain {
     
     
     
-    // 用户
+    // 普通用户
     @Transient
     public static final String ROLE_USER = "ROLE_USER";
 }

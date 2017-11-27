@@ -4,13 +4,11 @@ import in.hocg.web.modules.system.domain.Member;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.util.CollectionUtils;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by hocgin on 2017/10/25.
@@ -79,9 +77,7 @@ public class IMember implements UserDetails {
                 custom.getLastPasswordResetAt());
     }
     
-    private static List<? extends GrantedAuthority> getGrantedAuthority(Collection<String> roles) {
-        return CollectionUtils.isEmpty(roles) ? Collections.emptyList() : roles.stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+    private static List<? extends GrantedAuthority> getGrantedAuthority(String roles) {
+        return Collections.singletonList(new SimpleGrantedAuthority(roles));
     }
 }

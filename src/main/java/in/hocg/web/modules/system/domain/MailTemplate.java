@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import in.hocg.web.modules.base.BaseDomain;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Map;
 
@@ -13,6 +14,7 @@ import java.util.Map;
  * 邮件模版
  */
 @Data
+@Document(collection = "MailTemplate")
 public class MailTemplate extends BaseDomain {
     @Id
     private String id;
