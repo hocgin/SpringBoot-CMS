@@ -1,10 +1,9 @@
 package in.hocg.web;
 
 import in.hocg.web.modules.system.domain.Department;
-import in.hocg.web.modules.system.domain.Role;
 import in.hocg.web.modules.system.domain.repository.DepartmentRepository;
-import in.hocg.web.modules.system.domain.repository.SysMenuRepository;
 import in.hocg.web.modules.system.domain.repository.RoleRepository;
+import in.hocg.web.modules.system.domain.repository.SysMenuRepository;
 import in.hocg.web.modules.system.domain.repository.UserRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,11 +32,6 @@ public class InitDB {
     
     @Test
     public void testInitRole() {
-        Role role = new Role();
-        role.setRole(Role.ROLE_USER);
-        role.setAvailable(true);
-        role.setName("普通用户");
-        roleRepository.save(role);
     }
     
     @Test

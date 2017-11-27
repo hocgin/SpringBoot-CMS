@@ -39,10 +39,6 @@ public class Role extends BaseDomain {
     public Role() {
     }
     
-    
-    // 用户
-    @Transient
-    public static final String ROLE_USER = "ROLE_USER";
     // 管理员
     @Transient
     public static final String ROLE_ADMIN = "ROLE_ADMIN";

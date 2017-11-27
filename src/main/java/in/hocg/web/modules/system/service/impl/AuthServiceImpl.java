@@ -4,7 +4,6 @@ import in.hocg.web.lang.CheckError;
 import in.hocg.web.modules.security.JwtTokenUtil;
 import in.hocg.web.modules.security.details.user.IUser;
 import in.hocg.web.modules.security.details.user.IUserDetailsService;
-import in.hocg.web.modules.system.domain.Role;
 import in.hocg.web.modules.system.domain.User;
 import in.hocg.web.modules.system.domain.repository.RoleRepository;
 import in.hocg.web.modules.system.domain.repository.UserRepository;
@@ -19,7 +18,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.util.Collections;
 import java.util.Date;
 
 /**
@@ -58,7 +56,7 @@ public class AuthServiceImpl implements AuthService {
         user.setPassword(encoder.encode(rawPassword));
         user.setLastPasswordResetAt(new Timestamp(new Date().getTime()));
         // 分配用户权限
-        user.setRole(Collections.singleton(roleRepository.findTopByRole(Role.ROLE_USER)));
+//        todo user.setRole(Collections.singleton(roleRepository.findTopByRole(Role.ROLE_USER)));
         return userRepository.insert(user);
     }
     

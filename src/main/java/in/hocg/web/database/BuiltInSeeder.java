@@ -257,8 +257,6 @@ public class BuiltInSeeder {
          *   - 前台管理
          *      - 普通用户
          */
-        Role r1 = DocumentFactory.role(Role.ROLE_USER, "普通用户", d12);
-        r1 = roleRepository.insert(r1);
         Role r2 = DocumentFactory.role(Role.ROLE_ADMIN, "管理员", d11);
         r2.setPermissions(Arrays.asList(role_admin));
         r2 = roleRepository.insert(r2);
@@ -292,7 +290,9 @@ public class BuiltInSeeder {
         /**
          * 添加系统变量
          */
-        Variable variable = DocumentFactory.variable("FILE_UPLOAD_DIR", "/Users/hocgin/Desktop/FileUpload", "文件上传目录");
+        Variable variable = DocumentFactory.variable(Variable.FILE_UPLOAD_DIR, "/Users/hocgin/Desktop/FileUpload", "文件上传目录");
         variableRepository.insert(variable);
+        Variable variable2 = DocumentFactory.variable(Variable.HOST, "http://127.0.0.1", "域名");
+        variableRepository.insert(variable2);
     }
 }

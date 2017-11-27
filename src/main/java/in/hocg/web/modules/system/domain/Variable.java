@@ -24,4 +24,7 @@ public class Variable extends BaseDomain {
     
     @Transient
     public final static String FILE_UPLOAD_DIR = "FILE_UPLOAD_DIR";
+    
+    @Transient
+    public final static String HOST = "HOST";
 }

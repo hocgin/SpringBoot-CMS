@@ -132,12 +132,7 @@ public class MailService {
                                 Map<String, Object> params,
                                 Map<String, File> inline,
                                 Map<String, File> attachment) throws UnsupportedEncodingException, javax.mail.MessagingException {
-        // 解析邮件
-        WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-        // .. 还可以存储一些内置变量
-        Optional.ofNullable(params).ifPresent(ctx::setVariables);
-        String text = springTemplateEngine.process(templateName, ctx);
-        send(to, subject, text, inline, attachment);
+        send(to, subject, thymeleafTemplate(templateName, params), inline, attachment);
     }
     
     /**

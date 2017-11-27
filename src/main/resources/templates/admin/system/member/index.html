@@ -137,6 +137,21 @@
                                 layer.msg('取消' + (available ? '开启' : '关闭'));
                             });
                         }
+                    },
+                    sendVerifyEmail: function (id) {
+                        layer.confirm('确定重新发送校验邮件？', {
+                            btn: ['确定', '取消'] //按钮
+                        }, function () {
+                            $.post('/admin/system/member/sendVerifyEmail', {id: id.toString()}, function (data) {
+                                if (data.code === 200) {
+                                    layer.msg(data.message, {icon: 1});
+                                } else {
+                                    layer.msg(data.message, {icon: 2});
+                                }
+                            }, 'json');
+                        }, function () {
+                            layer.msg('取消发送');
+                        });
                     }
                 };
 
@@ -209,6 +224,7 @@
                                         '             <li class="divider"></li>' +
                                         '             <li><a href="/admin/system/member/" pjax-data>密码重置</a></li>' +
                                         '             <li><a href="/admin/system/member/update-view/' + row.id + '" pjax-data>修改信息</a></li>' +
+                                        '             <li><a href="javascript:;;" onclick="allRequest.sendVerifyEmail(\'' + row.id + '\')">校验邮箱</a></li>' +
                                         '             <li class="divider"></li>' +
                                         '             <li><a href="javascript:;;" onclick="allRequest.deleteById(\'' + row.id + '\')">删除</a></li>' +
                                         '             <li class="divider"></li>' +

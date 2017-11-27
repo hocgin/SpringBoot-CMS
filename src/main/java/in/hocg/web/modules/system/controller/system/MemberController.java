@@ -5,6 +5,7 @@ import in.hocg.web.modules.base.BaseController;
 import in.hocg.web.modules.base.body.Results;
 import in.hocg.web.modules.base.filter.group.Insert;
 import in.hocg.web.modules.base.filter.group.Update;
+import in.hocg.web.modules.base.filter.lang.IdFilter;
 import in.hocg.web.modules.base.filter.lang.IdsFilter;
 import in.hocg.web.modules.system.domain.Member;
 import in.hocg.web.modules.system.filter.MemberDataTablesInputFilter;
@@ -130,6 +131,19 @@ public class MemberController extends BaseController {
         CheckError checkError = CheckError.get();
         memberService.update(filter, checkError);
         return Results.check(checkError, "修改信息成功");
+    }
+    
+    @PostMapping("/sendVerifyEmail")
+    @ResponseBody
+    @PreAuthorize("hasPermission(null, 'sys.member.edit')")
+    public Results sendVerifyEmail(@Validated IdFilter filter,
+                                   BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return Results.check(bindingResult);
+        }
+        CheckError checkError = CheckError.get();
+        memberService.sendVerifyEmail(filter.getId(), checkError);
+        return Results.check(checkError, "正在发送");
     }
     
 }

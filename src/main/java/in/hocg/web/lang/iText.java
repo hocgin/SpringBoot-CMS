@@ -26,6 +26,7 @@ public class iText {
     
     /**
      * 表格文字居中
+     *
      * @param colspan
      * @param text
      * @return
@@ -36,10 +37,20 @@ public class iText {
     
     /**
      * 格式化时间
+     *
      * @param date
      * @return
      */
     public String format(Date date) {
         return ObjectUtils.isEmpty(date) ? danger("暂无") : new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
+    }
+    
+    /**
+     * 开启状态
+     * @param available
+     * @return
+     */
+    public String available(boolean available) {
+        return String.format("<i class=\"fa fa-circle %s\"></i>", available ? "text-success" : "text-danger");
     }
 }

@@ -16,6 +16,9 @@
                 <a href="javascript:;" class="list-group-item" title="User-Agent">
                     <span class="i-mr10 i-bold">User-Agent</span><span th:utext="${member.userAgent?:@iText.danger('暂无')}"></span>
                 </a>
+                <a href="javascript:;" class="list-group-item" title="User-Agent">
+                    <span class="i-mr10 i-bold">角色</span><span th:utext="${member.role?:@iText.danger('暂无')}"></span>
+                </a>
                 <a href="javascript:;" class="list-group-item" title="注册IP">
                     <span class="i-mr10 i-bold">注册 IP</span><span th:text="${member.signUpIP}"></span>
                 </a>
@@ -31,48 +34,22 @@
             </div>
         </div>
     </div>
-    <div class="row">
-        <th:block th:if="${not #lists.isEmpty(member.role)}">
-            <th:block th:each="role, i:${member.role}">
-                <div class="col-xs-12">
-                    <table class="table js-tree-table">
-                        <caption th:text="${role.name}">权限名称</caption>
-                        <thead>
-                        <tr>
-                            <th class="col-md-2">权限名称</th>
-                            <th class="col-md-2">URL</th>
-                            <th class="col-md-1">权限类型</th>
-                            <th class="col-md-2">权限标识</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <th:block th:each="permission, i:${role.permissions}">
-                            <tr th:attr="data-tt-id=${permission.id}, data-tt-parent-id=${permission.parent}, data-tt-branch=${permission.hasChildren}">
-                                <td th:text="${permission.name}"></td>
-                                <td th:text="${permission.url}"></td>
-                                <td th:text="${permission.type(permission.type)}"></td>
-                                <td th:text="${permission.permission}"></td>
-                            </tr>
-                        </th:block>
-                        </tbody>
-                    </table>
-                </div>
-            </th:block>
-        </th:block>
-        <th:block th:if="${#lists.isEmpty(member.role)}">
-            <div class="col-xs-12">
-                <p class="text-danger text-center">暂未分配角色</p>
+    <div class="row" th:if="${not #lists.isEmpty(member.token)}">
+        <div class="col-xs-12">
+            <div class="list-group">
+                <a href="javascript:;" class="list-group-item" title="Token">
+                    <span class="i-mr10 i-bold">Token</span><span th:text="${member.token?.token}"></span>
+                </a>
+                <a href="javascript:;" class="list-group-item" title="当月次数">
+                    <span class="i-mr10 i-bold">当月次数</span><span th:text="${member.token?.count}"></span>
+                </a>
+                <a href="javascript:;" class="list-group-item" title="开启状态">
+                    <span class="i-mr10 i-bold">开启状态</span><span th:utext="${@iText.available(member.token?.available)}"></span>
+                </a>
             </div>
-        </th:block>
+        </div>
     </div>
 </div>
 <!--<div class="modal-footer">-->
 <!--<button class="btn btn-default pull-left" data-dismiss="modal" type="button">知道了</button>-->
 <!--</div>-->
-<script>
-    $(function () {
-        $(".js-tree-table").treetable({
-            expandable: true
-        });
-    });
-</script>

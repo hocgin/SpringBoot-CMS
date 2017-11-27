@@ -11,6 +11,8 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by hocgin on 2017/11/9.
@@ -48,6 +50,12 @@ public class MemberFilter extends BaseFilter {
         member.setNickname(nickname);
         member.setAvailable(available);
         member.setEmail(email);
+        
+        // 邮箱校验有效期三天
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.add(Calendar.DAY_OF_MONTH, 3);
+        member.setVerifyEmailAt(calendar.getTime());
         member.createdAt();
         return member;
     }

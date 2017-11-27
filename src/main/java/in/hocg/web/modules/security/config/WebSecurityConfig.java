@@ -30,7 +30,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.antMatcher("/**")
                 .exceptionHandling()
                 .authenticationEntryPoint(new IWebUnauthorizedEntryPoint()).and()
-                .csrf().disable() //TODO 临时关闭, 调试
+                .csrf().and()
                 .authorizeRequests()
                 
                 // 允许对于网站静态资源的无授权访问

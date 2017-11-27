@@ -1,8 +1,10 @@
 package in.hocg.web.modules.pub;
 
+import in.hocg.web.lang.CheckError;
 import in.hocg.web.modules.base.BaseController;
 import in.hocg.web.modules.system.domain.IFile;
 import in.hocg.web.modules.system.service.IFileService;
+import in.hocg.web.modules.system.service.MemberService;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
@@ -11,10 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
@@ -32,10 +31,13 @@ import java.util.Optional;
 public class PublicController extends BaseController {
     
     private IFileService iFileService;
+    private MemberService memberService;
     
     @Autowired
-    public PublicController(IFileService iFileService) {
+    public PublicController(IFileService iFileService,
+                            MemberService memberService) {
         this.iFileService = iFileService;
+        this.memberService = memberService;
     }
     
     /**
@@ -130,6 +132,16 @@ public class PublicController extends BaseController {
         
         builder.toOutputStream(response.getOutputStream());
         return ResponseEntity.ok().build();
+    }
+    
+    
+    @GetMapping("/verify-email.html")
+    @ResponseBody
+    public Object vVerifyEmail(@RequestParam("id") String id) {
+        // 认证成功
+        CheckError checkError = CheckError.get();
+        memberService.verifyEmail(id, checkError);
+        return vRedirect("/");
     }
     
 }

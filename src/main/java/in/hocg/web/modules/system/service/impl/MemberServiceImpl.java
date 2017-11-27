@@ -1,5 +1,6 @@
 package in.hocg.web.modules.system.service.impl;
 
+import in.hocg.web.global.component.MailService;
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.lang.utils.RequestKit;
 import in.hocg.web.modules.system.domain.Member;
@@ -15,12 +16,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.encrypt.Encryptors;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -35,10 +39,12 @@ public class MemberServiceImpl implements MemberService {
     private RoleService roleService;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     private HttpServletRequest request;
+    private MailService mailService;
     
     @Autowired
     MemberServiceImpl(MemberRepository memberRepository,
                       RoleService roleService,
+                      MailService mailService,
                       BCryptPasswordEncoder bCryptPasswordEncoder,
                       DepartmentService departmentService,
                       HttpServletRequest request) {
@@ -47,6 +53,7 @@ public class MemberServiceImpl implements MemberService {
         this.roleService = roleService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.request = request;
+        this.mailService = mailService;
     }
     
     @Override
@@ -54,29 +61,46 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.findAll();
     }
     
+    
+    /**
+     * 1. 三天内点击有效
+     * @param id
+     * @param checkError
+     */
     @Override
-    public Collection<Role> findRoleByMember(String id) {
+    public void verifyEmail(String id, CheckError checkError) {
         Member member = memberRepository.findOne(id);
-        if (ObjectUtils.isEmpty(member)) {
-            return Collections.emptyList();
+        if (member.getIsVerifyEmail()) {
+            checkError.putError("已经校验过了");
+            return;
         }
-        return member.getRole();
+        if (ObjectUtils.isEmpty(member.getVerifyEmailAt())) {
+            checkError.putError("异常认证");
+            return;
+        }
+        if (new Date().before(member.getVerifyEmailAt())) {
+            member.setVerifyEmailAt(new Date());
+            member.setIsVerifyEmail(true);
+            member.setToken(Member.Token.gen(memberRepository.count())); // 分配 Token
+            memberRepository.save(member);
+        } else {
+            checkError.putError("认证邮件已过期");
+            return;
+        }
     }
     
     @Override
-    public Collection<SysMenu> findSysMenuByMember(String id) {
-        Collection<Role> roles = findRoleByMember(id);
-        // 一般角色处理
-        HashSet<SysMenu> menus = new HashSet<>();
-        roles.forEach(role -> {
-            Collection<SysMenu> menuCollection = role.getPermissions();
-            if (!CollectionUtils.isEmpty(menuCollection)) {
-                menus.addAll(menuCollection);
-            }
-        });
-        return menus.stream()
-                .sorted(Comparator.comparing(SysMenu::getLocation))
-                .collect(Collectors.toList());
+    public void sendVerifyEmail(String id, CheckError checkError) {
+        Member member = memberRepository.findOne(id);
+        if (ObjectUtils.isEmpty(member)) {
+            checkError.putError("会员异常");
+            return;
+        }
+        if (member.getIsVerifyEmail()) {
+            checkError.putError("已经校验过了");
+            return;
+        }
+        sendVerifyEmail(member);
     }
     
     
@@ -109,13 +133,15 @@ public class MemberServiceImpl implements MemberService {
             return;
         }
         
-        member.setToken(Member.Token.gen(memberRepository.count())); // 分配 Token
         member.setIsVerifyEmail(false);
-        member.setRole(Collections.singleton(roleService.findByRole(Role.ROLE_USER)));
+        member.setRole(Collections.singleton(Member.ROLE_USER));
         member.setSignUpIP(RequestKit.getClientIP(request));
         // 密码加密
         member.setPassword(bCryptPasswordEncoder.encode(filter.getPassword()));
-        memberRepository.save(member);
+        member = memberRepository.insert(member);
+        sendVerifyEmail(member);
+    
+    
     }
     
     @Override
@@ -152,5 +178,23 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void update(Member member) {
         memberRepository.save(member);
+    }
+    
+    /**
+     * 发送校验邮件
+     * - _todo 后期迁移出内置邮箱模版
+     * @param member
+     */
+    private void sendVerifyEmail(Member member) {
+        // 邮箱认证
+        Map<String, Object> params = new HashMap<>();
+        params.put("verifyUrl",
+                String.format("%s/public/verify-email.html?id=%s", "http://127.0.0.1:8080", member.getId()));
+        try {
+            mailService.sendUseTemplate(member.getEmail(), String.format("邮箱验证 (%s)", member.getNickname()),"verify-email",
+                    params, null, null);
+        } catch (UnsupportedEncodingException | MessagingException e) {
+            e.printStackTrace();
+        }
     }
 }
