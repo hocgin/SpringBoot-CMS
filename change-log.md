@@ -115,3 +115,4 @@ fixed 修正序列化时数字开头字段丢失
 # 2017-11-28
 - 前台用户登陆
 - Spring Security 优化
+- 更改 Member Token 生成策略
