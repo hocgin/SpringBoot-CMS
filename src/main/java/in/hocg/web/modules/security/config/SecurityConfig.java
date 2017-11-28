@@ -154,7 +154,12 @@ public class SecurityConfig {
                             "/favicon.ico",
                             "/web-lte/**",
                             "/admin-lte/**",
-                            "/dist/**"
+                            "/dist/**",
+                            // -- swagger ui
+                            "/swagger-resources/**",
+                            "/swagger-ui.html",
+                            "/v2/api-docs",
+                            "/webjars/**"
                     ).permitAll()
                     
                     // 允许匿名访问(前台登陆)

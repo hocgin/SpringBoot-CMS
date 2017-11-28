@@ -2,15 +2,14 @@ package in.hocg.web.modules.api;
 
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.modules.base.body.Results;
-import in.hocg.web.modules.system.domain.User;
 import in.hocg.web.modules.security.JwtAuthenticationRequest;
 import in.hocg.web.modules.security.JwtAuthenticationResponse;
+import in.hocg.web.modules.system.domain.User;
 import in.hocg.web.modules.system.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.naming.AuthenticationException;
 import javax.servlet.http.HttpServletRequest;
@@ -19,9 +18,11 @@ import javax.servlet.http.HttpSession;
 /**
  * Created by hocgin on 2017/10/24.
  * email: hocgin@gmail.com
+ * JWT
  */
-@RestController
-@RequestMapping("/api")
+//@RestController
+//@RequestMapping("/api")
+@Deprecated
 public class AuthController {
     private AuthService authService;
     
@@ -31,7 +32,7 @@ public class AuthController {
     }
     
     @RequestMapping(value = "/auth", method = RequestMethod.POST)
-    public Results createAuthenticationToken(JwtAuthenticationRequest authenticationRequest, HttpSession session) throws AuthenticationException{
+    public Results createAuthenticationToken(JwtAuthenticationRequest authenticationRequest, HttpSession session) throws AuthenticationException {
         final String token = authService.login(authenticationRequest.getUsername(), authenticationRequest.getPassword());
         // Return the token
         return Results.success(token)
@@ -39,10 +40,10 @@ public class AuthController {
     }
     
     @RequestMapping(value = "/auth/refresh", method = RequestMethod.GET)
-    public ResponseEntity<?> refreshAndGetAuthenticationToken(HttpServletRequest request) throws AuthenticationException{
+    public ResponseEntity<?> refreshAndGetAuthenticationToken(HttpServletRequest request) throws AuthenticationException {
         String token = request.getHeader("Authorization");
         String refreshedToken = authService.refresh(token);
-        if(refreshedToken == null) {
+        if (refreshedToken == null) {
             return ResponseEntity.badRequest()
                     .body(null);
         } else {
@@ -51,7 +52,7 @@ public class AuthController {
     }
     
     @RequestMapping(value = "/auth/register", method = RequestMethod.POST)
-    public Results register(User user) throws AuthenticationException{
+    public Results register(User user) throws AuthenticationException {
         CheckError checkError = CheckError.get();
         User register = authService.register(user, checkError);
         return Results.check(checkError)

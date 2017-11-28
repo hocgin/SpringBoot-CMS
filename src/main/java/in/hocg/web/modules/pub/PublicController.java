@@ -2,9 +2,13 @@ package in.hocg.web.modules.pub;
 
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.modules.base.BaseController;
+import in.hocg.web.modules.base.body.ResultCode;
+import in.hocg.web.modules.base.body.Results;
 import in.hocg.web.modules.system.domain.IFile;
 import in.hocg.web.modules.system.service.IFileService;
 import in.hocg.web.modules.system.service.MemberService;
+import in.hocg.web.modules.weather.domain.City;
+import in.hocg.web.modules.weather.service.CityService;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
@@ -13,6 +17,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.imageio.ImageIO;
@@ -20,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -32,12 +38,15 @@ public class PublicController extends BaseController {
     
     private IFileService iFileService;
     private MemberService memberService;
+    private CityService cityService;
     
     @Autowired
     public PublicController(IFileService iFileService,
+                            CityService cityService,
                             MemberService memberService) {
         this.iFileService = iFileService;
         this.memberService = memberService;
+        this.cityService = cityService;
     }
     
     /**
@@ -135,6 +144,11 @@ public class PublicController extends BaseController {
     }
     
     
+    /**
+     * 邮件认证
+     * @param id
+     * @return
+     */
     @GetMapping("/verify-email.html")
     @ResponseBody
     public Object vVerifyEmail(@RequestParam("id") String id) {
@@ -142,6 +156,21 @@ public class PublicController extends BaseController {
         CheckError checkError = CheckError.get();
         memberService.verifyEmail(id, checkError);
         return vRedirect("/");
+    }
+    
+    /**
+     * 城市搜索
+     * @param q
+     * @return
+     */
+    @PostMapping("/city/search")
+    @ResponseBody
+    public Results search(@RequestParam("q") String q) {
+        if (StringUtils.isEmpty(q)) {
+            return Results.error(ResultCode.VERIFICATION_FAILED, "参数不能为空");
+        }
+        List<City> cities = cityService.searchForCity(q);
+        return Results.success(cities);
     }
     
 }
