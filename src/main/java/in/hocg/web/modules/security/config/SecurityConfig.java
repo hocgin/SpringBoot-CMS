@@ -3,9 +3,9 @@ package in.hocg.web.modules.security.config;
 import in.hocg.web.modules.security.details.member.IMemberDetailsService;
 import in.hocg.web.modules.security.details.user.IUserDetailsService;
 import in.hocg.web.modules.security.handler.IAccessDeniedHandler;
+import in.hocg.web.modules.security.handler.IWebUnauthorizedEntryPoint;
 import in.hocg.web.modules.security.handler.reception.FailureHandler;
 import in.hocg.web.modules.security.handler.reception.SuccessHandler;
-import in.hocg.web.modules.security.handler.IWebUnauthorizedEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.Order;
@@ -16,6 +16,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 /**
  * Created by hocgin on 2017/11/28.
@@ -176,7 +177,9 @@ public class SecurityConfig {
                     .permitAll().and()
                     
                     // 退出
-                    .logout().logoutUrl("/logout")
+                    .logout()
+                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                    .logoutSuccessUrl("/")
                     .permitAll();
         }
     }

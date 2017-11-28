@@ -68,8 +68,8 @@
                 },
                 success: function (data, statusText, xhr, form) {
                     if (data.code === 200) {
-                        layer.closeAll();
                         layer.msg(data.message, {icon: 1});
+                        window.location.reload();
                     } else {
                         layer.msg(data.message, {icon: 2});
                     }
