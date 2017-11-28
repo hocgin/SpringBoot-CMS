@@ -103,6 +103,11 @@ public class MemberServiceImpl implements MemberService {
         sendVerifyEmail(member);
     }
     
+    @Override
+    public Member findOneByToken(String token) {
+        return memberRepository.findOneByToken(token);
+    }
+    
     
     @Override
     public DataTablesOutput<Member> data(MemberDataTablesInputFilter input) {

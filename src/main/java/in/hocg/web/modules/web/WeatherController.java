@@ -30,7 +30,7 @@ public class WeatherController extends BaseController{
     @ResponseBody
     public Results current(WeatherParamQueryFilter filter) {
         CheckError checkError = CheckError.get();
-        Weather weather = service.getCurrentWeather(filter, checkError);
+        Weather weather = service.currentWeather(filter, checkError);
         return Results.check(checkError)
                 .setData(weather)
                 .setMessage("当前天气");

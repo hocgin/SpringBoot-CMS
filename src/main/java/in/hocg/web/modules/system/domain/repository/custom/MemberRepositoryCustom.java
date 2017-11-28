@@ -10,4 +10,6 @@ public interface MemberRepositoryCustom {
     
     Member findByEmailAvailableTrue(String email);
     Member findByEmail(String email);
+    
+    Member findOneByToken(String token);
 }

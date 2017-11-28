@@ -25,4 +25,10 @@ public class MemberRepositoryImpl
         Query query = Query.query(Criteria.where("email").is(email));
         return findOne(query);
     }
+    
+    @Override
+    public Member findOneByToken(String token) {
+        Query query = Query.query(Criteria.where("token.$token").is(token));
+        return findOne(query);
+    }
 }

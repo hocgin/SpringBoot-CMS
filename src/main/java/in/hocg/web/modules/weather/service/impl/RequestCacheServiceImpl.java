@@ -2,11 +2,14 @@ package in.hocg.web.modules.weather.service.impl;
 
 import com.google.gson.Gson;
 import in.hocg.web.lang.CheckError;
+import in.hocg.web.modules.system.domain.Member;
+import in.hocg.web.modules.system.service.MemberService;
 import in.hocg.web.modules.weather.body.Forecast;
 import in.hocg.web.modules.weather.body.Weather;
 import in.hocg.web.modules.weather.domain.RequestCache;
 import in.hocg.web.modules.weather.domain.repository.RequestCacheRepository;
 import in.hocg.web.modules.weather.filter.WeatherParamQueryFilter;
+import in.hocg.web.modules.weather.filter.WeatherQueryFilter;
 import in.hocg.web.modules.weather.service.RequestCacheService;
 import in.hocg.web.modules.weather.utils.HttpService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,14 +28,17 @@ import java.util.Optional;
 @Service
 public class RequestCacheServiceImpl implements RequestCacheService {
     private RequestCacheRepository requestCacheRepository;
+    private MemberService memberService;
     private HttpService httpService;
     private Gson gson;
     
     @Autowired
     public RequestCacheServiceImpl(RequestCacheRepository requestCacheRepository,
+                                   MemberService memberService,
                                    Gson gson,
                                    HttpService httpService) {
         this.requestCacheRepository = requestCacheRepository;
+        this.memberService = memberService;
         this.httpService = httpService;
         this.gson = gson;
     }
@@ -80,8 +86,49 @@ public class RequestCacheServiceImpl implements RequestCacheService {
     }
     
     
-    public Weather getCurrentWeather(WeatherParamQueryFilter filter, CheckError checkError) {
+    public Weather currentWeather(WeatherParamQueryFilter filter, CheckError checkError) {
         return getCurrentWeather(filter.getUnits(), filter.getLang(), filter.getLon(), filter.getLat(), checkError);
+    }
+    
+    @Override
+    public Weather currentWeatherUseToken(WeatherQueryFilter filter, CheckError checkError) {
+        if (_checkToken(filter, checkError)) {
+            return currentWeather(filter, checkError);
+        }
+        return null;
+    }
+    
+    /**
+     * 检验用户 Token
+     *
+     * @param filter
+     * @param checkError
+     * @return
+     */
+    private final int MAX_COUNT = 2000;
+    private boolean _checkToken(WeatherQueryFilter filter, CheckError checkError) {
+        Member member = memberService.findOneByToken(filter.getToken());
+        if (!ObjectUtils.isEmpty(member)) {
+            Member.Token token = member.getToken();
+            if (member.getAvailable()
+                    && token.getAvailable()) {
+                long count = token.getCount();
+                if (count < MAX_COUNT) {
+                    token.setCount(count + 1);
+                    memberService.update(member);
+                    return true;
+                } else {
+                    checkError.putError(String.format("该Token本月使用次数已达到上限(%d), 请联系客服.", MAX_COUNT));
+                    return false;
+                }
+            } else {
+                checkError.putError("该用户或Token被禁止");
+                return false;
+            }
+        } else {
+            checkError.putError("Token 异常或失效");
+        }
+        return false;
     }
     
     
@@ -109,6 +156,14 @@ public class RequestCacheServiceImpl implements RequestCacheService {
     
     public Forecast forecast(WeatherParamQueryFilter filter, CheckError checkError) {
         return forecast(filter.getUnits(), filter.getLang(), filter.getLon(), filter.getLat(), checkError);
+    }
+    
+    @Override
+    public Forecast forecastUseToken(WeatherQueryFilter filter, CheckError checkError) {
+        if (_checkToken(filter, checkError)) {
+            return forecast(filter, checkError);
+        }
+        return null;
     }
     
     
