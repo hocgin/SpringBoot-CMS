@@ -19,6 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 //@EnableWebSecurity
 //@Order(2)
 //@EnableGlobalMethodSecurity(prePostEnabled = true)
+@Deprecated
 public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
     
     @Autowired
@@ -34,7 +35,7 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.antMatcher("/api/**").
                 // 由于使用的是JWT，我们这里不需要csrf
-                csrf().disable()
+                        csrf().disable()
                 
                 // 所有请求进行拦截处理
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
@@ -56,7 +57,6 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
                 .headers().cacheControl();
         
     }
-    
     
     
     /**
