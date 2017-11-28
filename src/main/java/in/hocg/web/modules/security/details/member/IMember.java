@@ -1,6 +1,7 @@
 package in.hocg.web.modules.security.details.member;
 
 import in.hocg.web.modules.system.domain.Member;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,17 +16,21 @@ import java.util.List;
  * email: hocgin@gmail.com
  * 会员细节信息
  */
+@Data
 public class IMember implements UserDetails {
     private final String username;
+    private final String nickname;
     private final String password;
     private final Collection<? extends GrantedAuthority> authorities;
     private final Date lastPasswordResetAt;
     
     private IMember(String username,
+                    String nickname,
                     String password,
                     Collection<? extends GrantedAuthority> authorities,
                     Date lastPasswordResetAt) {
         this.username = username;
+        this.nickname = nickname;
         this.password = password;
         this.authorities = authorities;
         this.lastPasswordResetAt = lastPasswordResetAt;
@@ -34,16 +39,6 @@ public class IMember implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
-    }
-    
-    @Override
-    public String getPassword() {
-        return password;
-    }
-    
-    @Override
-    public String getUsername() {
-        return username;
     }
     
     @Override
@@ -72,6 +67,7 @@ public class IMember implements UserDetails {
     
     public static IMember toIMember(Member custom) {
         return new IMember(custom.getEmail(),
+                custom.getNickname(),
                 custom.getPassword(),
                 getGrantedAuthority(custom.getRole()),
                 custom.getLastPasswordResetAt());

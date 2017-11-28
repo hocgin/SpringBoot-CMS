@@ -23,3 +23,18 @@
 -----
 ## `/public/**`
 - 公共入口
+
+
+
+## 笔记
+### AuthenticationManager
+> 管理认证
+
+### AuthenticationProvider
+> 认证过程
+
+### UserDetailsService
+> 获取用户信息
+
+### UserDetails
+> 暴露的用户信息

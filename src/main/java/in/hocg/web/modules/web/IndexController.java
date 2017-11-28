@@ -1,7 +1,10 @@
 package in.hocg.web.modules.web;
 
+import in.hocg.web.lang.CheckError;
 import in.hocg.web.modules.base.BaseController;
-import in.hocg.web.modules.base.filter.lang.IdFilter;
+import in.hocg.web.modules.base.body.Results;
+import in.hocg.web.modules.system.filter.MemberFilter;
+import in.hocg.web.modules.system.service.MemberService;
 import in.hocg.web.modules.weather.domain.City;
 import in.hocg.web.modules.weather.service.CityService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +12,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * Created by hocgin on 2017/11/23.
@@ -22,10 +27,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class IndexController extends BaseController {
     public final String BASE_TEMPLATES_PATH = "/web/%s";
     private CityService cityService;
+    private MemberService memberService;
     
     @Autowired
-    public IndexController(CityService cityService) {
+    public IndexController(CityService cityService,
+                           MemberService memberService) {
         this.cityService = cityService;
+        this.memberService = memberService;
     }
     
     @RequestMapping({"/", "/index.html"})
@@ -42,19 +50,16 @@ public class IndexController extends BaseController {
         return String.format(BASE_TEMPLATES_PATH, "index");
     }
     
-    @GetMapping("/login.html")
-    public String login() {
-        return String.format(BASE_TEMPLATES_PATH, "login");
-    }
-    
-    @GetMapping("/login-modal.html")
-    public String vLoginModal() {
-        return String.format(BASE_TEMPLATES_PATH, "login-modal");
-    }
-    
-    
-    @GetMapping("/register-modal.html")
-    public String vRegisterModal() {
-        return String.format(BASE_TEMPLATES_PATH, "register-modal");
+    @PostMapping("/register")
+    @ResponseBody
+    public Results register(@Validated MemberFilter filter,
+                           BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return Results.check(bindingResult);
+        }
+        CheckError checkError = CheckError.get();
+        memberService.insert(filter, checkError);
+        return Results.check(checkError)
+                .setMessage("注册成功, 请检查邮箱");
     }
 }

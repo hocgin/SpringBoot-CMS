@@ -1,0 +1,65 @@
+html {
+    font-size: 12px;
+    font-family: -apple-system, PingFang SC, Hiragino Sans GB, Arial, Microsoft YaHei, Helvetica Neue, sans-serif;
+}
+.login-wrapper {
+    display: inline-block;
+    width: 270px;
+    padding: 24px;
+    font-size: 1.167rem;
+}
+
+.input-group {
+    width: 100%;
+}
+
+.input-box {
+    position: relative;
+    margin-bottom: .8rem;
+}
+
+.input-box .input {
+    padding: 10px;
+    width: 100%;
+    border: 1px solid #e9e9e9;
+    border-radius: 2px;
+    outline: none;
+    font: inherit;
+    box-sizing: border-box;
+}
+
+.login-wrapper .btn {
+    font: inherit;
+    width: 100%;
+    height: 40px;
+    color: #fff;
+    background-color: #878FD6;
+    border-radius: 2px;
+    outline: none;
+    box-sizing: border-box;
+    cursor: pointer;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border: none;
+    padding: 6px 15px;
+    transition: background-color .3s, color .3s;
+}
+
+.prompt-box {
+    margin: 1rem 0 0;
+    color: #8b9196;
+}
+
+.prompt-box .clickable {
+    color: #878FD6;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.center {
+    text-align: center;
+}
+
+.right {
+    float: right;
+}

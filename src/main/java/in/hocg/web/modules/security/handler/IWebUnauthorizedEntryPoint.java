@@ -18,7 +18,7 @@ public class IWebUnauthorizedEntryPoint implements AuthenticationEntryPoint {
         if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
         } else {
-            response.sendRedirect("/login.html");
+            response.sendRedirect("/index.html");
         }
         
     }

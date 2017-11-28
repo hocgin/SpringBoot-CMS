@@ -1,3 +1,6 @@
+.loading {
+    overflow-y: hidden;
+}
 #loader-wrapper {
     position: fixed;
     top: 0;

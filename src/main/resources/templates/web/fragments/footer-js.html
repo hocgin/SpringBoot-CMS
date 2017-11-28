@@ -18,4 +18,64 @@
             });
         });
     </script>
+
+    <script>
+        $(function () {
+            $(document).on('click', '.register', function () {
+                layer.closeAll();
+                layer.open({
+                    title: '注册',
+                    resize: false,
+                    move: false,
+                    offset: '100px',
+                    shadeClose: true,
+                    type: 1,
+                    content: $('#register') //这里content是一个URL，如果你不想让iframe出现滚动条，你还可以content: ['http://sentsin.com', 'no']
+                });
+            });
+            $('#register-form').ajaxForm({
+                dataType: 'json',
+                beforeSubmit: function (arr, form, option) {
+                    form.find("button:submit").attr('disable', true);
+                },
+                success: function (data, statusText, xhr, form) {
+                    if (data.code === 200) {
+                        layer.closeAll();
+                        layer.msg(data.message, {icon: 1});
+                    } else {
+                        layer.msg(data.message, {icon: 2});
+                    }
+                    form.find("button:submit").attr('disable', false);
+                }
+            });
+
+            $(document).on('click', '.login', function () {
+                layer.closeAll();
+                layer.open({
+                    title: '登陆',
+                    resize: false,
+                    move: false,
+                    offset: '100px',
+                    shadeClose: true,
+                    type: 1,
+                    content: $('#login') //这里content是一个URL，如果你不想让iframe出现滚动条，你还可以content: ['http://sentsin.com', 'no']
+                });
+            });
+            $('#login-form').ajaxForm({
+                dataType: 'json',
+                beforeSubmit: function (arr, form, option) {
+                    form.find("button:submit").attr('disable', true);
+                },
+                success: function (data, statusText, xhr, form) {
+                    if (data.code === 200) {
+                        layer.closeAll();
+                        layer.msg(data.message, {icon: 1});
+                    } else {
+                        layer.msg(data.message, {icon: 2});
+                    }
+                    form.find("button:submit").attr('disable', false);
+                }
+            });
+        });
+    </script>
 </head>

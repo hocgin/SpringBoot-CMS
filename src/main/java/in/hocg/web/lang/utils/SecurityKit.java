@@ -8,6 +8,17 @@ import java.security.Principal;
 /**
  * Created by hocgin on 2017/11/17.
  * email: hocgin@gmail.com
+ *
+ *
+ // 获取用户名
+ httpServletRequest.getRemoteUser();  // Servlet标准，推荐使用
+ SecurityContextHolder.getContext().getAuthentication().getName();
+ 
+ // 获取用户ROLE：
+ SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+ 
+ // 判断用户是否拥有ROLE：
+ httpServletRequest.isUserInRole("ADMIN");
  */
 public class SecurityKit {
     

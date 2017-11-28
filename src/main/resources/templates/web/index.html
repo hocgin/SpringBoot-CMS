@@ -6,7 +6,7 @@
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <!-- default header name is X-CSRF-TOKEN -->
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-    <title>ai 天气</title>
+    <title>爱天气</title>
     <css th:replace="/web/fragments/all-css :: all-css"></css>
 </head>
 <body class="loading">
@@ -21,6 +21,9 @@
 <!-- 以上为加载框, 加载完成自动移除 -->
 
 <header th:replace="/web/fragments/top-menu :: top-menu"></header>
+<!--登陆和注册模块-->
+<div th:replace="/web/fragments/login-register:: login-register"></div>
+
 <div id="pjax-web-container">
     <main class="g-main">
         <div class="container">
@@ -31,7 +34,8 @@
                         <div class="search-wrapper pull-right">
                             <div class="search-box">
                                 <div class="search-widget">
-                                    <input id="search-input" type="text" placeholder="城市搜索" autocomplete="off" th:value="${city}">
+                                    <input id="search-input" type="text" placeholder="城市搜索" autocomplete="off"
+                                           th:value="${city}">
                                     <input id="city-id" name="city" type="hidden" th:value="${cityId}">
                                     <div class="search-btn">
                                     <span class="icon" onclick="submit()">
@@ -140,9 +144,9 @@
             navigator.geolocation.getCurrentPosition(function (position) {
                 lat = position.coords.latitude;
                 lon = position.coords.longitude;
-                callback(lat, lon);
+                callback(lat.toFixed(3), lon.toFixed(3));
             }, function (error) {
-                callback(24.636, 118.074);
+                callback(24.636.toFixed(3), 118.074.toFixed(3));
                 console.log('[错误日志] Error occurred. Error code: ' + error.code);
                 // error.code can be:
                 //   0: unknown error
@@ -151,7 +155,7 @@
                 //   3: timed out
             });
         } else {
-            callback(lat, lon);
+            callback(lat.toFixed(3), lon.toFixed(3));
         }
     }
 
@@ -162,7 +166,7 @@
             .addClass('loaded');
         $('#loader-wrapper').remove();
     }
-    
+
     function submit() {
         if (!!$('#city-id').val()) {
             $('form').submit();

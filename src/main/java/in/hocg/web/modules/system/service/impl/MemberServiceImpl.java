@@ -128,7 +128,7 @@ public class MemberServiceImpl implements MemberService {
         
         // 检测用户名是否已被使用
         if (!ObjectUtils.isEmpty(memberRepository.findByEmail(filter.getEmail()))) {
-            checkError.putError("账号已存在");
+            checkError.putError("邮箱已被注册");
             return;
         }
         
@@ -138,8 +138,8 @@ public class MemberServiceImpl implements MemberService {
         // 密码加密
         member.setPassword(bCryptPasswordEncoder.encode(filter.getPassword()));
         member = memberRepository.insert(member);
+        // 验证邮箱
         sendVerifyEmail(member);
-    
     
     }
     

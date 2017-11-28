@@ -1,16 +1,12 @@
 package in.hocg.web.modules.security.config;
 
-import in.hocg.web.modules.security.details.user.IUserDetailsService;
 import in.hocg.web.modules.security.JwtAuthenticationTokenFilter;
+import in.hocg.web.modules.security.details.user.IUserDetailsService;
 import in.hocg.web.modules.security.handler.IAuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -20,10 +16,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  * Created by hocgin on 2017/11/12.
  * email: hocgin@gmail.com
  */
-@Configuration
-@EnableWebSecurity
-@Order(2)
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+//@EnableWebSecurity
+//@Order(2)
+//@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
     
     @Autowired
