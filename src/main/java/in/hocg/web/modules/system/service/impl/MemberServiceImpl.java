@@ -69,18 +69,19 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void verifyEmail(String id, CheckError checkError) {
         Member member = memberRepository.findOne(id);
-        if (member.getIsVerifyEmail()) {
-            checkError.putError("已经校验过了");
+        if (ObjectUtils.isEmpty(member)
+                ||ObjectUtils.isEmpty(member.getVerifyEmailAt())) {
+            checkError.putError("异常认证");
             return;
         }
-        if (ObjectUtils.isEmpty(member.getVerifyEmailAt())) {
-            checkError.putError("异常认证");
+        if (member.getIsVerifyEmail()) {
+            checkError.putError("已经校验过了");
             return;
         }
         if (new Date().before(member.getVerifyEmailAt())) {
             member.setVerifyEmailAt(new Date());
             member.setIsVerifyEmail(true);
-            member.setToken(Member.Token.gen(memberRepository.count())); // 分配 Token
+            member.setToken(Member.Token.gen(member.getId())); // 分配 Token
             memberRepository.save(member);
         } else {
             checkError.putError("认证邮件已过期");
@@ -188,7 +189,9 @@ public class MemberServiceImpl implements MemberService {
         // 邮箱认证
         Map<String, Object> params = new HashMap<>();
         params.put("verifyUrl",
-                String.format("%s/public/verify-email.html?id=%s", variableService.getValue(Variable.HOST, "http://127.0.0.1:8080"), member.getId()));
+                String.format("%s/public/verify-email.html?id=%s",
+                        variableService.getValue(Variable.HOST, "http://127.0.0.1:8080"),
+                        member.getId()));
         try {
             mailService.sendUseTemplate(member.getEmail(), String.format("邮箱验证 (%s)", member.getNickname()),"verify-email",
                     params, null, null);

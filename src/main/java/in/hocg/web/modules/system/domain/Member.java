@@ -39,7 +39,7 @@ public class Member extends BaseDomain {
     @JsonIgnore
     private Date lastPasswordResetAt; // 最后一次修改密码时间
     
-    private Token token;  // Token
+    private Token token;  // 邮箱被认证后分配 Token
     
     private Boolean available = Boolean.FALSE; // 是否可用, 默认不可用。
     private Boolean isVerifyEmail = Boolean.FALSE; // Email是否校验
@@ -59,10 +59,12 @@ public class Member extends BaseDomain {
     
         // 目前只有一种级别
         @JsonIgnore
-        public static Token gen(Long count) {
+        public static Token gen(String memberId) {
             Token token = new Token();
             token.setAvailable(true);
-            byte[] bytes = SerializationUtils.serialize(String.format("%d::%d", count, System.currentTimeMillis()));
+            byte[] bytes = SerializationUtils.serialize(String.format("%s::%d",
+                    memberId,
+                    System.currentTimeMillis()));
             token.setToken(DigestUtils.md5DigestAsHex(bytes));
             return token;
         }

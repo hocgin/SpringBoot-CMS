@@ -29,7 +29,7 @@
         <div class="container">
             <div class="row">
                 <div class="g-weather-card col-sm-7 col-sm-offset-2">
-                    <form method="POST" action="/">
+                    <form id="query" method="POST" action="/">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                         <div class="search-wrapper pull-right">
                             <div class="search-box">
@@ -155,7 +155,7 @@
                 //   3: timed out
             });
         } else {
-            callback(lat.toFixed(3), lon.toFixed(3));
+            callback(lat, lon);
         }
     }
 
@@ -169,7 +169,7 @@
 
     function submit() {
         if (!!$('#city-id').val()) {
-            $('form').submit();
+            $('form#query').submit();
         } else {
             layer.msg('请选择城市', {icon: 2});
         }
