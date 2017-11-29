@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Controller
 @RequestMapping("/admin/system/variable")
+@PreAuthorize("hasPermission(null, 'sys.variable')")
 public class VariableController extends BaseController {
     public final String BASE_TEMPLATES_PATH = "/admin/system/variable/%s";
     private VariableService variableService;

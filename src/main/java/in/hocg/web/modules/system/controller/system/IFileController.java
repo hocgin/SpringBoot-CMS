@@ -33,6 +33,7 @@ import java.io.IOException;
  */
 @Controller
 @RequestMapping("/admin/system/file")
+@PreAuthorize("hasPermission(null, 'sys.file')")
 public class IFileController extends BaseController {
     public final String BASE_TEMPLATES_PATH = "/admin/system/file/%s";
     

@@ -1,6 +1,7 @@
 package in.hocg.web.modules.security.handler;
 
 import com.google.gson.Gson;
+import in.hocg.web.lang.utils.ResponseKit;
 import in.hocg.web.modules.base.body.ResultCode;
 import in.hocg.web.modules.base.body.Results;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.Serializable;
 
 /**
@@ -23,8 +23,12 @@ public class IAuthenticationEntryPoint implements AuthenticationEntryPoint, Seri
     
     private static final long serialVersionUID = -8970718410437077606L;
     
+    private Gson gson;
+    
     @Autowired
-    Gson gson;
+    public IAuthenticationEntryPoint(Gson gson) {
+        this.gson = gson;
+    }
     
     @Override
     public void commence(HttpServletRequest request,
@@ -37,13 +41,7 @@ public class IAuthenticationEntryPoint implements AuthenticationEntryPoint, Seri
             message = "用户名/密码错误";
         }
         
-        
-        
-        response.setHeader("Content-type", "text/html;charset=UTF-8");
-        try (PrintWriter writer = response.getWriter()) {
-            Results<Exception> result = Results.error(ResultCode.BAD_REQUEST, message);
-            result.setData(authException);
-            writer.write(gson.toJson(result));
-        }
+        ResponseKit.write(response, gson.toJson(Results.error(ResultCode.BAD_REQUEST, message)
+                .setData(authException)));
     }
 }

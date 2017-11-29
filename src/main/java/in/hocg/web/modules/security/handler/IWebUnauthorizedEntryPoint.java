@@ -1,5 +1,6 @@
 package in.hocg.web.modules.security.handler;
 
+import in.hocg.web.lang.utils.RequestKit;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 
@@ -15,7 +16,7 @@ import java.io.IOException;
 public class IWebUnauthorizedEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+        if (RequestKit.isAjax(request)) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
         } else {
             response.sendRedirect("/index.html");

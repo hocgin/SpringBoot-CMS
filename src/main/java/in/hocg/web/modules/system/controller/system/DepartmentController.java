@@ -28,6 +28,7 @@ import java.util.*;
  */
 @Controller
 @RequestMapping("/admin/system/department")
+@PreAuthorize("hasPermission(null, 'sys.department')")
 public class DepartmentController extends BaseController {
     public final String BASE_TEMPLATES_PATH = "/admin/system/department/%s";
     

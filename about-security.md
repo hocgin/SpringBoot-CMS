@@ -38,3 +38,6 @@
 
 ### UserDetails
 > 暴露的用户信息
+
+### SessionRegistry
+

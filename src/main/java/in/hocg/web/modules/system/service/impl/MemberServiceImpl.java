@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 @Service
 public class MemberServiceImpl implements MemberService {
     private MemberRepository memberRepository;
+    private RoleService roleService;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     private HttpServletRequest request;
     private MailService mailService;
@@ -44,11 +45,13 @@ public class MemberServiceImpl implements MemberService {
     
     @Autowired
     MemberServiceImpl(MemberRepository memberRepository,
-                      VariableService variableService,
+                      RoleService roleService,
                       MailService mailService,
+                      VariableService variableService,
                       BCryptPasswordEncoder bCryptPasswordEncoder,
                       HttpServletRequest request) {
         this.memberRepository = memberRepository;
+        this.roleService = roleService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.request = request;
         this.mailService = mailService;
@@ -139,7 +142,7 @@ public class MemberServiceImpl implements MemberService {
         }
         
         member.setIsVerifyEmail(false);
-        member.setRole(Member.ROLE_USER);
+        member.setRole(Collections.singleton(roleService.findByRole(Role.ROLE_USER)));
         member.setSignUpIP(RequestKit.getClientIP(request));
         // 密码加密
         member.setPassword(bCryptPasswordEncoder.encode(filter.getPassword()));

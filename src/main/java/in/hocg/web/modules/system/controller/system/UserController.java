@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Controller
 @RequestMapping("/admin/system/user")
+@PreAuthorize("hasPermission(null, 'sys.user')")
 public class UserController extends BaseController {
     public final String BASE_TEMPLATES_PATH = "/admin/system/user/%s";
     

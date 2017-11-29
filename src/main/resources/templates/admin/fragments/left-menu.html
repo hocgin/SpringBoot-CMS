@@ -29,7 +29,7 @@
             <li class="header">操作面板</li>
             <th:block th:with="leftMenu=${@langService.getLeftMenu()}">
                 <li class="treeview"
-                    th:each="root, i: ${leftMenu.root}">
+                    th:each="root, i: ${leftMenu?.root}">
                     <a th:href="${root.url?:'#'}">
                         <i th:class="${root.icon}"></i> <span th:text="${root.name}">系统配置</span>
                         <span class="pull-right-container">

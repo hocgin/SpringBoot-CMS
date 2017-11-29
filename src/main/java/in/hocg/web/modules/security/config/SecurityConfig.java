@@ -7,7 +7,9 @@ import in.hocg.web.modules.security.handler.IWebUnauthorizedEntryPoint;
 import in.hocg.web.modules.security.handler.reception.FailureHandler;
 import in.hocg.web.modules.security.handler.reception.SuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -20,7 +22,12 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 /**
  * Created by hocgin on 2017/11/28.
- * email: hocgin@gmail.com
+ * email: hocgin@gmail.com @Override
+ * public void configure(WebSecurity web) throws Exception {
+ * web.ignoring()
+ * .antMatchers("/static/**")
+ * .antMatchers("/i18n/**");
+ * }
  * 安全配置
  */
 @EnableWebSecurity
@@ -39,7 +46,7 @@ public class SecurityConfig {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
     
-    @Bean
+    @Bean("iUserAuthenticationProvider")
     DaoAuthenticationProvider iUserAuthenticationProvider() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setPasswordEncoder(bCryptPasswordEncoder);
@@ -47,14 +54,18 @@ public class SecurityConfig {
         return daoAuthenticationProvider;
     }
     
-    @Bean
+    @Bean("iMemberAuthenticationProvider")
     DaoAuthenticationProvider iMemberAuthenticationProvider() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setPasswordEncoder(bCryptPasswordEncoder);
         daoAuthenticationProvider.setUserDetailsService(iMemberDetailsService);
         return daoAuthenticationProvider;
     }
-    
+
+
+//    void global(AuthenticationManagerBuilder builder) {
+//        builder.
+//    }
     
     /**
      * 后台认证
@@ -67,15 +78,14 @@ public class SecurityConfig {
         
         @Autowired
         public BackstageSecurityConfig(IAccessDeniedHandler accessDeniedHandler,
-                                       DaoAuthenticationProvider iUserAuthenticationProvider) {
+                                       @Qualifier("iUserAuthenticationProvider") DaoAuthenticationProvider iUserAuthenticationProvider) {
             this.accessDeniedHandler = accessDeniedHandler;
             this.iUserAuthenticationProvider = iUserAuthenticationProvider;
         }
         
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            http.antMatcher("/admin/**")
-                    .csrf().and()
+            http.antMatcher("/admin/**").csrf().and()
                     
                     .exceptionHandling()
                     .accessDeniedHandler(accessDeniedHandler).and()
@@ -85,6 +95,10 @@ public class SecurityConfig {
                     .authenticated().and()
                     
                     .authenticationProvider(iUserAuthenticationProvider)
+                    
+                    .sessionManagement()
+                    .invalidSessionUrl("/admin/login.html")
+                    .and()
                     
                     // 登陆
                     .formLogin()
@@ -103,7 +117,10 @@ public class SecurityConfig {
                     
                     // 退出
                     .logout()
-                    .logoutUrl("/admin/logout");
+                    .logoutUrl("/admin/logout")
+                    .permitAll();
+            
+//            http.addFilterBefore(new TFilter(IUser.class), UsernamePasswordAuthenticationFilter.class);
         }
     }
     
@@ -131,7 +148,9 @@ public class SecurityConfig {
         private FailureHandler failureHandler;
         
         @Autowired
-        public ReceptionSecurityConfig(DaoAuthenticationProvider iMemberAuthenticationProvider, SuccessHandler successHandler, FailureHandler failureHandler) {
+        public ReceptionSecurityConfig(@Qualifier("iMemberAuthenticationProvider") @Lazy DaoAuthenticationProvider iMemberAuthenticationProvider,
+                                       SuccessHandler successHandler,
+                                       FailureHandler failureHandler) {
             this.iMemberAuthenticationProvider = iMemberAuthenticationProvider;
             this.successHandler = successHandler;
             this.failureHandler = failureHandler;
@@ -143,6 +162,7 @@ public class SecurityConfig {
                     .exceptionHandling()
                     .authenticationEntryPoint(new IWebUnauthorizedEntryPoint())
                     .and()
+                    
                     .csrf()
                     .and()
                     
@@ -170,7 +190,8 @@ public class SecurityConfig {
                     ).permitAll()
                     
                     // 除以上连接, 其余都要认证
-                    .anyRequest().authenticated().and()
+                    .anyRequest()
+                    .authenticated().and()
                     
                     .authenticationProvider(iMemberAuthenticationProvider)
                     

@@ -173,8 +173,10 @@
                             },
                             columns: [
                                 {data: 'username', bSortable: true},
-                                {data: 'nickname', bSortable: true},
-                                {data: 'department.name', bSortable: true},
+                                {data: 'nickname', bSortable: true,
+                                    defaultContent: '<span class="text-danger">暂无</span>'},
+                                {data: 'department.name', bSortable: true,
+                                    defaultContent: '<span class="text-danger">暂无</span>'},
                                 {data: 'email', bSortable: true},
                                 {data: 'available', bSortable: true}
                             ],

@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Controller
 @RequestMapping("/admin/system/member")
+@PreAuthorize("hasPermission(null, 'sys.member')")
 public class MemberController extends BaseController {
     public final String BASE_TEMPLATES_PATH = "/admin/system/member/%s";
     

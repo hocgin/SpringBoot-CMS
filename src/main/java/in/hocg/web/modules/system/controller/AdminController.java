@@ -16,12 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/admin")
 public class AdminController extends BaseController {
     public final String BASE_TEMPLATES_PATH = "/admin/%s";
-    private AuthService authService;
-    
-    @Autowired
-    public AdminController(AuthService authService) {
-        this.authService = authService;
-    }
     
     @ILog(value = "后台登陆界面", msg = "'测试信息:'+ #return")
     @GetMapping({"/login.html", ""})

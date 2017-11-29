@@ -9,6 +9,7 @@ import org.springframework.security.core.AuthenticationException;
  * email: hocgin@gmail.com
  * 前台的认证过程
  */
+@Deprecated
 public class ReceptionAuthenticationProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {

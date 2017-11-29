@@ -29,6 +29,7 @@ import java.io.IOException;
  */
 @Controller
 @RequestMapping("/admin/message/mail")
+@PreAuthorize("hasPermission(null, 'message.mail')")
 public class MailTemplateController extends BaseController {
     public final String BASE_TEMPLATES_PATH = "/admin/message/mail/%s";
     

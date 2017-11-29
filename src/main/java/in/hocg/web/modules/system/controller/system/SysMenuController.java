@@ -32,6 +32,7 @@ import java.util.*;
  */
 @Controller
 @RequestMapping("/admin/system/menu")
+@PreAuthorize("hasPermission(null, 'sys.menu')")
 public class SysMenuController extends BaseController {
     public final String BASE_TEMPLATES_PATH = "/admin/system/menu/%s";
     

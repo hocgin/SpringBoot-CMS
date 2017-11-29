@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Controller
 @RequestMapping("/admin/system/role")
+@PreAuthorize("hasPermission(null, 'sys.role')")
 public class RoleController extends BaseController {
     private UserService userService;
     private RoleService roleService;
