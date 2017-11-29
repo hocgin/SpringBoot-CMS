@@ -36,4 +36,6 @@ public interface MemberService {
     void sendVerifyEmail(String id, CheckError checkError);
     
     Member findOneByToken(String token);
+    
+    void updateTokenAvailable(String id, boolean available);
 }

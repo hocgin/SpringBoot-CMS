@@ -111,6 +111,18 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.findOneByToken(token);
     }
     
+    @Override
+    public void updateTokenAvailable(String id, boolean available) {
+        Member member = memberRepository.findOne(id);
+        if (!ObjectUtils.isEmpty(member)) {
+            Member.Token token = member.getToken();
+            if (!ObjectUtils.isEmpty(token)) {
+                token.setAvailable(available);
+                memberRepository.save(member);
+            }
+        }
+    }
+    
     
     @Override
     public DataTablesOutput<Member> data(MemberDataTablesInputFilter input) {

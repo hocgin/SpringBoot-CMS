@@ -138,6 +138,25 @@
                             });
                         }
                     },
+                    availableToken: function (id, isAvailable) { // isAvailable 1:0
+                        var available = !!isAvailable;
+                        if (!!id
+                            && isAvailable !== undefined) {
+                            layer.confirm('确定要' + (available ? '开启' : '关闭') + '此用户的 Token 使用权限？', {
+                                btn: ['确定', '取消'] //按钮
+                            }, function () {
+                                $.post('/admin/system/member/token/available/' + id.toString(), {available: available}, function (data) {
+                                    if (data.code === 200) {
+                                        layer.msg(data.message, {icon: 1});
+                                    } else {
+                                        layer.msg(data.message, {icon: 2});
+                                    }
+                                }, 'json');
+                            }, function () {
+                                layer.msg('取消' + (available ? '开启' : '关闭'));
+                            });
+                        }
+                    },
                     sendVerifyEmail: function (id) {
                         layer.confirm('确定重新发送校验邮件？', {
                             btn: ['确定', '取消'] //按钮
@@ -227,6 +246,9 @@
                                         '             <li><a href="javascript:;;" onclick="allRequest.sendVerifyEmail(\'' + row.id + '\')">校验邮箱</a></li>' +
                                         '             <li class="divider"></li>' +
                                         '             <li><a href="javascript:;;" onclick="allRequest.deleteById(\'' + row.id + '\')">删除</a></li>' +
+                                        '             <li class="divider"></li>' +
+                                        '             <li><a href="javascript:;;" onclick="allRequest.availableToken(\'' + row.id + '\', 1)">启用 Token</a></li>' +
+                                        '             <li><a href="javascript:;;" onclick="allRequest.availableToken(\'' + row.id + '\', 0)">禁用 Token</a></li>' +
                                         '             <li class="divider"></li>' +
                                         '             <li><a href="javascript:;;" onclick="allRequest.available(\'' + row.id + '\', 1)">启用</a></li>' +
                                         '             <li><a href="javascript:;;" onclick="allRequest.available(\'' + row.id + '\', 0)">禁用</a></li>' +

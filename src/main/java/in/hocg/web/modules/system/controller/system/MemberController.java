@@ -113,6 +113,15 @@ public class MemberController extends BaseController {
                 .setMessage(String.format("%s成功", available ? "开启" : "禁用"));
     }
     
+    @PostMapping("/token/available/{id}")
+    @ResponseBody
+    @PreAuthorize("hasPermission(null, 'sys.member.edit')")
+    public Results tokenAvailable(@PathVariable("id") String id, boolean available) {
+        memberService.updateTokenAvailable(id, available);
+        return Results.success()
+                .setMessage(String.format("%s成功", available ? "开启Token" : "禁用Token"));
+    }
+    
     
     @RequestMapping("/detail/{id}")
     public String vDetail(@PathVariable("id") String id, Model model) {

@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class AdminController extends BaseController {
     public final String BASE_TEMPLATES_PATH = "/admin/%s";
     
-    @ILog(value = "后台登陆界面", msg = "'测试信息:'+ #return")
+    @ILog(value = "后台登陆界面")
     @GetMapping({"/login.html", ""})
     public String vLogin() {
         return String.format(BASE_TEMPLATES_PATH, "login");
