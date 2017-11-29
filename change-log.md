@@ -117,3 +117,7 @@ fixed 修正序列化时数字开头字段丢失
 - Spring Security 优化
 - 更改 Member Token 生成策略
 - Swagger 配置
+
+# 2017-11-29
+- 配置用户剔除
+- 认证异常信息补充
