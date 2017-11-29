@@ -67,6 +67,21 @@ public class IUser implements UserDetails {
         return lastPasswordResetDate;
     }
     
+    @Override
+    public String toString() {
+        return id;
+    }
+    
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        return this.toString().equals(obj.toString());
+    }
+    
     public static IUser toIUser(User user) {
         return new IUser(user.getId(),
                 user.getUsername(),

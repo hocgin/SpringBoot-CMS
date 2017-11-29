@@ -258,6 +258,7 @@ public class BuiltInSeeder {
          *      - 普通用户
          */
         Role r1 = DocumentFactory.role(Role.ROLE_USER, "普通用户", d12);
+        r1.setDescription("内置角色, 不允许分配用户");
         r1 = roleRepository.insert(r1);
         Role r2 = DocumentFactory.role(Role.ROLE_ADMIN, "管理员", d11);
         r2.setPermissions(Arrays.asList(role_admin));

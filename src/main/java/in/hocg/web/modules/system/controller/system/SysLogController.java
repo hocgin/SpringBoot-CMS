@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Controller
 @RequestMapping("/admin/system/log")
-@PreAuthorize("hasPermission(null, 'sys.log')")
+@PreAuthorize("hasPermission(null, 'safety.log')")
 public class SysLogController extends BaseController {
     public final String BASE_TEMPLATES_PATH = "/admin/system/log/%s";
     

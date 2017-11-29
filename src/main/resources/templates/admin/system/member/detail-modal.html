@@ -16,9 +16,6 @@
                 <a href="javascript:;" class="list-group-item" title="User-Agent">
                     <span class="i-mr10 i-bold">User-Agent</span><span th:utext="${member.userAgent?:@iText.danger('暂无')}"></span>
                 </a>
-                <a href="javascript:;" class="list-group-item" title="User-Agent">
-                    <span class="i-mr10 i-bold">角色</span><span th:utext="${member.role?:@iText.danger('暂无')}"></span>
-                </a>
                 <a href="javascript:;" class="list-group-item" title="注册IP">
                     <span class="i-mr10 i-bold">注册 IP</span><span th:text="${member.signUpIP}"></span>
                 </a>
@@ -54,7 +51,7 @@
             <th:block th:each="role, i:${member.role}">
                 <div class="col-xs-12">
                     <table class="table js-tree-table">
-                        <caption th:text="${role.name}">权限名称</caption>
+                        <caption th:text="${role?.name}">权限名称</caption>
                         <thead>
                         <tr>
                             <th class="col-md-2">权限名称</th>
@@ -64,7 +61,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <th:block th:each="permission, i:${role.permissions}">
+                        <th:block th:each="permission, i:${role?.permissions}">
                             <tr th:attr="data-tt-id=${permission.id}, data-tt-parent-id=${permission.parent}, data-tt-branch=${permission.hasChildren}">
                                 <td th:text="${permission.name}"></td>
                                 <td th:text="${permission.url}"></td>

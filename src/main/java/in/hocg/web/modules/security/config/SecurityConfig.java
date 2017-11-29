@@ -17,6 +17,8 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -61,31 +63,40 @@ public class SecurityConfig {
         daoAuthenticationProvider.setUserDetailsService(iMemberDetailsService);
         return daoAuthenticationProvider;
     }
-
-
-//    void global(AuthenticationManagerBuilder builder) {
-//        builder.
-//    }
+    
+    @Bean
+    public SessionRegistry sessionRegistry() {
+        return new SessionRegistryImpl();
+    }
+    
     
     /**
      * 后台认证
      */
-    @Order(1)
+    @Order(2)
     @EnableGlobalMethodSecurity(prePostEnabled = true)
     public static class BackstageSecurityConfig extends WebSecurityConfigurerAdapter {
         private IAccessDeniedHandler accessDeniedHandler;
         private DaoAuthenticationProvider iUserAuthenticationProvider;
+        private SessionRegistry sessionRegistry;
         
         @Autowired
         public BackstageSecurityConfig(IAccessDeniedHandler accessDeniedHandler,
+                                       SessionRegistry sessionRegistry,
                                        @Qualifier("iUserAuthenticationProvider") DaoAuthenticationProvider iUserAuthenticationProvider) {
             this.accessDeniedHandler = accessDeniedHandler;
             this.iUserAuthenticationProvider = iUserAuthenticationProvider;
+            this.sessionRegistry = sessionRegistry;
         }
         
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            http.antMatcher("/admin/**").csrf().and()
+            System.out.println(String.format("http 安全2: %s", http.toString()));
+            http.antMatcher("/admin/**")
+                    .authenticationProvider(iUserAuthenticationProvider)
+                    
+                    .csrf()
+                    .and()
                     
                     .exceptionHandling()
                     .accessDeniedHandler(accessDeniedHandler).and()
@@ -94,9 +105,10 @@ public class SecurityConfig {
                     .anyRequest()
                     .authenticated().and()
                     
-                    .authenticationProvider(iUserAuthenticationProvider)
-                    
                     .sessionManagement()
+                    .maximumSessions(1)
+                    .expiredUrl("/admin/login?expired")
+                    .sessionRegistry(sessionRegistry).and()
                     .invalidSessionUrl("/admin/login.html")
                     .and()
                     
@@ -119,7 +131,7 @@ public class SecurityConfig {
                     .logout()
                     .logoutUrl("/admin/logout")
                     .permitAll();
-            
+
 //            http.addFilterBefore(new TFilter(IUser.class), UsernamePasswordAuthenticationFilter.class);
         }
     }
@@ -127,12 +139,13 @@ public class SecurityConfig {
     /**
      * 公共
      */
-    @Order(2)
+    @Order(3)
     @EnableGlobalMethodSecurity(prePostEnabled = true)
     public static class PublicSecurityConfig extends WebSecurityConfigurerAdapter {
         
         @Override
         protected void configure(HttpSecurity http) throws Exception {
+            System.out.println(String.format("http 安全3: %s", http.toString()));
             http.antMatcher("/public/**")
                     .csrf().disable();
         }
@@ -158,7 +171,9 @@ public class SecurityConfig {
         
         @Override
         protected void configure(HttpSecurity http) throws Exception {
+            System.out.println(String.format("http 安全: %s", http.toString()));
             http.antMatcher("/**")
+                    .authenticationProvider(iMemberAuthenticationProvider)
                     .exceptionHandling()
                     .authenticationEntryPoint(new IWebUnauthorizedEntryPoint())
                     .and()
@@ -193,7 +208,10 @@ public class SecurityConfig {
                     .anyRequest()
                     .authenticated().and()
                     
-                    .authenticationProvider(iMemberAuthenticationProvider)
+                    .sessionManagement()
+                    .maximumSessions(1).expiredUrl("/index.html?expired").and()
+                    .invalidSessionUrl("/index.html")
+                    .and()
                     
                     .formLogin().loginPage("/login.html")
                     .usernameParameter("username")

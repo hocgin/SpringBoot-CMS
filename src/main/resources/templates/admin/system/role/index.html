@@ -74,6 +74,7 @@
                                         <th>角色名称</th>
                                         <th>角色标识</th>
                                         <th>所属单位</th>
+                                        <th>描述</th>
                                         <th>状态</th>
                                         <th>操作</th>
                                     </tr>
@@ -175,6 +176,7 @@
                                 {data: 'name', bSortable: true},
                                 {data: 'role', bSortable: true},
                                 {data: 'department.name', bSortable: true},
+                                {data: 'description', bSortable: true},
                                 {data: 'available', bSortable: true}
                             ],
                             order: [[0, "desc"]],
@@ -187,7 +189,7 @@
                                             return '<i id="js-' + row.id + '" class="fa fa-circle text-danger"></i>';
                                         }
                                     },
-                                    targets: 3
+                                    targets: 4
                                 }, { // 操作
                                     render: function (data, type, row) {
                                         return '<div class="btn-group">' +
@@ -210,7 +212,7 @@
                                             '         </ul>' +
                                             '   </div>';
                                     },
-                                    targets: 4
+                                    targets: 5
                                 }
                             ]
                         });

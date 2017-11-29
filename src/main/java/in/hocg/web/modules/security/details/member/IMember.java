@@ -8,10 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -66,6 +63,22 @@ public class IMember implements UserDetails {
     
     public Date getLastPasswordResetAt() {
         return lastPasswordResetAt;
+    }
+    
+    
+    @Override
+    public String toString() {
+        return username;
+    }
+    
+    @Override
+    public int hashCode() {
+        return username.hashCode();
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        return this.toString().equals(obj.toString());
     }
     
     public static IMember toIMember(Member member) {

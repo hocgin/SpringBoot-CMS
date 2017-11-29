@@ -6,6 +6,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -23,7 +24,8 @@ public class IPermissionEvaluator implements PermissionEvaluator {
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         for (GrantedAuthority authority : authorities) {
             IGrantedAuthority iGrantedAuthority = (IGrantedAuthority) authority;
-            if (CollectionUtils.isEmpty(iGrantedAuthority.getRole().getPermissions())) {
+            if (ObjectUtils.isEmpty(iGrantedAuthority.getRole())
+                    || CollectionUtils.isEmpty(iGrantedAuthority.getRole().getPermissions())) {
                 return false;
             }
             for (SysMenu permissionObject : iGrantedAuthority.getRole().getPermissions()) {
