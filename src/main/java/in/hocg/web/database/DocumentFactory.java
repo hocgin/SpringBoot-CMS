@@ -4,6 +4,7 @@ import in.hocg.web.modules.system.domain.*;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * Created by hocgin on 2017/11/14.
@@ -126,5 +127,25 @@ public class DocumentFactory {
         variable.setBuiltIn(true);
         variable.createdAt();
         return variable;
+    }
+    
+    /**
+     * 定时任务
+     * @return
+     */
+    public static SysTask sysTask(String name,
+                                  String cron,
+                                  String execClass,
+                                  Map<String, Object> params) {
+        SysTask sysTask = new SysTask();
+        sysTask.setAvailable(true);
+        sysTask.setDescription(name);
+        sysTask.setGroup(name);
+        sysTask.setCron(cron);
+        sysTask.setExecClass(execClass);
+        sysTask.setName(name);
+        sysTask.setParams(params);
+        sysTask.createdAt();
+        return sysTask;
     }
 }

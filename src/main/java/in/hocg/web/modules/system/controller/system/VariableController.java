@@ -1,5 +1,7 @@
 package in.hocg.web.modules.system.controller.system;
 
+import in.hocg.web.modules.base.filter.group.Insert;
+import in.hocg.web.modules.base.filter.group.Update;
 import in.hocg.web.modules.system.filter.VariableFilter;
 import in.hocg.web.modules.base.filter.lang.IdsFilter;
 import in.hocg.web.lang.CheckError;
@@ -64,7 +66,7 @@ public class VariableController extends BaseController {
     @PostMapping("/insert")
     @ResponseBody
     @PreAuthorize("hasPermission(null, 'sys.variable.add')")
-    public Results insert(@Validated VariableFilter filter,
+    public Results insert(@Validated(Insert.class) VariableFilter filter,
                           BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return Results.check(bindingResult);
@@ -77,7 +79,7 @@ public class VariableController extends BaseController {
     @PostMapping("/update")
     @ResponseBody
     @PreAuthorize("hasPermission(null, 'sys.variable.edit')")
-    public Results update(@Validated VariableFilter filter,
+    public Results update(@Validated(Update.class) VariableFilter filter,
                           BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return Results.check(bindingResult);

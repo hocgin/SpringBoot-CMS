@@ -31,7 +31,7 @@ public class StringKit {
         List<String> lines = new ArrayList<>();
         BufferedReader reader = new BufferedReader(new StringReader(text));
         try {
-            String line = null;
+            String line;
             while ((line = reader.readLine()) != null) {
                 lines.add(line);
             }
@@ -40,6 +40,5 @@ public class StringKit {
         }
         return lines;
     }
-    
     
 }

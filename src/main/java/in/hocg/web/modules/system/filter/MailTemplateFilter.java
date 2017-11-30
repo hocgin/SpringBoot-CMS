@@ -48,17 +48,17 @@ public class MailTemplateFilter extends BaseFilter {
         mailTemplate.setDescription(description);
         mailTemplate.setName(name);
         mailTemplate.createdAt();
+        // 解析默认变量
+        Map<String, Object> params = new HashMap<>();
         if (!StringUtils.isEmpty(param)) {
-            // 解析默认变量
-            Map<String, Object> params = new HashMap<>();
             StringKit.lines(param).stream()
                     .filter(str -> !StringUtils.isEmpty(str) && str.contains("="))
                     .map(str -> str.split("="))
-                    .forEach(map->{
+                    .forEach(map -> {
                         params.put(map[0], map[1]);
                     });
-            mailTemplate.setParam(params);
         }
+        mailTemplate.setParam(params);
         return mailTemplate;
     }
     
@@ -67,17 +67,17 @@ public class MailTemplateFilter extends BaseFilter {
         mailTemplate.setDescription(description);
         mailTemplate.setName(name);
         mailTemplate.updatedAt();
+        // 解析默认变量
+        Map<String, Object> params = new HashMap<>();
         if (!StringUtils.isEmpty(param)) {
-            // 解析默认变量
-            Map<String, Object> params = new HashMap<>();
             StringKit.lines(param).stream()
                     .filter(str -> !StringUtils.isEmpty(str) && str.contains("="))
                     .map(str -> str.split("="))
-                    .forEach(map->{
+                    .forEach(map -> {
                         params.put(map[0], map[1]);
                     });
-            mailTemplate.setParam(params);
         }
+        mailTemplate.setParam(params);
         return mailTemplate;
     }
 }

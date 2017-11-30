@@ -12,4 +12,6 @@ public interface MemberRepositoryCustom {
     Member findByEmail(String email);
     
     Member findOneByToken(String token);
+    
+    void resumeToken();
 }

@@ -1,6 +1,7 @@
 package in.hocg.web;
 
 import in.hocg.web.database.BuiltInSeeder;
+import in.hocg.web.modules.system.service.SysTaskService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,8 @@ public class Application {
      */
     @Autowired
     private BuiltInSeeder builtInSeeder;
+    @Autowired
+    private SysTaskService sysTaskService;
     
     @Bean
     CommandLineRunner preLoadMongo() throws Exception {
@@ -54,6 +57,7 @@ public class Application {
                 logger.info("正在初始化 MongoDB 数据");
                 builtInSeeder.drop().init();
             }
+            sysTaskService.init();
         };
     }
     

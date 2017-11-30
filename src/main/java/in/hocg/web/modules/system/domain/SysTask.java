@@ -1,10 +1,13 @@
 package in.hocg.web.modules.system.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import in.hocg.web.modules.base.BaseDomain;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.Map;
 
 /**
  * Created by hocgin on 2017/11/17.
@@ -20,23 +23,26 @@ public class SysTask extends BaseDomain {
     @Id
     private String id;
     
-    private String name;
+    private String name; // 定时器名称
     
-    /**
-     * 执行参数
-     */
-    private String data;
+    private String group; // 分组
     
-    private String cron;
+    private Map<String, Object> params; // 参数，不能为null
     
-    private String note;
+    private String cron; // 定时规则
     
-    private String execClass;
+    private String description; // 备注
+    
+    private String execClass; // 执行类
     
     private Boolean available = Boolean.FALSE;// 是否可用, 默认不可用。
     
-    /**
-     * 消耗时间
-     */
-    private long usageTime;
+    @JsonIgnore
+    public String getParamsString() {
+        StringBuffer str = new StringBuffer();
+        params.forEach((key, val) -> {
+            str.append(String.format("%s=%s\n", key, val));
+        });
+        return str.toString();
+    }
 }

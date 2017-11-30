@@ -27,7 +27,7 @@ public class SysMenu extends BaseDomain {
     private String path;
     private String target;
     private String icon;  // 图标 class
-    private Boolean available = Boolean.FALSE;// 是否可用, 默认保留, 不分配。
+    private Boolean available = Boolean.FALSE;// 是否可用, 默认不可用。
     private Boolean hasChildren = Boolean.FALSE; // 是否有子节点
     private Boolean builtIn = Boolean.FALSE; // 是否为内置, 默认False
     private Integer location = 0;  // 排序, 一级

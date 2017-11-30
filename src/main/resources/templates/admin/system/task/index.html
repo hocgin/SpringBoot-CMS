@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta th:replace="/admin/fragments/meta::meta"/>
+    <title>任务管理</title>
+    <css th:replace="/admin/fragments/all-css :: all-css"></css>
+    <js th:replace="/admin/fragments/head-js :: head-js"></js>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+    <div th:replace="/admin/fragments/header::header"></div>
+    <div th:replace="/admin/fragments/left-menu::left-menu"></div>
+    <div id="pjax-container" class="content-wrapper">
+        <!--Modal 详情框-->
+        <div class="modal fade in" id="js-detail-modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                </div>
+            </div>
+        </div>
+        <!--./Modal 详情框-->
+        <div class="i-right-box">
+            <!-- 位置提示 -->
+            <section class="content-header">
+                <h1>
+                    任务管理
+                    <small>任务管理</small>
+                </h1>
+                <ol class="breadcrumb">
+                    <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+                    <li class="active">任务管理</li>
+                </ol>
+            </section>
+            <!-- 内容区域 -->
+            <section class="content">
+                <!-- Small boxes (Stat box) -->
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="box">
+                            <div class="box-header">
+                                <header class="tool-bar">
+                                    <h3 class="pull-left">任务管理</h3>
+                                    <div class="pull-right tool-button">
+                                        <a th:href="@{/admin/system/task/add-view.html}"
+                                           class="btn btn-primary" data-pjax>
+                                            <i class="fa fa-plus"></i> 新建任务
+                                        </a>
+                                        <button class="btn btn-danger" id="js-trash">
+                                            <i class="fa fa-trash-o"></i> 删除选中
+                                        </button>
+                                    </div>
+                                </header>
+                            </div>
+                            <!-- /.box-header -->
+                            <div class="box-body">
+                                <table id="js-table" class="table table-bordered table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>名称</th>
+                                        <th>组别</th>
+                                        <th>执行类</th>
+                                        <th>定时规则</th>
+                                        <th>状态</th>
+                                        <th>创建时间</th>
+                                        <th>操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- /.box-body -->
+                        </div>
+                    </div>
+                </div>
+                <!-- /.row -->
+            </section>
+            <!-- /内容区域 -->
+        </div>
+        <script>
+            var allRequest = {};
+            $(function () {
+                // 所有网络请求
+                allRequest = {
+                    deleteById: function (ids) {
+                        if (!!ids && !!ids.length) {
+                            layer.confirm('确定删除选中的 ' + ids.length + ' 行？', {
+                                btn: ['确定', '取消'] //按钮
+                            }, function () {
+                                $.post('/admin/system/task/delete', {id: ids.toString()}, function (data) {
+                                    if (data.code === 200) {
+                                        layer.msg(data.message, {icon: 1});
+                                        table.reloadPage();
+                                    } else {
+                                        layer.msg(data.message, {icon: 2});
+                                    }
+                                }, 'json');
+                            }, function () {
+                                layer.msg('取消删除');
+                            });
+                        } else {
+                            layer.msg('请先选中行');
+                        }
+                    },
+                    available: function (id, isAvailable) { // isAvailable 1:0
+                        var available = !!isAvailable;
+                        if (!!id
+                            && isAvailable !== undefined) {
+                            layer.confirm('确定要' + (available ? '开启' : '关闭') + '它？', {
+                                btn: ['确定', '取消'] //按钮
+                            }, function () {
+                                $.post('/admin/system/task/available/' + id.toString(), {available: available}, function (data) {
+                                    if (data.code === 200) {
+                                        layer.msg(data.message, {icon: 1});
+                                        $('#js-' + id).attr('class', 'fa fa-circle ' + (available ? 'text-success' : 'text-danger'));
+                                    } else {
+                                        layer.msg(data.message, {icon: 2});
+                                    }
+                                }, 'json');
+                            }, function () {
+                                layer.msg('取消' + (available ? '开启' : '关闭'));
+                            });
+                        }
+                    },
+                    resume: function (id) {
+                        if (!!id) {
+                            layer.confirm('确定要重置该任务？', {
+                                btn: ['确定', '取消'] //按钮
+                            }, function () {
+                                $.post('/admin/system/task/resume/' + id.toString(), function (data) {
+                                    if (data.code === 200) {
+                                        layer.msg(data.message, {icon: 1});
+                                        table.reloadPage();
+                                    } else {
+                                        layer.msg(data.message, {icon: 2});
+                                    }
+                                }, 'json');
+                            }, function () {
+                                layer.msg('取消重置');
+                            });
+                        }
+                    },
+                    restart: function (id) {
+                        if (!!id) {
+                            layer.confirm('确定要重启该任务？', {
+                                btn: ['确定', '取消'] //按钮
+                            }, function () {
+                                $.post('/admin/system/task/restart/' + id.toString(), function (data) {
+                                    if (data.code === 200) {
+                                        layer.msg(data.message, {icon: 1});
+                                        table.reloadPage();
+                                    } else {
+                                        layer.msg(data.message, {icon: 2});
+                                    }
+                                }, 'json');
+                            }, function () {
+                                layer.msg('取消重启');
+                            });
+                        }
+                    }
+                };
+
+                // 系统参数配置表格
+                table = {
+                    $obj: $('#js-table'),
+                    dataTableObject: {},
+                    getSelectedRow: function () {
+                        return this.dataTableObject.rows('.selected').data();
+                    },
+                    init: function () {
+                        // 初始化
+                        this.dataTableObject = this.$obj.DataTable({
+                            dom: '<"toolbar">frtip',
+                            ordering: true,
+                            searching: false,
+                            select: true,
+                            autoWidth: true,
+                            processing: false,
+                            serverSide: true,
+                            deferRender: true,
+                            language: DATA_TABLE_CONFIG.language,
+                            preDrawCallback: DATA_TABLE_CONFIG.preDrawCallback,
+                            ajax: {
+                                url: '/admin/system/task/data',
+                                type: 'POST',
+                                contentType: 'application/json',
+                                data: function (params) {
+                                    // 携带参数
+                                    params.regexMessage = $('#regexMessage').val() || '';
+                                    params.tag = $('#tag').val() || '';
+                                    params.createdAtRange = $('#createdAtRange').val() || '';
+                                    params.from = $('#from').val() || '';
+                                    return JSON.stringify(params);
+                                }
+                            },
+                            columns: [
+                                {data: 'name', bSortable: true},
+                                {data: 'group', bSortable: true},
+                                {data: 'execClass', bSortable: true},
+                                {data: 'cron', bSortable: true},
+                                {data: 'available', bSortable: true},
+                                {data: 'createdAt', bSortable: true},
+                                {bSortable: false}
+                            ],
+                            order: [[0, "desc"]],
+                            columnDefs: [{
+                                render: function (data, type, row) { // 状态
+                                    if (!!data) {
+                                        return '<i id="js-' + row.id + '" class="fa fa-circle text-success"></i>';
+                                    } else {
+                                        return '<i id="js-' + row.id + '" class="fa fa-circle text-danger"></i>';
+                                    }
+                                },
+                                targets: 4
+                            }, {
+                                render: function (data, type, row) {
+                                    return new Date(row.createdAt).toLocaleString();
+                                },
+                                targets: 5
+                            }, { // 操作
+                                render: function (data, type, row) {
+                                    return '<div class="btn-group">' +
+                                        '         <button type="button" class="btn btn-default btn-flat">操作</button>' +
+                                        '         <button type="button" class="btn btn-default btn-flat dropdown-toggle" data-toggle="dropdown">' +
+                                        '               <span class="caret"></span>' +
+                                        '               <span class="sr-only">Toggle Dropdown</span>' +
+                                        '         </button>' +
+                                        '         <ul class="dropdown-menu" role="menu">' +
+                                        '             <li><a class="js-modal" href="/admin/system/task/detail/' + row.id + '" data-target="#js-detail-modal" data-toggle="modal">查看详情</a></li>' +
+                                        '             <li class="divider"></li>' +
+                                        '             <li><a href="/admin/system/task/update-view/' + row.id + '" pjax-data>修改</a></li>' +
+                                        '             <li class="divider"></li>' +
+                                        '             <li><a href="javascript:;;" onclick="allRequest.deleteById([\'' + row.id + '\'])">删除</a></li>' +
+                                        '             <li class="divider"></li>' +
+                                        '             <li><a href="javascript:;;" onclick="allRequest.resume(\'' + row.id + '\')">重置任务</a></li>' +
+                                        '             <li><a href="javascript:;;" onclick="allRequest.restart(\'' + row.id + '\')">重启任务</a></li>' +
+                                        '             <li class="divider"></li>' +
+                                        '             <li><a href="javascript:;;" onclick="allRequest.available(\'' + row.id + '\', 1)">启用</a></li>' +
+                                        '             <li><a href="javascript:;;" onclick="allRequest.available(\'' + row.id + '\', 0)">禁用</a></li>' +
+                                        '         </ul>' +
+                                        '   </div>';
+                                },
+                                targets: 6
+                            }]
+                        });
+                        // 绑定多选
+                        this.$obj.children('tbody').on('click', 'tr', function () {
+                            $(this).toggleClass('selected');
+                        });
+
+                        var that = this;
+                        // ==========================自定义=============================
+                        // + 删除选中事件
+                        $('#js-trash').on('click', function () {
+                            var selectedRow = that.getSelectedRow();
+                            var ids = [];
+                            if (!!selectedRow.length) {
+                                $.each(selectedRow, function (i, obj) {
+                                    ids.push(obj.id);
+                                });
+                            }
+                            allRequest.deleteById(ids);
+                        });
+                    },
+                    reloadPage: function () {
+                        this.dataTableObject.ajax.reload(null, false);
+                    },
+                    reloadAll: function () {
+                        this.dataTableObject.ajax.reload();
+                    }
+                };
+                table.init();
+            });
+        </script>
+    </div>
+    <div th:replace="/admin/fragments/main-footer::main-footer"></div>
+    <div th:replace="/admin/fragments/right-setting::right-setting"></div>
+    <div class="control-sidebar-bg"></div>
+</div>
+<js th:replace="/admin/fragments/footer-js::footer-js"></js>
+</body>
+</html>

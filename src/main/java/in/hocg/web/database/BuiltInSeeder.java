@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 
 /**
  * Created by hocgin on 2017/11/14.
@@ -19,16 +20,19 @@ public class BuiltInSeeder {
     private UserRepository userRepository;
     private SysMenuRepository sysMenuRepository;
     private VariableRepository variableRepository;
+    private SysTaskRepository sysTaskRepository;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     
     public BuiltInSeeder(
             VariableRepository variableRepository,
+            SysTaskRepository sysTaskRepository,
             RoleRepository roleRepository, DepartmentRepository departmentRepository, UserRepository userRepository, SysMenuRepository sysMenuRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.roleRepository = roleRepository;
         this.departmentRepository = departmentRepository;
         this.userRepository = userRepository;
         this.sysMenuRepository = sysMenuRepository;
         this.variableRepository = variableRepository;
+        this.sysTaskRepository = sysTaskRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
     
@@ -38,6 +42,7 @@ public class BuiltInSeeder {
         userRepository.deleteAll();
         sysMenuRepository.deleteAll();
         variableRepository.deleteAll();
+        sysTaskRepository.deleteAll();
         return this;
     }
     
@@ -153,9 +158,19 @@ public class BuiltInSeeder {
         menu172 = sysMenuRepository.insert(menu172);
         SysMenu menu173 = DocumentFactory.data("修改会员", "000100070003", "sys.member.edit", menu17.getId());
         menu173 = sysMenuRepository.insert(menu173);
-    
-    
-    
+        // 系统管理 - 定时任务
+        SysMenu menu18 = DocumentFactory.menu("定时任务", "00010008",
+                "sys.task", "/admin/system/task/index.html");
+        menu18.setParent(menu1.getId());
+        menu18 = sysMenuRepository.insert(menu18);
+        SysMenu menu181 = DocumentFactory.data("添加任务", "000100080001", "sys.task.add", menu18.getId());
+        menu181 = sysMenuRepository.insert(menu181);
+        SysMenu menu182 = DocumentFactory.data("删除任务", "000100080002", "sys.task.delete", menu18.getId());
+        menu182 = sysMenuRepository.insert(menu182);
+        SysMenu menu183 = DocumentFactory.data("修改任务", "000100080003", "sys.task.edit", menu18.getId());
+        menu183 = sysMenuRepository.insert(menu183);
+        
+        
         // 系统安全
         String path = "0002";
         SysMenu menu2 = DocumentFactory.menu("系统安全", path, "safety", "");
@@ -168,8 +183,8 @@ public class BuiltInSeeder {
         menu26 = sysMenuRepository.insert(menu26);
         SysMenu menu261 = DocumentFactory.data("清空日志", "000200060001", "safety.log.empty", menu26.getId());
         menu261 = sysMenuRepository.insert(menu261);
-    
-    
+        
+        
         // 仪表盘
         SysMenu menu3 = DocumentFactory.menu("仪表盘", "0003", "dashboard", "");
         menu3.setLocation(0);
@@ -179,8 +194,8 @@ public class BuiltInSeeder {
                 "dashboard.index", "/admin/dashboard/index.html");
         menu31.setParent(menu3.getId());
         menu31 = sysMenuRepository.insert(menu31);
-    
-    
+        
+        
         // 天气服务
         SysMenu menu4 = DocumentFactory.menu("天气服务", "0004", "weather", "");
         menu4.setLocation(3);
@@ -222,23 +237,24 @@ public class BuiltInSeeder {
                 menu15, menu151, menu152, menu153,
                 menu16, menu161, menu162, menu163,
                 menu17, menu171, menu172, menu173,
+                menu18, menu181, menu182, menu183,
                 
                 menu2,
                 menu26, menu261,
                 
                 menu3,
                 menu31,
-        
+                
                 menu4,
                 menu41, menu411, menu412, menu413,
-        
+                
                 menu5,
                 menu51, menu511, menu512, menu513
         };
         
         SysMenu[] role_admin_old = new SysMenu[]{
                 menu1,
-                menu11, menu12, menu13, menu14, menu15, menu16, menu17,
+                menu11, menu12, menu13, menu14, menu15, menu16, menu17, menu18,
                 menu2,
                 menu26,
                 menu3,
@@ -297,5 +313,14 @@ public class BuiltInSeeder {
         variableRepository.insert(variable);
         Variable variable2 = DocumentFactory.variable(Variable.HOST, "http://127.0.0.1:8080", "域名");
         variableRepository.insert(variable2);
+        
+        
+        /**
+         * 定时任务
+         */
+        SysTask task = DocumentFactory.sysTask("会员Token每月自动重置",
+                "0 0 0 1 * ? *",
+                "in.hocg.web.job.ResumeMemberTokenJob", new HashMap<>());
+        sysTaskRepository.insert(task);
     }
 }

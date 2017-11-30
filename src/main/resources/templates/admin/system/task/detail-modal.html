@@ -1,0 +1,64 @@
+<div class="modal-header"
+     xmlns:th="http://www.thymeleaf.org">
+    <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+        <span aria-hidden="true">×</span></button>
+    <h4 class="modal-title">任务详情</h4>
+    <small th:text="|ID: [${task.id}]|"></small>
+</div>
+<div class="modal-body"
+     xmlns:th="http://www.thymeleaf.org">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="list-group">
+                <a href="javascript:;" class="list-group-item" title="名称">
+                    <span class="i-mr10 i-bold">名称</span> <span
+                        th:utext="${task.name}"></span>
+                </a>
+                <a href="javascript:;" class="list-group-item" title="组别">
+                    <span class="i-mr10 i-bold">组别</span> <span
+                        th:utext="${task.group}"></span>
+                </a>
+                <a href="javascript:;" class="list-group-item" title="执行类">
+                    <span class="i-mr10 i-bold">执行类</span> <span
+                        th:utext="${task.execClass}"></span>
+                </a>
+                <a href="javascript:;" class="list-group-item" title="定时规则">
+                    <span class="i-mr10 i-bold">定时规则</span> <span
+                        th:utext="${task.cron}"></span>
+                </a>
+                <a href="javascript:;" class="list-group-item" title="状态">
+                    <span class="i-mr10 i-bold">状态</span> <span
+                        th:utext="${@iText.available(task.available)}"></span>
+                </a>
+                <a href="javascript:;" class="list-group-item" title="描述">
+                    <span class="i-mr10 i-bold">描述</span> <span
+                        th:utext="${task.description}"></span>
+                </a>
+                <a href="javascript:;" class="list-group-item" title="创建时间">
+                    <span class="i-mr10 i-bold">创建时间</span><span th:utext="${@iText.format(task.createdAt)}"></span>
+                </a>
+                <a href="javascript:;" class="list-group-item" title="创建时间">
+                    <span class="i-mr10 i-bold">更新时间</span><span th:utext="${@iText.format(task.updatedAt)}"></span>
+                </a>
+            </div>
+        </div>
+        <div class="col-xs-12">
+            <table class="table no-m">
+                <thead>
+                <tr>
+                    <th>参数名</th>
+                    <th>默认值</th>
+                </tr>
+                </thead>
+                <tbody>
+                <th:block th:each="param, i:${task.params}">
+                    <tr>
+                        <td th:text="${param.key}"></td>
+                        <td th:text="${param.value}"></td>
+                    </tr>
+                </th:block>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

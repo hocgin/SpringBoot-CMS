@@ -73,7 +73,7 @@ public class SecurityConfig {
     /**
      * 后台认证
      */
-    @Order(2)
+    @Order(1)
     @EnableGlobalMethodSecurity(prePostEnabled = true)
     public static class BackstageSecurityConfig extends WebSecurityConfigurerAdapter {
         private IAccessDeniedHandler accessDeniedHandler;
@@ -139,7 +139,7 @@ public class SecurityConfig {
     /**
      * 公共
      */
-    @Order(3)
+    @Order(2)
     @EnableGlobalMethodSecurity(prePostEnabled = true)
     public static class PublicSecurityConfig extends WebSecurityConfigurerAdapter {
         

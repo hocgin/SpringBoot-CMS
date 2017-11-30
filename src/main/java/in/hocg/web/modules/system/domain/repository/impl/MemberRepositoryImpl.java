@@ -5,6 +5,7 @@ import in.hocg.web.modules.system.domain.Member;
 import in.hocg.web.modules.system.domain.repository.custom.MemberRepositoryCustom;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 
 /**
  * Created by hocgin on 2017/11/25.
@@ -30,5 +31,11 @@ public class MemberRepositoryImpl
     public Member findOneByToken(String token) {
         Query query = Query.query(Criteria.where("token.$token").is(token));
         return findOne(query);
+    }
+    
+    @Override
+    public void resumeToken() {
+        Query query = Query.query(Criteria.where("token").ne(null));
+        updateMulti(query, Update.update("token.$.count", 1000));
     }
 }

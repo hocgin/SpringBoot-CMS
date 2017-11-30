@@ -38,4 +38,6 @@ public interface MemberService {
     Member findOneByToken(String token);
     
     void updateTokenAvailable(String id, boolean available);
+    
+    void resumeToken();
 }

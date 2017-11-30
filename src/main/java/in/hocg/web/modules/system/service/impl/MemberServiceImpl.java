@@ -123,6 +123,11 @@ public class MemberServiceImpl implements MemberService {
         }
     }
     
+    @Override
+    public void resumeToken() {
+        memberRepository.resumeToken();
+    }
+    
     
     @Override
     public DataTablesOutput<Member> data(MemberDataTablesInputFilter input) {
