@@ -1,5 +1,7 @@
 package in.hocg.web.modules.system.service.impl;
 
+import com.google.gson.Gson;
+import in.hocg.web.lang.utils.SecurityKit;
 import in.hocg.web.modules.system.domain.SysLog;
 import in.hocg.web.modules.system.domain.repository.SysLogRepository;
 import in.hocg.web.modules.system.filter.SysLogDataTablesInputFilter;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by hocgin on 2017/11/17.
@@ -19,10 +22,12 @@ import java.util.List;
 @Service
 public class SysLogServiceImpl implements SysLogService {
     private SysLogRepository sysLogRepository;
+    private Gson gson;
     
     @Autowired
-    public SysLogServiceImpl(SysLogRepository sysLogRepository) {
+    public SysLogServiceImpl(SysLogRepository sysLogRepository,Gson gson) {
         this.sysLogRepository = sysLogRepository;
+        this.gson = gson;
     }
     
     @Override
@@ -53,6 +58,35 @@ public class SysLogServiceImpl implements SysLogService {
     
     public SysLog save(SysLog sysLog) {
         return sysLogRepository.save(sysLog);
+    }
+    
+    /**
+     * 记录日志
+     * @param start 执行开始时间
+     * @param type 日志类型
+     * @param from 记录来源
+     * @param tag 记录类型[用户登陆..]
+     * @param ip  请求IP
+     * @param msg 消息
+     * @param params 携带参数
+     * @param result 执行结果
+     */
+    public void log(long start, SysLog.Type type, SysLog.From from,
+                    String tag, String ip, String msg, Map<String, Object> params, Object result) {
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        StackTraceElement stackTraceElement = stackTrace[2];
+        String src = String.format("%s#%s", stackTraceElement.getClassName(), stackTraceElement.getMethodName());
+        SysLog sysLog = SysLog.NEW(type.name(),
+                tag,
+                src,
+                ip,
+                msg,
+                gson.toJson(params),
+                gson.toJson(result),
+                SecurityKit.username(),
+                from.name());
+        sysLog.setUsageTime(System.currentTimeMillis() - start);
+        sysLogRepository.save(sysLog);
     }
     
     @Override
