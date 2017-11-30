@@ -273,7 +273,7 @@
                         dtArr.push(time);
                         // 预测温度
                         tempArr.push(obj.main.temp);
-                        rain3hArr.push(obj.rain._$3h);
+                        rain3hArr.push(!!obj.rain ? obj.rain._$3h : 0);
                     });
                     $forecastCard = $('.g-weather-forecast-card');
                     $.each($forecastCard, function (index, card) {
@@ -393,7 +393,7 @@
                 setWeatherInfo(
                     data.main.temp,
                     data.wind.speed,
-                    data.rain._$3h,
+                    !!data.rain ? data.rain._$3h : 0,
                     data.main.humidity,
                     data.weather[0].main,
                     data.dt_txt,
