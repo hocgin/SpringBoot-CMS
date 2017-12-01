@@ -46,4 +46,6 @@ public interface UserService {
     Collection<SysMenu> findSysMenuByUser(String id);
     
     LeftMenu getLeftMenu(String id);
+    
+    List<User> findAllByDepartmentAndRole(String departmentId, String roleId);
 }

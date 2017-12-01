@@ -28,6 +28,10 @@ public class AdminController extends BaseController {
     @Autowired
     private SessionRegistry sessionRegistry;
     
+    /**
+     * todo 测试 查看当前在线用户
+     * @return
+     */
     @GetMapping("/all")
     @ResponseBody
     public Results all() {
@@ -36,4 +40,7 @@ public class AdminController extends BaseController {
         }
         return Results.success();
     }
+    
+    
+    
 }

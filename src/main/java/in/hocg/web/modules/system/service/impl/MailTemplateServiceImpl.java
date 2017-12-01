@@ -1,5 +1,6 @@
 package in.hocg.web.modules.system.service.impl;
 
+import in.hocg.web.global.component.MailService;
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.modules.base.BaseService;
 import in.hocg.web.modules.system.domain.IFile;
@@ -7,14 +8,21 @@ import in.hocg.web.modules.system.domain.MailTemplate;
 import in.hocg.web.modules.system.domain.repository.MailTemplateRepository;
 import in.hocg.web.modules.system.filter.MailTemplateDataTablesInputFilter;
 import in.hocg.web.modules.system.filter.MailTemplateFilter;
-import in.hocg.web.modules.system.service.IFileService;
-import in.hocg.web.modules.system.service.MailTemplateService;
+import in.hocg.web.modules.system.filter.SendMailFilter;
+import in.hocg.web.modules.system.filter.SendGroupMailFilter;
+import in.hocg.web.modules.system.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+
+import javax.mail.MessagingException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by hocgin on 2017/11/26.
@@ -25,11 +33,23 @@ public class MailTemplateServiceImpl extends BaseService implements MailTemplate
     
     private MailTemplateRepository mailTemplateRepository;
     private IFileService iFileService;
+    private UserService userService;
+    private MemberService memberService;
+    private MailService mailService;
+    private SysLogService sysLogService;
     @Autowired
     public MailTemplateServiceImpl(MailTemplateRepository mailTemplateRepository,
+                                   UserService userService,
+                                   MailService mailService,
+                                   SysLogService sysLogService,
+                                   MemberService memberService,
                                    IFileService iFileService) {
         this.mailTemplateRepository = mailTemplateRepository;
+        this.userService = userService;
+        this.mailService = mailService;
+        this.memberService = memberService;
         this.iFileService = iFileService;
+        this.sysLogService = sysLogService;
     }
     
     @Override
@@ -89,5 +109,68 @@ public class MailTemplateServiceImpl extends BaseService implements MailTemplate
         mailTemplateRepository.save(filter.update(mailTemplate));
     }
     
+    /**
+     * 群发邮件
+     * @param id
+     * @param filter
+     * @param checkError
+     */
+    @Override
+    public void sendGroup(String id, SendGroupMailFilter filter, CheckError checkError) {
+        MailTemplate template = mailTemplateRepository.findOne(id);
+        if (ObjectUtils.isEmpty(template)) {
+            checkError.putError("邮件模版异常");
+            return;
+        }
+        List<String> emailAll = new ArrayList<>();
+        if (filter.isWeb()) {
+            memberService.findAllByDepartmentAndRole(filter.getDepartment(), filter.getRole())
+                    .forEach(member -> emailAll.add(member.getEmail()));
+        } else if (filter.isAdmin()) {
+            userService.findAllByDepartmentAndRole(filter.getDepartment(), filter.getRole())
+                    .forEach(user -> emailAll.add(user.getEmail()));
+        }
+        try {
+            mailService.sendUseThymeleafFile(emailAll,
+                    template.getDefSubject(),
+                    template.getTemplate().getPath(),
+                    template.getParam(),
+                    null, null);
+            sysLogService.aInfo("邮件模版群发", String.format("邮件模版(%s) 接收者 %s", id, Arrays.toString(emailAll.toArray())));
+        } catch (IOException | MessagingException e) {
+            e.printStackTrace();
+            checkError.putError("发送失败");
+        }
+    }
+    
+    @Override
+    public void send(String id, SendMailFilter filter, CheckError checkError) {
+        MailTemplate template = mailTemplateRepository.findOne(id);
+        if (ObjectUtils.isEmpty(template)) {
+            checkError.putError("邮件模版异常");
+            return;
+        }
+        List<String> emailAll = new ArrayList<>();
+        if (filter.isWeb()) {
+            memberService.findAllById(filter.getIds())
+                    .forEach(member -> emailAll.add(member.getEmail()));
+        } else if (filter.isAdmin()) {
+            userService.findAllById(filter.getIds())
+                    .forEach(user -> emailAll.add(user.getEmail()));
+        }
+        
+        // 使用模版发送
+        try {
+            mailService.sendUseThymeleafFile(emailAll,
+                    template.getDefSubject(),
+                    template.getTemplate().getPath(),
+                    template.getParam(),
+                    null, null);
+            sysLogService.aInfo("邮件模版指定发送", String.format("邮件模版(%s) 接收者 %s", id, Arrays.toString(emailAll.toArray())));
+        } catch (IOException | MessagingException e) {
+            e.printStackTrace();
+            checkError.putError("发送失败");
+        }
+    }
     
 }

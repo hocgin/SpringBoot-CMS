@@ -18,4 +18,6 @@ public interface SysLogService {
     SysLog save(SysLog sysLog);
     
     List getTags();
+    
+    void aInfo(String tag, String msg);
 }

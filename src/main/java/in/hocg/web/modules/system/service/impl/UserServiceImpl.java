@@ -116,6 +116,11 @@ public class UserServiceImpl implements UserService {
     }
     
     @Override
+    public List<User> findAllByDepartmentAndRole(String departmentId, String roleId) {
+        return userRepository.findAllByDepartmentAndRole(departmentId, roleId);
+    }
+    
+    @Override
     public DataTablesOutput<User> data(UserDataTablesInputFilter input) {
         Criteria criteria = new Criteria();
         if (!StringUtils.isEmpty(input.getDepartment())) {
@@ -132,6 +137,12 @@ public class UserServiceImpl implements UserService {
                     Criteria.where("username").regex(String.format("%s.*", input.getRegexNicknameOrUsername())),
                     Criteria.where("nickname").regex(String.format("%s.*", input.getRegexNicknameOrUsername()))
             );
+        }
+        if (!ObjectUtils.isEmpty(input.getIds())) {
+            criteria.andOperator(Criteria.where("_id").in(input.getIds()));
+        }
+        if (!ObjectUtils.isEmpty(input.getNoIds())) {
+            criteria.andOperator(Criteria.where("_id").nin(input.getNoIds()));
         }
         DataTablesOutput<User> all = userRepository.findAll(input, criteria);
         all.setDraw(0);

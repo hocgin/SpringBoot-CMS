@@ -6,6 +6,8 @@ import in.hocg.web.lang.CheckError;
 import in.hocg.web.modules.system.domain.Role;
 import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
 
+import java.util.List;
+
 /**
  * Created by hocgin on 2017/10/29.
  * email: hocgin@gmail.com
@@ -31,4 +33,6 @@ public interface RoleService {
     void deleteAllByDepartmentIn(String... DepartmentId);
     
     void removePermissionForAllRole(String... id);
+    
+    List<Role> findByDepartment(String department);
 }

@@ -128,6 +128,11 @@ public class MemberServiceImpl implements MemberService {
         memberRepository.resumeToken();
     }
     
+    @Override
+    public List<Member> findAllByDepartmentAndRole(String department, String role) {
+        return memberRepository.findAllByDepartmentAndRole(department, role);
+    }
+    
     
     @Override
     public DataTablesOutput<Member> data(MemberDataTablesInputFilter input) {
@@ -137,6 +142,12 @@ public class MemberServiceImpl implements MemberService {
         }
         if (!StringUtils.isEmpty(input.getRegexNickname())) {
             criteria.andOperator(Criteria.where("nickname").regex(String.format(".*%s.*", input.getRegexNickname())));
+        }
+        if (!ObjectUtils.isEmpty(input.getIds())) {
+            criteria.andOperator(Criteria.where("_id").in(input.getIds()));
+        }
+        if (!ObjectUtils.isEmpty(input.getNoIds())) {
+            criteria.andOperator(Criteria.where("_id").nin(input.getNoIds()));
         }
         DataTablesOutput<Member> all = memberRepository.findAll(input, criteria);
         all.setDraw(0);

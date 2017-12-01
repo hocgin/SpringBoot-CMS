@@ -13,4 +13,6 @@ import org.springframework.data.mongodb.datatables.mapping.DataTablesInput;
 public class MemberDataTablesInputFilter extends DataTablesInput{
     private String regexEmail;
     private String regexNickname;
+    private String[] ids;
+    private String[] noIds;
 }

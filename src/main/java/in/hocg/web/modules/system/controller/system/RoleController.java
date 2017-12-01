@@ -1,18 +1,18 @@
 package in.hocg.web.modules.system.controller.system;
 
-import in.hocg.web.modules.system.filter.UserToRoleFilter;
-import in.hocg.web.modules.system.filter.RoleFilter;
-import in.hocg.web.modules.system.filter.RoleDataTablesInputFilter;
+import in.hocg.web.lang.CheckError;
+import in.hocg.web.modules.base.BaseController;
+import in.hocg.web.modules.base.body.Results;
 import in.hocg.web.modules.base.filter.group.Insert;
 import in.hocg.web.modules.base.filter.group.Update1;
 import in.hocg.web.modules.base.filter.group.Update2;
 import in.hocg.web.modules.base.filter.lang.IdsFilter;
-import in.hocg.web.lang.CheckError;
-import in.hocg.web.modules.base.body.Results;
 import in.hocg.web.modules.system.domain.Role;
+import in.hocg.web.modules.system.filter.RoleDataTablesInputFilter;
+import in.hocg.web.modules.system.filter.RoleFilter;
+import in.hocg.web.modules.system.filter.UserToRoleFilter;
 import in.hocg.web.modules.system.service.RoleService;
 import in.hocg.web.modules.system.service.UserService;
-import in.hocg.web.modules.base.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,6 +21,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * Created by hocgin on 2017/10/29.
@@ -88,6 +90,13 @@ public class RoleController extends BaseController {
     @ResponseBody
     public DataTablesOutput<Role> data(@RequestBody RoleDataTablesInputFilter input) {
         return roleService.data(input);
+    }
+    
+    @RequestMapping("/list")
+    @ResponseBody
+    public Results roles(String department) {
+        List<Role> roles = roleService.findByDepartment(department);
+        return Results.success(roles);
     }
     
     /**

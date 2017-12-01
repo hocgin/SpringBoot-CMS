@@ -15,4 +15,6 @@ public class UserDataTablesInputFilter extends DataTablesInput{
     private String role;
     private String regexNicknameOrUsername;
     private String notRole;
+    private String[] ids;
+    private String[] noIds;
 }

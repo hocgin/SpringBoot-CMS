@@ -26,6 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
@@ -80,7 +81,7 @@ public class MailService {
      * @throws javax.mail.MessagingException
      * @throws UnsupportedEncodingException
      */
-    public void send(@NotNull String to, @NotNull String subject, @NotNull String text,
+    public void send(@NotNull String[] to, @NotNull String subject, @NotNull String text,
                      Map<String, File> inline,
                      Map<String, File> attachment) throws javax.mail.MessagingException, UnsupportedEncodingException {
         
@@ -110,6 +111,11 @@ public class MailService {
             });
         });
         mailSender.send(messageHelper.getMimeMessage());
+    }
+    public void send(@NotNull String to, @NotNull String subject, @NotNull String text,
+                     Map<String, File> inline,
+                     Map<String, File> attachment) throws javax.mail.MessagingException, UnsupportedEncodingException {
+        send(new String[]{to}, subject, text, inline, attachment);
     }
     
     public void send(@NotNull String to, @NotNull String subject, @NotNull String text) throws UnsupportedEncodingException, javax.mail.MessagingException {
@@ -169,6 +175,13 @@ public class MailService {
                                      Map<String, File> inline,
                                      Map<String, File> attachment) throws IOException, MessagingException {
         send(to, subject, thymeleaf(thymeleafFilePath, params), inline, attachment);
+    }
+    
+    public void sendUseThymeleafFile(@NotNull Collection<String> to, @NotNull String subject, @NotNull Path thymeleafFilePath,
+                                     Map<String, Object> params,
+                                     Map<String, File> inline,
+                                     Map<String, File> attachment) throws IOException, MessagingException {
+        send(to.toArray(new String[]{}), subject, thymeleaf(thymeleafFilePath, params), inline, attachment);
     }
     
     /**

@@ -145,4 +145,10 @@ public class RoleServiceImpl implements RoleService {
         roleRepository.removePermissionForAllRole(id);
     }
     
+    @Override
+    public List<Role> findByDepartment(String department) {
+        Department departmentObj = departmentService.findById(department);
+        return roleRepository.findAllByPath(departmentObj.getPath());
+    }
+    
 }

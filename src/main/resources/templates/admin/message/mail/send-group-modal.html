@@ -1,0 +1,108 @@
+<form id="js-form" th:action="@{/admin/message/mail/send-group}" method="post"
+      xmlns:th="http://www.thymeleaf.org">
+    <div class="modal-header">
+        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+            <span aria-hidden="true">×</span></button>
+        <h4 class="modal-title">群发</h4>
+    </div>
+    <div class="modal-body">
+        <input type="hidden" name="id" th:value="${id}">
+        <div class="form-group">
+            <label for="target">目标: </label>
+            <select name="target" id="target">
+                <option value="0">前台</option>
+                <option value="1">后台</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>单位: </label>
+            <div class="jstree-default i-jstree">
+                <a class="jstree-anchor">
+                    <i class="jstree-icon jstree-themeicon"></i>全部
+                </a>
+            </div>
+            <input type="hidden" id="department" name="department">
+            <div id="js-department-tree"></div>
+        </div>
+        <div class="form-group">
+            <label for="role">角色: </label>
+            <select name="role" id="role">
+                <option value="">全部</option>
+            </select>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default pull-left" data-dismiss="modal" type="button">取消</button>
+        <button class="btn btn-primary" type="submit">发送</button>
+    </div>
+</form>
+<script>
+    $('#js-form').ajaxForm({
+        dataType: 'json',
+        beforeSubmit: function (arr, form, option) {
+            form.find("button:submit").attr('disable', true);
+            $('#js-detail-modal').modal('hide');
+        },
+        success: function (data, statusText, xhr, form) {
+            if (data.code === 200) {
+                layer.msg(data.message, {icon: 1});
+            } else {
+                layer.msg(data.message, {icon: 2});
+            }
+            form.find("button:submit").attr('disable', false);
+        }
+    });
+
+    /**
+     * 重置角色选项
+     * @param department
+     */
+    function resetRoleOption(department) {
+        $('#role').empty().append('<option value="">全部</option>');
+        if (!!department) {
+            $.post('/admin/system/role/list', {department: department}, function (data) {
+                if (data.code === 200) {
+                    $.each(data.data, function (i, row) {
+                        $('#role').append('<option value="' + row.id + '">' + row.name + '</option>')
+                    });
+                }
+            });
+        }
+    }
+
+    var tree = {
+        $el: $('#js-department-tree'),
+        obj: null,
+        init: function () {
+            var that = this;
+            this.obj = this.$el.jstree({
+                plugins: ['wholerow', 'json_data'],
+                core: {
+                    dataType: 'json',
+                    data: {
+                        url: function (node) {
+                            return '/admin/system/department/tree/' + (node.id === '#' ? '' : node.id)
+                        }
+                    }
+                }
+            }).on("click.jstree", function (node) {
+                that.selectParentMenu();
+            });
+
+            $('.i-jstree').on('click', function () {
+                $('#department').val('');
+                resetRoleOption('');
+                $(this).css('background', '#BDE7FF');
+                $.jstree.reference("#js-department-tree").deselect_all();
+            });
+        },
+        selectParentMenu: function () { //选择父菜单
+            var tree = $.jstree.reference("#js-department-tree");
+            var node = tree.get_selected(true);
+            $('#department').val(node[0].id);
+            resetRoleOption(node[0].id);
+            $('.i-jstree').css('background', '');
+        }
+    };
+    tree.init();
+</script>

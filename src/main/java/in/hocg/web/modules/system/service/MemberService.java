@@ -40,4 +40,6 @@ public interface MemberService {
     void updateTokenAvailable(String id, boolean available);
     
     void resumeToken();
+    
+    List<Member> findAllByDepartmentAndRole(String department, String role);
 }

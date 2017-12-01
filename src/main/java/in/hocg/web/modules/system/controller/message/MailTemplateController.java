@@ -7,10 +7,13 @@ import in.hocg.web.modules.base.BaseController;
 import in.hocg.web.modules.base.body.Results;
 import in.hocg.web.modules.base.filter.group.Insert;
 import in.hocg.web.modules.base.filter.group.Update;
+import in.hocg.web.modules.base.filter.lang.IdFilter;
 import in.hocg.web.modules.base.filter.lang.IdsFilter;
 import in.hocg.web.modules.system.domain.MailTemplate;
 import in.hocg.web.modules.system.filter.MailTemplateDataTablesInputFilter;
 import in.hocg.web.modules.system.filter.MailTemplateFilter;
+import in.hocg.web.modules.system.filter.SendGroupMailFilter;
+import in.hocg.web.modules.system.filter.SendMailFilter;
 import in.hocg.web.modules.system.service.MailTemplateService;
 import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -61,6 +64,25 @@ public class MailTemplateController extends BaseController {
         return String.format(BASE_TEMPLATES_PATH, "query-modal");
     }
     
+    @GetMapping("/send-group/{id}")
+    public String vSendGroupModal(@PathVariable("id") String id, Model model) {
+        model.addAttribute("id", id);
+        return String.format(BASE_TEMPLATES_PATH, "send-group-modal");
+    }
+    @GetMapping("/send-user-view/{id}")
+    public String vSendUserModal(@PathVariable("id") String id, Model model) {
+        MailTemplate template = mailTemplateService.find(id);
+        model.addAttribute("template", template);
+        return String.format(BASE_TEMPLATES_PATH, "send-user-view");
+    }
+    
+    @GetMapping("/send-member-view/{id}")
+    public String vSendMemberModal(@PathVariable("id") String id, Model model) {
+        MailTemplate template = mailTemplateService.find(id);
+        model.addAttribute("template", template);
+        return String.format(BASE_TEMPLATES_PATH, "send-member-view");
+    }
+    
     @GetMapping("/update-view/{id}")
     public String vUpdate(@PathVariable("id") String id, Model model) {
         MailTemplate mailTemplate = mailTemplateService.find(id);
@@ -68,11 +90,13 @@ public class MailTemplateController extends BaseController {
         return String.format(BASE_TEMPLATES_PATH, "update-view");
     }
     
+    
     @PostMapping("/data")
     @ResponseBody
     public DataTablesOutput<MailTemplate> data(@RequestBody MailTemplateDataTablesInputFilter filter) {
         return mailTemplateService.data(filter);
     }
+    
     /**
      * 删除
      *
@@ -138,6 +162,32 @@ public class MailTemplateController extends BaseController {
         CheckError checkError = CheckError.get();
         mailTemplateService.update(filter, checkError);
         return Results.check(checkError, "修改成功");
+    }
+    
+    @PostMapping("/send-group")
+    @ResponseBody
+    public Results sendGroup(@Validated IdFilter idFilter,
+                             @Validated SendGroupMailFilter filter,
+                             BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return Results.check(bindingResult);
+        }
+        CheckError checkError = CheckError.get();
+        mailTemplateService.sendGroup(idFilter.getId(), filter, checkError);
+        return Results.check(checkError, "发送成功");
+    }
+    
+    @PostMapping("/send")
+    @ResponseBody
+    public Results send(@Validated IdFilter idFilter,
+                             @Validated SendMailFilter filter,
+                             BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return Results.check(bindingResult);
+        }
+        CheckError checkError = CheckError.get();
+        mailTemplateService.send(idFilter.getId(), filter, checkError);
+        return Results.check(checkError, "发送成功");
     }
     
 }

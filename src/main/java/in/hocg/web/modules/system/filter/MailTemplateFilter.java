@@ -35,7 +35,7 @@ public class MailTemplateFilter extends BaseFilter {
     private String param; // 参数
     @NotBlank(message = "主题为必填", groups = {Insert.class, Update.class})
     private String defSubject; // 主题名
-    @Pattern(regexp = "^[A-za-z0-9_]+", message = "权限标识只允许由英文、数字、_组成", groups = {Insert.class, Update.class})
+    @Pattern(regexp = "^[A-za-z0-9_]+", message = "模版名称只允许由英文、数字、_组成", groups = {Insert.class, Update.class})
     private String name;
     
     /**
