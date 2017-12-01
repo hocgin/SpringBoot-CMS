@@ -162,9 +162,9 @@ public class MailTemplateServiceImpl extends BaseService implements MailTemplate
         // 使用模版发送
         try {
             mailService.sendUseThymeleafFile(emailAll,
-                    template.getDefSubject(),
+                    filter.getDefSubject(),
                     template.getTemplate().getPath(),
-                    template.getParam(),
+                    filter.getParams(),
                     null, null);
             sysLogService.aInfo("邮件模版指定发送", String.format("邮件模版(%s) 接收者 %s", id, Arrays.toString(emailAll.toArray())));
         } catch (IOException | MessagingException e) {

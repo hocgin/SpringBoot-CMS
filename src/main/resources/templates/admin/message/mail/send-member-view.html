@@ -82,6 +82,12 @@
                                 <fieldset title="第一步">
                                     <legend>设置参数</legend>
                                     <div class="form-group">
+                                        <label for="defSubject">标题</label>
+                                        <input class="form-control" id="defSubject" name="defSubject"
+                                                  th:value="${template.defSubject}"
+                                                  placeholder="请输入标题">/>
+                                    </div>
+                                    <div class="form-group">
                                         <label for="params">参数</label>
                                         <textarea class="form-control" id="params" name="params"
                                                   th:text="${template.getParamString()}"
@@ -119,6 +125,10 @@
                 $('#js-form').ajaxForm({
                     dataType: 'json',
                     beforeSubmit: function (arr, form, option) {
+                        if (!$('input[name="ids"]').val()) {
+                            layer.msg("请先选择用户", {icon: 2});
+                            return false;
+                        }
                         form.find("button:submit").attr('disable', true);
                         if (form.attr("isSubmit") === undefined) {//与stepy结合使用时，要避免二次提交的问题
                             form.attr("isSubmit", true);
@@ -134,6 +144,7 @@
                             $('input[name="ids"]').val("");
                             //回到第一个step
                             $(".stepy").stepy("step", 1);
+                            table.reloadPage();
                         } else {
                             layer.msg(data.message, {icon: 2});
                         }
