@@ -35,7 +35,19 @@ public class HttpService {
         return responseEntity;
     }
     
-    
+    /**
+     * 使用Ip 获取定位
+     * @param ip
+     * @return
+     */
+    public ResponseEntity<String> getLocation(String ip) {
+        String url = String.format("https://api.map.baidu.com/location/ip?ip=%s&ak=C159d6c7abc8fa73baf7604aa862d0b1&coor=bd09ll", ip);
+        ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
+        if (!HttpStatus.OK.equals(responseEntity.getStatusCode())) {
+            return null;
+        }
+        return responseEntity;
+    }
     
     
     private String getAppId() {

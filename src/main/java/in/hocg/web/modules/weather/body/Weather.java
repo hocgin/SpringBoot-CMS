@@ -1,12 +1,13 @@
 package in.hocg.web.modules.weather.body;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by hocgin on 2017/11/22.
  * email: hocgin@gmail.com
  */
-public class Weather {
+public class Weather implements Serializable {
     
     /**
      * coord : {"lon":118.08,"lat":24.48}

@@ -11,4 +11,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 public interface RequestCacheRepository extends
         MongoRepository<RequestCache, String>,
         RequestCacheRepositoryCustom {
+    RequestCache findTopByParamAndType(String ip, String type);
 }

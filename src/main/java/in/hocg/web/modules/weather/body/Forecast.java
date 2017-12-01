@@ -2,13 +2,14 @@ package in.hocg.web.modules.weather.body;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by hocgin on 2017/11/22.
  * email: hocgin@gmail.com
  */
-public class Forecast {
+public class Forecast implements Serializable{
     
     /**
      * cod : 200

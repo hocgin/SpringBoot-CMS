@@ -2,6 +2,7 @@ package in.hocg.web.modules.weather.domain;
 
 import in.hocg.web.modules.base.BaseDomain;
 import in.hocg.web.modules.weather.body.Forecast;
+import in.hocg.web.modules.weather.body.Location;
 import in.hocg.web.modules.weather.body.Weather;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -20,7 +21,7 @@ public class RequestCache extends BaseDomain {
     public static String Document = "RequestCache";
     
     public enum Type {
-        Current, Forecast
+        Current, Forecast, Location
     }
     
     
@@ -62,6 +63,13 @@ public class RequestCache extends BaseDomain {
     public RequestCache asForecast(Forecast forecast) {
         setType(Type.Forecast.name());
         setResponse(forecast);
+        createdAt();
+        return this;
+    }
+    
+    public RequestCache asLocation(Location location) {
+        setType(Type.Location.name());
+        setResponse(location);
         createdAt();
         return this;
     }

@@ -5,6 +5,7 @@ import in.hocg.web.lang.CheckError;
 import in.hocg.web.modules.system.domain.Member;
 import in.hocg.web.modules.system.service.MemberService;
 import in.hocg.web.modules.weather.body.Forecast;
+import in.hocg.web.modules.weather.body.Location;
 import in.hocg.web.modules.weather.body.Weather;
 import in.hocg.web.modules.weather.domain.RequestCache;
 import in.hocg.web.modules.weather.domain.repository.RequestCacheRepository;
@@ -85,9 +86,28 @@ public class RequestCacheServiceImpl implements RequestCacheService {
                 Optional.ofNullable(lat).orElse(""));
     }
     
-    
+    @Override
     public Weather currentWeather(WeatherParamQueryFilter filter, CheckError checkError) {
         return getCurrentWeather(filter.getUnits(), filter.getLang(), filter.getLon(), filter.getLat(), checkError);
+    }
+    
+    @Override
+    public Location getLocation(String ip,
+                                CheckError checkError) {
+        RequestCache requestCache = requestCacheRepository.findTopByParamAndType(ip, RequestCache.Type.Location.name());
+        if (ObjectUtils.isEmpty(requestCache)) {
+            ResponseEntity<String> locationString = httpService.getLocation(ip);
+            Location location = gson.fromJson(locationString.getBody(), Location.class);
+            if (!ObjectUtils.isEmpty(location)
+                    && 0 == location.getStatus()) {
+                _insertLocation(location, ip);
+                return location;
+            } else {
+                checkError.putError("请求服务器异常");
+                return null;
+            }
+        }
+        return ((Location) requestCache.getResponse());
     }
     
     @Override
@@ -105,7 +125,8 @@ public class RequestCacheServiceImpl implements RequestCacheService {
      * @param checkError
      * @return
      */
-    private final int MAX_COUNT = 2000;
+    private static final int MAX_COUNT = 2000;
+    
     private boolean _checkToken(WeatherQueryFilter filter, CheckError checkError) {
         Member member = memberService.findOneByToken(filter.getToken());
         if (!ObjectUtils.isEmpty(member)) {
@@ -191,6 +212,14 @@ public class RequestCacheServiceImpl implements RequestCacheService {
         RequestCache requestCache = new RequestCache()
                 .asForecast(forecast);
         requestCache.setPoint(point);
+        requestCache.setParam(param);
+        requestCacheRepository.insert(requestCache);
+    }
+    
+    private void _insertLocation(Location location,
+                                 String param) {
+        RequestCache requestCache = new RequestCache()
+                .asLocation(location);
         requestCache.setParam(param);
         requestCacheRepository.insert(requestCache);
     }
