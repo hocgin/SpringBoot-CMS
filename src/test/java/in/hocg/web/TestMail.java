@@ -52,7 +52,7 @@ public class TestMail {
         fileMap.put("f", new File("/Users/hocgin/Desktop/FileUpload/b3d1920dcbe38c64ca6250af3a2ca985"));
         Map<String, File> img = new HashMap<>();
         img.put("tup", new File("/Users/hocgin/Pictures/hocgin/hocgin.png"));
-       mailService.sendUseThymeleafText("578797748@qq.com", "有内容的标题", a,
-               param, img, fileMap);
+//       mailService.sendUseThymeleafText("578797748@qq.com", "有内容的标题", a,
+//               param, img, fileMap);
     }
 }

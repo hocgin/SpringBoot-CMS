@@ -2,7 +2,6 @@ package in.hocg.web.global.component;
 
 import com.sun.istack.internal.NotNull;
 import in.hocg.web.global.StringTemplateResolver;
-import in.hocg.web.modules.system.domain.MailTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +23,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
@@ -152,7 +149,7 @@ public class MailService {
      * @throws UnsupportedEncodingException
      * @throws MessagingException
      */
-    public void sendUseThymeleafText(@NotNull String to, @NotNull String subject, @NotNull String thymeleafText,
+    public void sendUseThymeleafText(@NotNull String[] to, @NotNull String subject, @NotNull String thymeleafText,
                                      Map<String, Object> params,
                                      Map<String, File> inline,
                                      Map<String, File> attachment) throws UnsupportedEncodingException, MessagingException {

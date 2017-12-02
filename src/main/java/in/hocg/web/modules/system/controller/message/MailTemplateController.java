@@ -20,6 +20,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -62,6 +63,15 @@ public class MailTemplateController extends BaseController {
     @GetMapping("/query-modal.html")
     public String vQueryModal() {
         return String.format(BASE_TEMPLATES_PATH, "query-modal");
+    }
+    
+    @GetMapping("/images-upload-modal.html")
+    public String vImagesUploadModal() {
+        return String.format(BASE_TEMPLATES_PATH, "images-upload-modal");
+    }
+    @GetMapping("/template-upload-modal.html")
+    public String vTemplateUploadModal() {
+        return String.format(BASE_TEMPLATES_PATH, "template-upload-modal");
     }
     
     @GetMapping("/send-group-view/{id}")
@@ -143,10 +153,10 @@ public class MailTemplateController extends BaseController {
         MailTemplate mailTemplate = mailTemplateService.find(id);
         String content;
         if (ObjectUtils.isEmpty(mailTemplate)
-                || !mailTemplate.getTemplate().exists()) {
-            content = iText.danger("模版文件异常");
+                || StringUtils.isEmpty(mailTemplate.getTemplateString())) {
+            content = iText.danger("邮件模版丢失");
         } else {
-            content = mailService.thymeleaf(mailTemplate.getTemplate().getPath(), mailTemplate.getParam());
+            content = mailService.thymeleaf(mailTemplate.getTemplateString(), mailTemplate.getParam());
         }
         model.addAttribute("content", content);
         model.addAttribute("mailTemplate", mailTemplate);
@@ -182,8 +192,8 @@ public class MailTemplateController extends BaseController {
     @PostMapping("/send")
     @ResponseBody
     public Results send(@Validated IdFilter idFilter,
-                             @Validated SendMailFilter filter,
-                             BindingResult bindingResult) {
+                        @Validated SendMailFilter filter,
+                        BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return Results.check(bindingResult);
         }

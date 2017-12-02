@@ -173,5 +173,11 @@ public class PublicController extends BaseController {
         return Results.success(cities);
     }
     
+//    @CrossOrigin(origins = "http://localhost:63342")
+//    @PostMapping("/upload")
+//    @ResponseBody
+//    public Results upload(@RequestParam("file") MultipartFile file) {
+//        return Results.success().setCode(ResultCode.FILE_ALREADY_EXISTS);
+//    }
     
 }

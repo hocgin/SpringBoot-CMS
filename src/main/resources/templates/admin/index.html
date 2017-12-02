@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="/admin/_layouts/default">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div th:include="/admin/_widgets/upload-box::upload-box" th:with="iFiles=${all},id='Upload1',var=imagesId"></div>
+
+    <div class="modal fade in" id="js-template-modal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+            </div>
+        </div>
+    </div>
+
+    <input type="text" id="sdfd">
+    <a href="#" th:href="@{/admin/upload-box-modal.html}"
+       data-toggle="modal"
+       data-target="#js-template-modal">点击模态框</a>
+</div>
+</body>
+</html>

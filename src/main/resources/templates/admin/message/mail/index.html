@@ -60,7 +60,7 @@
                                     <div class="pull-right tool-button">
                                         <a th:href="@{/admin/message/mail/add-view.html}"
                                            class="btn btn-primary" data-pjax>
-                                            <i class="fa fa-plus"></i> 新建邮件模版
+                                            <i class="fa fa-plus"></i> 上传邮件模版
                                         </a>
                                         <button class="btn btn-danger" id="js-trash">
                                             <i class="fa fa-trash-o"></i> 删除选中
@@ -81,7 +81,6 @@
                                     <tr>
                                         <th>模版名称</th>
                                         <th>默认主题名</th>
-                                        <th>模版文件名</th>
                                         <th>描述</th>
                                         <th>操作</th>
                                     </tr>
@@ -161,7 +160,6 @@
                             columns: [
                                 {data: 'name', bSortable: true},
                                 {data: 'defSubject', bSortable: true},
-                                {data: 'template.keepName', bSortable: true},
                                 {data: 'description', bSortable: true}
                             ],
                             order: [[0, "desc"]],
@@ -187,7 +185,7 @@
                                         '         </ul>' +
                                         '   </div>'
                                 },
-                                targets: 4
+                                targets: 3
                             }]
                         });
                         // 绑定多选
@@ -220,6 +218,9 @@
 
 
                 $('#js-detail-modal').on("hidden.bs.modal", function () {
+                    $(this).removeData("bs.modal");
+                });
+                $('#js-browser-modal').on("hidden.bs.modal", function () {
                     $(this).removeData("bs.modal");
                 });
             });

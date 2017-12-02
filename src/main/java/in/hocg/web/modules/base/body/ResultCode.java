@@ -11,6 +11,9 @@ public interface ResultCode {
     // 请求成功
     int SUCCESS = 200;
     
+    // 文件已存在
+    int FILE_ALREADY_EXISTS = 220;
+    
     /**
      * 400-499 用于指出客户端的错误。
      */

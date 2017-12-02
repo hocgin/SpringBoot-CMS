@@ -1,0 +1,226 @@
+<!--
+嵌入组件(上传文件框)
+参数
+- iFiles (ArrayList<IFile>)
+- id (String)
+- maxCount (int:1)
+- height (int:5) 高度
+- var 变量名 <input>
+<div th:include="/admin/_widgets/upload-box::upload-box" th:with="iFiles=${all},id='Upload1',var=imagesId"></div>
+-->
+<div th:fragment="upload-box"
+     xmlns:th="http://www.thymeleaf.org">
+    <!--/*@thymesVar id="id" type="java.lang.String"*/-->
+    <div th:id="${id}" class="container-fluid upload-wrapper">
+        <!--/*@thymesVar id="var" type="java.lang.String"*/-->
+        <input type="hidden" th:name="${var}">
+        <div class="center-block">
+            <div class="row">
+                <div class="col-md-12">
+                    <div>
+                        <a class="upload-btn">
+                            选择文件
+                        </a>
+                    </div>
+                    <!--/*@thymesVar id="height" type="java.lang.Integer"*/-->
+                    <div class="upload-area" th:style="'height:'+(45*(${height}?:5))+'px;'">
+                        <!--/*@thymesVar id="iFiles" type="java.util.ArrayList<in.hocg.web.modules.system.domain.IFile"*/-->
+                        <p class="text-sub text-center"
+                           th:if="${iFiles.isEmpty()}">请选择需要上传的文件</p>
+                        <div class="upload-progress"
+                             th:unless="${iFiles.isEmpty()}"
+                             th:classappend="${iFile.id}"
+                             th:each="iFile,i : ${iFiles}"
+                             th:attr="data-fid=${iFile.id}">
+                            <div class="progress-info">
+                                <a href="javascript:;;" class="operating remove-upload"
+                                   th:attr="data-id=${iFile.id}">
+                                    <i class="glyphicon glyphicon-trash"></i>
+                                </a>
+                                <span class="file-info">
+                                    <span class="file-name"
+                                          th:title="${iFile.uploadName}"
+                                          th:text="${iFile.uploadName}">file.name</span>
+                                    <span class="file-size"
+                                          th:text="${@iText.formatBytes(iFile.size)}">file.size</span>
+                                </span>
+                                <span class="upload-status">100%</span>
+                            </div>
+                            <div class="progress-bg success" style="width: 100%;"></div>
+                        </div>
+
+                    </div>
+                </div>
+                <!--<div class="col-md-4">-->
+                <!--参数设置-->
+                <!--</div>-->
+            </div>
+        </div>
+    </div>
+    <script th:inline="javascript">
+        $(function () {
+            var upload = {
+                id: undefined,
+                $textSub: undefined,
+                $uploadArea: undefined, // 上传显示信息
+                uploader: undefined,
+                option: undefined,
+                count: [[${iFiles.size()}]], // 当前上传的数量
+                init: function (option) {
+                    var that = this;
+                    this.option = option;
+                    this.id = option.id;
+                    this.$uploadArea = $(this.id + ' .upload-area');
+                    this.$textSub = $(this.id + ' .text-sub');
+
+                    this.uploader = WebUploader.create({
+                        auto: true,
+                        swf: option.swf || '/static/dist/webuploader/Uploader.swf',
+                        server: option.server || 'http://localhost:8080/public/upload',
+                        pick: {
+                            id: this.id + ' .upload-btn',
+                            multiple: true
+                        },
+                        accept: option.accept,
+                        resize: true
+                    }).on('uploadBeforeSend', function (object, data, headers) {
+                        headers[option.header] = option.token;
+                    }).on('fileQueued', function (file) {
+                        if (!!that.option.maxCount
+                            && that.count >= that.option.maxCount) {
+                            layer.msg('上传文件数量已到达限制', {icon: 2});
+                            return;
+                        }
+                        that.$textSub.hide();
+                        that.$uploadArea.append(that.getUploadProgressHtml(file));
+                        var $this = $(that.id + ' .' + file.id);
+                        $this.find('.operating')
+                            .not('.cancel-upload').hide();
+                        that.count++;
+                    }).on('uploadProgress', function (file, percentage) {
+                        // 上传中
+                        var $this = $(that.id + ' .' + file.id);
+                        that.progress($this, percentage);
+                    }).on('fileDequeued', function () {
+                        that.count--;
+                    }).on('uploadError', function (file, reason) {
+                        // 上传出错
+                        var $this = $(that.id + ' .' + file.id);
+                        that.error($this, reason);
+                    }).on('uploadSuccess', function (file, data) {
+                        var $this = $(that.id + ' .' + file.id);
+                        if (data.code === 200) {
+                            $this.data('fid', data.data.id);
+                            that.success($this);
+                            that.resetFilesId();
+                        } else if (data.code === 220) {
+                            that.exits($this);
+                        } else {
+                            that.error($this, data.message);
+                        }
+                    });
+
+                    /**
+                     * 取消上传, 仅从队列中移除
+                     */
+                    this.$uploadArea.on('click', '.cancel-upload', function () {
+                        var id = $(this).data('id');
+                        that.cancelFile(id);
+                        that.resetFilesId();
+                    });
+                    /**
+                     * 删除上传文件, 仅从队列中移除, ~~从服务器上移除~~
+                     * > 不应该实时删除, 由服务器决定
+                     */
+                    this.$uploadArea.on('click', '.remove-upload', function () {
+                        var id = $(this).data('id');
+                        that.cancelFile(id);
+                        that.resetFilesId();
+                    });
+                    return this;
+                },
+                getUploadProgressHtml: function (file) {
+                    return '<div class="upload-progress ' + file.id + '">\n' +
+                        '                        <div class="progress-info">\n' +
+                        '                            <a href="javascript:;;" class="operating cancel-upload" data-id="' + file.id + '">\n' +
+                        '                                <i class="glyphicon glyphicon-ban-circle"></i>\n' +
+                        '                            </a>\n' +
+                        '                            <span class="operating success-upload">\n' +
+                        '                                <i class="glyphicon glyphicon-ok"></i>\n' +
+                        '                            </span>\n' +
+                        '                            <a href="javascript:;;" class="operating remove-upload" data-id="' + file.id + '">\n' +
+                        '                                <i class="glyphicon glyphicon-trash"></i>\n' +
+                        '                            </a>\n' +
+                        '                            <span class="file-info">\n' +
+                        '                                <span title="' + file.name + '" class="file-name">' + file.name + '</span>\n' +
+                        '                                <span class="file-size">' + this.formatBytes(file.size) + '</span>\n' +
+                        '                            </span>\n' +
+                        '                            <span class="upload-status"></span>\n' +
+                        '                        </div>\n' +
+                        '                        <div class="progress-bg" style="width: 0%;"></div>\n' +
+                        '                    </div>';
+                },
+                formatBytes: function (bytes) {
+                    if (bytes === 0) return '0 B';
+                    var k = 1024, // or 1024
+                        sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
+                        i = Math.floor(Math.log(bytes) / Math.log(k));
+
+                    return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i];
+                },
+                error: function (uploadProgress, reason) {
+                    var $this = $(uploadProgress);
+                    $this.find('.operating').show()
+                        .not('.cancel-upload').hide();
+                    $this.find('.progress-bg').addClass('error')
+                        .css('width', '100%');
+                    $this.find('.file-size').text('错误: ' + reason);
+                },
+                exits: function (uploadProgress) {
+                    var $this = $(uploadProgress);
+                    $this.find('.operating').show()
+                        .not('.cancel-upload').hide();
+                    $this.find('.progress-bg').addClass('exist')
+                        .css('width', '100%');
+                    $this.find('.file-size').text('文件已存在');
+                    $this.find('.upload-status').text('');
+                },
+                success: function (uploadProgress) {
+                    var $this = $(uploadProgress);
+                    $this.find('.operating').show()
+                        .not('.success-upload,.remove-upload').hide();
+                    this.progress(uploadProgress, 100);
+                    $this.find('.progress-bg').addClass("success");
+                },
+                progress: function (uploadProgress, percentage) {
+                    var $this = $(uploadProgress);
+                    var value = percentage + '%';
+                    $this.find('.progress-bg').css('width', value);
+                    $this.find('.upload-status').text(value);
+                },
+                cancelFile: function (id) {
+                    $(this.id + ' .' + id).remove();
+                    this.uploader.cancelFile(id, true);
+                    if (!$('.upload-progress').length) {
+                        this.$textSub.show();
+                    }
+                },
+                resetFilesId: function () {
+                    var ids = [];
+                    $.each($(this.id + ' .upload-progress'), function (i, e) {
+                        var $e = $(e);
+                        ids.push($e.data('fid'));
+                    });
+                    $(this.id + ' input[type="hidden"]').val(ids.toString());
+                }
+            };
+            upload.init({
+                id: '#' + [[${id}]],
+                maxCount: [[${maxCount?:1}]],
+                server: '/admin/system/file/upload',
+                token: $('meta[name="_csrf"]').attr('content'),
+                header: $('meta[name="_csrf_header"]').attr('content')
+            });
+        });
+    </script>
+</div>

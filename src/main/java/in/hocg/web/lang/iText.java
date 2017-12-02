@@ -47,10 +47,26 @@ public class iText {
     
     /**
      * 开启状态
+     *
      * @param available
      * @return
      */
     public String available(boolean available) {
         return String.format("<i class=\"fa fa-circle %s\"></i>", available ? "text-success" : "text-danger");
+    }
+    
+    /**
+     * 格式化文件大小
+     * @param bytes
+     * @return
+     */
+    public String formatBytes(long bytes) {
+        int u = 0;
+        for (; bytes > 1024 * 1024; bytes >>= 10) {
+            u++;
+        }
+        if (bytes > 1024)
+            u++;
+        return String.format("%.1f %cB", bytes / 1024f, " kMGTPE".charAt(u));
     }
 }

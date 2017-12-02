@@ -2,6 +2,7 @@ package in.hocg.web.modules.system.service.impl;
 
 import in.hocg.web.global.component.MailService;
 import in.hocg.web.lang.CheckError;
+import in.hocg.web.lang.utils.FileKit;
 import in.hocg.web.modules.base.BaseService;
 import in.hocg.web.modules.system.domain.*;
 import in.hocg.web.modules.system.domain.repository.MailTemplateRepository;
@@ -89,7 +90,13 @@ public class MailTemplateServiceImpl extends BaseService implements MailTemplate
             checkError.putError("模版文件丢失");
             return;
         }
-        mailTemplate.setTemplate(file);
+        try {
+            mailTemplate.setTemplateString(FileKit.read(file.getFile()));
+        } catch (IOException e) {
+            e.printStackTrace();
+            checkError.putError("读取文件出现异常");
+            return;
+        }
         mailTemplateRepository.insert(mailTemplate);
     }
     
@@ -110,7 +117,13 @@ public class MailTemplateServiceImpl extends BaseService implements MailTemplate
             checkError.putError("邮件模版文件不存在");
             return;
         }
-        mailTemplate.setTemplate(file);
+        try {
+            mailTemplate.setTemplateString(FileKit.read(file.getFile()));
+        } catch (IOException e) {
+            e.printStackTrace();
+            checkError.putError("读取文件出现异常");
+            return;
+        }
         mailTemplateRepository.save(filter.update(mailTemplate));
     }
     
@@ -169,10 +182,10 @@ public class MailTemplateServiceImpl extends BaseService implements MailTemplate
         
         // 发送
         try {
-            mailService.sendUseThymeleafFile(emailAll,
-                    template.getDefSubject(),
-                    template.getTemplate().getPath(),
-                    template.getParam(),
+            mailService.sendUseThymeleafText(emailAll.toArray(new String[]{}),
+                    filter.getDefSubject(),
+                    template.getTemplateString(),
+                    filter.getParams(),
                     null, null);
             sysLogService.aInfo("邮件模版群发", String.format("邮件模版(%s) 接收者 %s", id, Arrays.toString(emailAll.toArray())));
         } catch (IOException | MessagingException e) {
@@ -198,11 +211,11 @@ public class MailTemplateServiceImpl extends BaseService implements MailTemplate
                     .forEach(user -> emailAll.add(user.getEmail()));
         }
         
-        // 使用模版发送
+        // 发送
         try {
-            mailService.sendUseThymeleafFile(emailAll,
+            mailService.sendUseThymeleafText(emailAll.toArray(new String[]{}),
                     filter.getDefSubject(),
-                    template.getTemplate().getPath(),
+                    template.getTemplateString(),
                     filter.getParams(),
                     null, null);
             sysLogService.aInfo("邮件模版指定发送", String.format("邮件模版(%s) 接收者 %s", id, Arrays.toString(emailAll.toArray())));

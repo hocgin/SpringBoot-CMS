@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.w3.org/1999/xhtml">
+<head>
+    <meta th:replace="/admin/fragments/meta::meta"/>
+    <title>AdminLTE 2 | Dashboard</title>
+    <css th:replace="/admin/fragments/all-css :: all-css"></css>
+    <js th:replace="/admin/fragments/head-js :: head-js"></js>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+    <div th:replace="/admin/fragments/header::header"></div>
+    <div th:replace="/admin/fragments/left-menu::left-menu"></div>
+
+    <div id="pjax-container" class="content-wrapper" layout:fragment="content">
+        <section class="content-header">
+            <h1>
+                Dashboard
+                <small>Control panel</small>
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+                <li class="active">Dashboard</li>
+            </ol>
+        </section>
+
+        <section class="content">
+            <div class="row">
+
+            </div>
+        </section>
+    </div>
+
+
+    <div th:replace="/admin/fragments/main-footer::main-footer"></div>
+    <div th:replace="/admin/fragments/right-setting::right-setting"></div>
+    <div class="control-sidebar-bg"></div>
+</div>
+
+<js th:replace="/admin/fragments/footer-js::footer-js"></js>
+</body>
+</html>

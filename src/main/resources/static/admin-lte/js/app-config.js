@@ -55,16 +55,3 @@ const DATA_TABLE_CONFIG = {
         layer.msg('加载中');
     }
 };
-
-const PJAXUtils = {
-    getDefaultConfig: function (url) {
-        return {
-            url: url,
-            maxCacheLength: 0,
-            push: false,
-            replace: true,
-            fragment: '#pjax-container',
-            timeout: 8000
-        };
-    }
-};

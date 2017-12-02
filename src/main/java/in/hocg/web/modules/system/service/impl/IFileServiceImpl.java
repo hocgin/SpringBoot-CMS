@@ -142,4 +142,9 @@ public class IFileServiceImpl extends BaseService
             FileKit.removeIn(dirPath, fileList.toArray(new String[]{}));
         }
     }
+    
+    @Override
+    public List<IFile> findAll() {
+        return iFileRepository.findAll();
+    }
 }

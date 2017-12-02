@@ -1,0 +1,105 @@
+.upload-wrapper .upload-area {
+    border: 1px solid #dcdfe5;
+    border-radius: 4px;
+    overflow-y: scroll;
+    height: 440px;
+}
+
+.upload-area .text-sub {
+    color: #5e6166;
+    font-size: 14px;
+    line-height: 28px;
+    margin: 15px 0;
+}
+
+.upload-wrapper .upload-tip {
+    color: #5e6166;
+    padding-left: 0;
+    line-height: 24px;
+}
+
+.upload-wrapper .upload-tip li {
+    list-style: none;
+}
+
+.upload-wrapper .upload-area .upload-progress {
+    position: relative;
+    height: 45px;
+    border-top: 1px solid #dcdfe5;
+    background-color: #f5f7fa;
+}
+
+.upload-wrapper .upload-area .upload-progress .progress-info {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    padding: 10.5px 16px;
+    width: 100%;
+    color: #666f80;
+    line-height: 24px;
+}
+
+.upload-wrapper .upload-area .upload-progress .progress-info .file-info {
+    display: inline-block;
+    width: 80%;
+}
+
+.upload-wrapper .upload-area .upload-progress .progress-info .file-info .file-name {
+    font-weight: 500;
+    display: inline-block;
+    width: 70%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.upload-wrapper .upload-area .upload-progress .progress-info .file-info .file-size {
+    color: #8f9bb3;
+    font-weight: 400;
+    display: inline-block;
+    vertical-align: top;
+    max-width: 130px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.upload-wrapper .upload-area .upload-progress .progress-info .cancel-upload,
+.upload-wrapper .upload-area .upload-progress .progress-info .remove-upload,
+.upload-wrapper .upload-area .upload-progress .progress-info .success-upload {
+    float: right;
+    width: 20px;
+    text-align: center;
+    font-size: 16px;
+    line-height: 24px;
+    color: #8f9bb3;
+}
+
+.upload-wrapper .upload-area .upload-progress .progress-info .upload-status {
+    width: 90px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.upload-wrapper .upload-area .upload-progress .progress-bg {
+    background-color: #e5f2ff;
+    height: 100%;
+    margin-bottom: 0;
+}
+
+.upload-wrapper .upload-area .upload-progress .progress-bg.exist {
+    background-color: #fff6e5;
+}
+
+.upload-wrapper .upload-area .upload-progress .progress-bg.success {
+    background-color: #e5ffef;
+    color: #67c23a;
+}
+
+.upload-wrapper .upload-area .upload-progress .progress-bg.error {
+    color: #e55c5c;
+    background-color: #ffe5ea;
+}
+.modal-full {
+    width: 100%;
+}
