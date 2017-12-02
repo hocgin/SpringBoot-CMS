@@ -116,8 +116,8 @@ public class UserServiceImpl implements UserService {
     }
     
     @Override
-    public List<User> findAllByDepartmentAndRole(String departmentId, String roleId) {
-        return userRepository.findAllByDepartmentAndRole(departmentId, roleId);
+    public List<User> findAllByRoles(String... rolesId) {
+        return userRepository.findAllByRole(rolesId);
     }
     
     @Override

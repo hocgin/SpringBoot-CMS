@@ -13,5 +13,6 @@ public interface UserRepositoryCustom {
     
     void removeDepartmentField(String... departmentId);
     
-    List<User> findAllByDepartmentAndRole(String departmentId, String roleId);
+    
+    List<User> findAllByRole(String... rolesId);
 }

@@ -95,7 +95,7 @@ public class RoleController extends BaseController {
     @RequestMapping("/list")
     @ResponseBody
     public Results roles(String department) {
-        List<Role> roles = roleService.findByDepartment(department);
+        List<Role> roles = roleService.findByDepartmentAndChildren(department);
         return Results.success(roles);
     }
     

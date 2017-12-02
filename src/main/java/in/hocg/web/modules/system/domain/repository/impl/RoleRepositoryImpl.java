@@ -1,18 +1,16 @@
 package in.hocg.web.modules.system.domain.repository.impl;
 
 import com.mongodb.DBRef;
-import in.hocg.web.modules.system.domain.SysMenu;
-import in.hocg.web.modules.system.domain.Role;
-import in.hocg.web.modules.system.domain.repository.custom.RoleRepositoryCustom;
 import in.hocg.web.modules.base.BaseMongoCustom;
+import in.hocg.web.modules.system.domain.Role;
+import in.hocg.web.modules.system.domain.SysMenu;
+import in.hocg.web.modules.system.domain.repository.custom.RoleRepositoryCustom;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
 import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by hocgin on 2017/11/6.
@@ -35,12 +33,5 @@ public class RoleRepositoryImpl
         Update update = new Update().pullAll("permissions", dbRefs);
         
         updateMulti(query, update);
-    }
-    
-    @Override
-    public List<Role> findAllByPath(String path) {
-        return findAll().stream()
-                .filter(role -> role.getDepartment().getPath().startsWith(path))
-                .collect(Collectors.toList());
     }
 }

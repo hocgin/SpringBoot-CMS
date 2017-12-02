@@ -3,13 +3,12 @@ package in.hocg.web.modules.system.service.impl;
 import in.hocg.web.global.component.MailService;
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.modules.base.BaseService;
-import in.hocg.web.modules.system.domain.IFile;
-import in.hocg.web.modules.system.domain.MailTemplate;
+import in.hocg.web.modules.system.domain.*;
 import in.hocg.web.modules.system.domain.repository.MailTemplateRepository;
 import in.hocg.web.modules.system.filter.MailTemplateDataTablesInputFilter;
 import in.hocg.web.modules.system.filter.MailTemplateFilter;
-import in.hocg.web.modules.system.filter.SendMailFilter;
 import in.hocg.web.modules.system.filter.SendGroupMailFilter;
+import in.hocg.web.modules.system.filter.SendMailFilter;
 import in.hocg.web.modules.system.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -20,9 +19,8 @@ import org.springframework.util.StringUtils;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by hocgin on 2017/11/26.
@@ -37,19 +35,26 @@ public class MailTemplateServiceImpl extends BaseService implements MailTemplate
     private MemberService memberService;
     private MailService mailService;
     private SysLogService sysLogService;
+    private DepartmentService departmentService;
+    private RoleService roleService;
+    
     @Autowired
     public MailTemplateServiceImpl(MailTemplateRepository mailTemplateRepository,
                                    UserService userService,
                                    MailService mailService,
+                                   RoleService roleService,
+                                   DepartmentService departmentService,
                                    SysLogService sysLogService,
                                    MemberService memberService,
                                    IFileService iFileService) {
         this.mailTemplateRepository = mailTemplateRepository;
         this.userService = userService;
         this.mailService = mailService;
+        this.departmentService = departmentService;
         this.memberService = memberService;
         this.iFileService = iFileService;
         this.sysLogService = sysLogService;
+        this.roleService = roleService;
     }
     
     @Override
@@ -111,6 +116,7 @@ public class MailTemplateServiceImpl extends BaseService implements MailTemplate
     
     /**
      * 群发邮件
+     * - 角色为最细颗粒
      * @param id
      * @param filter
      * @param checkError
@@ -122,14 +128,46 @@ public class MailTemplateServiceImpl extends BaseService implements MailTemplate
             checkError.putError("邮件模版异常");
             return;
         }
-        List<String> emailAll = new ArrayList<>();
-        if (filter.isWeb()) {
-            memberService.findAllByDepartmentAndRole(filter.getDepartment(), filter.getRole())
-                    .forEach(member -> emailAll.add(member.getEmail()));
-        } else if (filter.isAdmin()) {
-            userService.findAllByDepartmentAndRole(filter.getDepartment(), filter.getRole())
-                    .forEach(user -> emailAll.add(user.getEmail()));
+        
+        String[] roles;
+        // 提取角色列表
+        if (StringUtils.isEmpty(filter.getRole())) {
+            List<Role> roleList;
+            if (StringUtils.isEmpty(filter.getDepartment())) {
+                roleList = roleService.findAll();
+            } else {
+                roleList = roleService.findByDepartmentAndChildren(filter.getDepartment());
+            }
+            roles = roleList.stream()
+                    .map(Role::getId)
+                    .toArray(String[]::new);
+        } else {
+            roles = new String[]{filter.getRole()};
         }
+        
+        List<String> emailAll;
+        // 提取邮箱地址
+        if (filter.isWeb()) {
+            emailAll = memberService.findAllByRoles(roles)
+                    .stream()
+                    .map(Member::getEmail)
+                    .collect(Collectors.toList());
+            
+        } else if (filter.isAdmin()) {
+            emailAll = userService.findAllByRoles(roles)
+                    .stream()
+                    .map(User::getEmail)
+                    .collect(Collectors.toList());
+        }else{
+            emailAll = Collections.emptyList();
+        }
+        
+        if (emailAll.isEmpty()) {
+            checkError.putError("未匹配到接收人");
+            return;
+        }
+        
+        // 发送
         try {
             mailService.sendUseThymeleafFile(emailAll,
                     template.getDefSubject(),
@@ -142,6 +180,7 @@ public class MailTemplateServiceImpl extends BaseService implements MailTemplate
             checkError.putError("发送失败");
         }
     }
+    
     
     @Override
     public void send(String id, SendMailFilter filter, CheckError checkError) {

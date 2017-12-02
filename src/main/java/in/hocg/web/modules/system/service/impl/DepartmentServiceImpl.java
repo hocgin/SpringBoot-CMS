@@ -1,19 +1,20 @@
 package in.hocg.web.modules.system.service.impl;
 
-import in.hocg.web.modules.system.filter.DepartmentFilter;
 import in.hocg.web.lang.CheckError;
+import in.hocg.web.modules.base.BaseService;
 import in.hocg.web.modules.system.domain.Department;
 import in.hocg.web.modules.system.domain.repository.DepartmentRepository;
+import in.hocg.web.modules.system.filter.DepartmentFilter;
 import in.hocg.web.modules.system.service.DepartmentService;
 import in.hocg.web.modules.system.service.RoleService;
 import in.hocg.web.modules.system.service.UserService;
-import in.hocg.web.modules.base.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -135,6 +136,16 @@ public class DepartmentServiceImpl extends BaseService implements DepartmentServ
     @Override
     public Department findById(String id) {
         return departmentRepository.findOne(id);
+    }
+    
+    @Override
+    public List<Department> findByDepartmentAndChildren(String departmentId) {
+        Department department = departmentRepository.findOne(departmentId);
+        if (ObjectUtils.isEmpty(department)) {
+            return Collections.emptyList();
+        }
+        return departmentRepository.findAllByPathRegex(
+                String.format("%s.*", (StringUtils.isEmpty(department.getPath()) ? "" : department.getPath())));
     }
     
     

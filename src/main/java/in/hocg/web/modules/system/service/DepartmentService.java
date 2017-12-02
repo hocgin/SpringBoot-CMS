@@ -18,4 +18,11 @@ public interface DepartmentService {
     List<Department> queryRoot();
     
     Department findById(String id);
+    
+    /**
+     * 查找 此单位 及 他的子单位
+     * @param department
+     * @return
+     */
+    List<Department> findByDepartmentAndChildren(String department);
 }

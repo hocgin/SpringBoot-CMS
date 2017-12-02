@@ -354,34 +354,6 @@
                     userTable.reloadPage();
                 });
 
-                tree = {
-                    $el: $('#js-tree'),
-                    obj: null,
-                    init: function () {
-                        var that = this;
-                        this.$el.jstree({
-                            plugins: ['wholerow', 'json_data'],
-                            core: {
-                                dataType: 'json',
-                                data: {
-                                    url: function (node) {
-                                        return '/admin/system/department/tree/' + (node.id === '#' ? '' : node.id)
-                                    }
-                                }
-                            }
-                        }).on("dblclick.jstree", function (node) {
-                            that.selectParentMenu();
-                        });
-                    },
-                    selectParentMenu: function () { //选择父菜单
-                        var tree = $.jstree.reference("#js-tree");
-                        var node = tree.get_selected(true);
-                        $("#department").val(node[0].text);
-                        $("input[name='departmentId']").val(node[0].id);
-                        $("#js-select-model").modal("hide");
-                    }
-                };
-                tree.init();
             });
         </script>
     </div>

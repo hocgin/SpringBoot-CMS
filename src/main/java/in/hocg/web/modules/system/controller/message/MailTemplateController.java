@@ -64,20 +64,22 @@ public class MailTemplateController extends BaseController {
         return String.format(BASE_TEMPLATES_PATH, "query-modal");
     }
     
-    @GetMapping("/send-group/{id}")
-    public String vSendGroupModal(@PathVariable("id") String id, Model model) {
-        model.addAttribute("id", id);
-        return String.format(BASE_TEMPLATES_PATH, "send-group-modal");
+    @GetMapping("/send-group-view/{id}")
+    public String vSendGroup(@PathVariable("id") String id, Model model) {
+        MailTemplate template = mailTemplateService.find(id);
+        model.addAttribute("template", template);
+        return String.format(BASE_TEMPLATES_PATH, "send-group-view");
     }
+    
     @GetMapping("/send-user-view/{id}")
-    public String vSendUserModal(@PathVariable("id") String id, Model model) {
+    public String vSendUser(@PathVariable("id") String id, Model model) {
         MailTemplate template = mailTemplateService.find(id);
         model.addAttribute("template", template);
         return String.format(BASE_TEMPLATES_PATH, "send-user-view");
     }
     
     @GetMapping("/send-member-view/{id}")
-    public String vSendMemberModal(@PathVariable("id") String id, Model model) {
+    public String vSendMember(@PathVariable("id") String id, Model model) {
         MailTemplate template = mailTemplateService.find(id);
         model.addAttribute("template", template);
         return String.format(BASE_TEMPLATES_PATH, "send-member-view");

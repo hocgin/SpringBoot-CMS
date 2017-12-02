@@ -41,5 +41,5 @@ public interface MemberService {
     
     void resumeToken();
     
-    List<Member> findAllByDepartmentAndRole(String department, String role);
+    List<Member> findAllByRoles(String... role);
 }

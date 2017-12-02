@@ -12,14 +12,22 @@
     <div th:replace="/admin/fragments/header::header"></div>
     <div th:replace="/admin/fragments/left-menu::left-menu"></div>
     <div id="pjax-container" class="content-wrapper">
-        <!--Modal 角色详情-->
+        <!--Modal 详情-->
         <div class="modal fade in" id="js-detail-modal">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                 </div>
             </div>
         </div>
-        <!--./Modal 角色详情-->
+        <!--./Modal 详情-->
+        <!--Modal 预览-->
+        <div class="modal fade in" id="js-browser-modal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                </div>
+            </div>
+        </div>
+        <!--./Modal 预览-->
         <!--Modal 查询框-->
         <div class="modal fade in" id="js-query-modal">
             <div class="modal-dialog">
@@ -166,10 +174,10 @@
                                         '               <span class="sr-only">Toggle Dropdown</span>' +
                                         '         </button>' +
                                         '         <ul class="dropdown-menu" role="menu">' +
-                                        '             <li><a class="js-modal" href="/admin/message/mail/detail/' + row.id + '" data-target="#js-detail-modal" data-toggle="modal">查看</a></li>' +
-                                        '             <li><a class="js-modal" href="/admin/message/mail/browser/' + row.id + '" data-target="#js-detail-modal" data-toggle="modal">浏览</a></li>' +
+                                        '             <li><a href="/admin/message/mail/detail/' + row.id + '" data-target="#js-detail-modal" data-toggle="modal">查看</a></li>' +
+                                        '             <li><a href="/admin/message/mail/browser/' + row.id + '" data-target="#js-browser-modal" data-toggle="modal">预览</a></li>' +
                                         '             <li class="divider"></li>' +
-                                        '             <li><a class="js-modal" href="/admin/message/mail/send-group/' + row.id + '" data-target="#js-detail-modal" data-toggle="modal">群发</a></li>' +
+                                        '             <li><a href="/admin/message/mail/send-group-view/' + row.id + '" pjax-data>群发</a></li>' +
                                         '             <li><a href="/admin/message/mail/send-user-view/' + row.id + '" pjax-data>发送 (后台)</a></li>' +
                                         '             <li><a href="/admin/message/mail/send-member-view/' + row.id + '" pjax-data>发送 (会员)</a></li>' +
                                         '             <li class="divider"></li>' +

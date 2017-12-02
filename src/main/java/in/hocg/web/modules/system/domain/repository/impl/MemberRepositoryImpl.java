@@ -3,11 +3,9 @@ package in.hocg.web.modules.system.domain.repository.impl;
 import in.hocg.web.modules.base.BaseMongoCustom;
 import in.hocg.web.modules.system.domain.Member;
 import in.hocg.web.modules.system.domain.repository.custom.MemberRepositoryCustom;
-import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -44,14 +42,7 @@ public class MemberRepositoryImpl
     }
     
     @Override
-    public List<Member> findAllByDepartmentAndRole(String department, String role) {
-        Criteria criteria = new Criteria();
-        if (!StringUtils.isEmpty(department)) {
-            criteria.andOperator(Criteria.where("department.$id").is(new ObjectId(department)));
-        }
-        if (!StringUtils.isEmpty(role)) {
-            criteria.andOperator(Criteria.where("role.$id").is(new ObjectId(role)));
-        }
-        return find(Query.query(criteria));
+    public List<Member> findAllByRole(String... roleIds) {
+        return find(Query.query(Criteria.where("role").in(roleIds)));
     }
 }

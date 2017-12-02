@@ -128,9 +128,13 @@ public class MemberServiceImpl implements MemberService {
         memberRepository.resumeToken();
     }
     
+    /**
+     * @param roleIds
+     * @return
+     */
     @Override
-    public List<Member> findAllByDepartmentAndRole(String department, String role) {
-        return memberRepository.findAllByDepartmentAndRole(department, role);
+    public List<Member> findAllByRoles(String... roleIds) {
+        return memberRepository.findAllByRole(roleIds);
     }
     
     

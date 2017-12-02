@@ -17,5 +17,5 @@ public interface MemberRepositoryCustom {
     
     void resumeToken();
     
-    List<Member> findAllByDepartmentAndRole(String department, String role);
+    List<Member> findAllByRole(String... roleIds);
 }

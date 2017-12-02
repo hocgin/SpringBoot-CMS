@@ -1,13 +1,11 @@
 package in.hocg.web.modules.system.domain.repository.impl;
 
+import in.hocg.web.modules.base.BaseMongoCustom;
 import in.hocg.web.modules.system.domain.User;
 import in.hocg.web.modules.system.domain.repository.custom.UserRepositoryCustom;
-import in.hocg.web.modules.base.BaseMongoCustom;
-import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -39,14 +37,7 @@ public class UserRepositoryImpl
     }
     
     @Override
-    public List<User> findAllByDepartmentAndRole(String departmentId, String roleId) {
-        Criteria criteria = new Criteria();
-        if (!StringUtils.isEmpty(departmentId)) {
-            criteria.andOperator(Criteria.where("department.$id").is(new ObjectId(departmentId)));
-        }
-        if (!StringUtils.isEmpty(roleId)) {
-            criteria.andOperator(Criteria.where("role.$id").is(new ObjectId(roleId)));
-        }
-        return find(Query.query(criteria));
+    public List<User> findAllByRole(String... rolesId) {
+        return find(Query.query(Criteria.where("role").in(rolesId)));
     }
 }

@@ -1,12 +1,12 @@
 package in.hocg.web.modules.system.service;
 
-import in.hocg.web.modules.system.filter.UserDataTablesInputFilter;
-import in.hocg.web.modules.system.filter.UserFilter;
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.modules.system.body.LeftMenu;
-import in.hocg.web.modules.system.domain.SysMenu;
 import in.hocg.web.modules.system.domain.Role;
+import in.hocg.web.modules.system.domain.SysMenu;
 import in.hocg.web.modules.system.domain.User;
+import in.hocg.web.modules.system.filter.UserDataTablesInputFilter;
+import in.hocg.web.modules.system.filter.UserFilter;
 import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
 
 import java.util.Collection;
@@ -47,5 +47,6 @@ public interface UserService {
     
     LeftMenu getLeftMenu(String id);
     
-    List<User> findAllByDepartmentAndRole(String departmentId, String roleId);
+    
+    List<User> findAllByRoles(String... rolesId);
 }

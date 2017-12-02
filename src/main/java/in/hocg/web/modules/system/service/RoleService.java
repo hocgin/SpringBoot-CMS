@@ -34,5 +34,8 @@ public interface RoleService {
     
     void removePermissionForAllRole(String... id);
     
-    List<Role> findByDepartment(String department);
+    List<Role> findByDepartmentAndChildren(String departmentId);
+    
+    List<Role> findAll();
+    
 }

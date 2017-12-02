@@ -1,15 +1,15 @@
 package in.hocg.web.modules.system.service.impl;
 
-import in.hocg.web.modules.system.filter.RoleDataTablesInputFilter;
-import in.hocg.web.modules.system.filter.RoleFilter;
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.modules.system.domain.Department;
-import in.hocg.web.modules.system.domain.SysMenu;
 import in.hocg.web.modules.system.domain.Role;
+import in.hocg.web.modules.system.domain.SysMenu;
 import in.hocg.web.modules.system.domain.repository.RoleRepository;
+import in.hocg.web.modules.system.filter.RoleDataTablesInputFilter;
+import in.hocg.web.modules.system.filter.RoleFilter;
 import in.hocg.web.modules.system.service.DepartmentService;
-import in.hocg.web.modules.system.service.SysMenuService;
 import in.hocg.web.modules.system.service.RoleService;
+import in.hocg.web.modules.system.service.SysMenuService;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -19,6 +19,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -146,9 +147,21 @@ public class RoleServiceImpl implements RoleService {
     }
     
     @Override
-    public List<Role> findByDepartment(String department) {
-        Department departmentObj = departmentService.findById(department);
-        return roleRepository.findAllByPath(departmentObj.getPath());
+    public List<Role> findByDepartmentAndChildren(String departmentId) {
+        
+        List<Department> departments = departmentService.findByDepartmentAndChildren(departmentId);
+        if (departments.isEmpty()) {
+            return Collections.emptyList();
+        }
+        String[] departmentIds = departments.stream()
+                .map(Department::getId)
+                .toArray(String[]::new);
+        return roleRepository.findAllByDepartmentIn(departmentIds);
+    }
+    
+    @Override
+    public List<Role> findAll() {
+        return roleRepository.findAll();
     }
     
 }
