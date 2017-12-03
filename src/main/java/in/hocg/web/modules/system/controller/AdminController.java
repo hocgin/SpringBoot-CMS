@@ -57,4 +57,14 @@ public class AdminController extends BaseController {
         return "/admin/index";
     }
     
+    @GetMapping("/upload-box-modal.html")
+    public String uploadBoxModal(Model model) {
+        List<IFile> all = iFileService.findAll();
+        model.addAttribute("iFiles", all);
+        model.addAttribute("modalId", "js-template-modal");
+        model.addAttribute("id", "upload3");
+        model.addAttribute("varId", "sdfd");
+        return "/admin/_widgets/upload-box-modal";
+    }
+    
 }
