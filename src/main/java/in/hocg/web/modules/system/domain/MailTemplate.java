@@ -23,8 +23,8 @@ public class MailTemplate extends BaseDomain {
     private String defSubject; // 默认标题
     private String description; // 描述
     private String templateString; // 模版内容
-    private Map<String, IFile> images; // 嵌入图片
-    private Map<String, IFile> files; // 附件
+    private Map<String, IFile> images; // (IFileID, IFile)嵌入图片
+    private Map<String, IFile> files; //(IFileID, IFile) 附件
     
     
     @JsonIgnore

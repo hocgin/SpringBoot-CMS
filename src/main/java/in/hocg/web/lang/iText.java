@@ -3,6 +3,7 @@ package in.hocg.web.lang;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -68,5 +69,15 @@ public class iText {
         if (bytes > 1024)
             u++;
         return String.format("%.1f %cB", bytes / 1024f, " kMGTPE".charAt(u));
+    }
+    
+    
+    /**
+     * URL 编码
+     * @param url
+     * @return
+     */
+    public String urlEncode(String url) {
+        return URLEncoder.encode(url);
     }
 }

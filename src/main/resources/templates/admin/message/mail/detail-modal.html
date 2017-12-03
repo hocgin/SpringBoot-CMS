@@ -64,8 +64,10 @@
                 <tbody>
                 <th:block th:each="image, i:${mailTemplate.images}">
                     <tr>
-                        <td th:text="${image.key}"></td>
-                        <td th:text="${image.value}"></td>
+                        <td th:text="${image.value.uploadName}"></td>
+                        <td>
+                            <a th:href="@{/admin/system/file/download/__${image.value.id}__(rename=${image.value.uploadName})}">下载</a>
+                        </td>
                     </tr>
                 </th:block>
                 </tbody>
@@ -83,8 +85,10 @@
                 <tbody>
                 <th:block th:each="file, i:${mailTemplate.files}">
                     <tr>
-                        <td th:text="${file.key}"></td>
-                        <td th:text="${file.value}"></td>
+                        <td th:text="${file.value.uploadName}"></td>
+                        <td>
+                            <a th:href="@{/admin/system/file/download/__${file.value.id}__(rename=${file.value.uploadName})}">下载</a>
+                        </td>
                     </tr>
                 </th:block>
                 </tbody>

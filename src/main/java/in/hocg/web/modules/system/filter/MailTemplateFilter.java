@@ -24,14 +24,13 @@ public class MailTemplateFilter extends BaseFilter {
      */
     @NotBlank(message = "ID异常", groups = {Update.class})
     private String id;
+    @NotBlank(message = "模版内容丢失", groups = {Update.class})
+    private String templateString;
     
     /**
      * 更新 与 增加 均拥有
      */
     private String description; // 说明
-    
-    @NotBlank(message = "请上传模版文件", groups = {Insert.class, Update.class})
-    private String fid; // 文件ID
     private String[] imagesId; // 嵌入图片
     private String[] filesId; // 附件
     private String param; // 参数
@@ -43,6 +42,9 @@ public class MailTemplateFilter extends BaseFilter {
     /**
      * 仅增加拥有
      */
+
+    @NotBlank(message = "请上传模版文件", groups = {Insert.class})
+    private String fid; // 文件ID
     
     public MailTemplate get() {
         MailTemplate mailTemplate = new MailTemplate();
@@ -67,6 +69,7 @@ public class MailTemplateFilter extends BaseFilter {
     public MailTemplate update(MailTemplate mailTemplate) {
         mailTemplate.setDefSubject(defSubject);
         mailTemplate.setDescription(description);
+        mailTemplate.setTemplateString(templateString);
         mailTemplate.setName(name);
         mailTemplate.updatedAt();
         // 解析默认变量

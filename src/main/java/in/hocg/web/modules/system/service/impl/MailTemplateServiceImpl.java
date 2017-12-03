@@ -104,7 +104,7 @@ public class MailTemplateServiceImpl extends BaseService implements MailTemplate
         HashMap<String, IFile> imageMap = new HashMap<>();
         iFileService.findByIdIn(filter.getImagesId()).forEach(image -> {
             if (image.exists()) {
-                imageMap.put(image.getUploadName(), image);
+                imageMap.put(image.getId(), image);
             }
         });
         mailTemplate.setImages(imageMap);
@@ -113,10 +113,11 @@ public class MailTemplateServiceImpl extends BaseService implements MailTemplate
         HashMap<String, IFile> fileMap = new HashMap<>();
         iFileService.findByIdIn(filter.getFilesId()).forEach(f -> {
             if (f.exists()) {
-                fileMap.put(f.getUploadName(), f);
+                fileMap.put(f.getId(), f);
             }
         });
         mailTemplate.setFiles(fileMap);
+        
         mailTemplateRepository.insert(mailTemplate);
     }
     
@@ -129,21 +130,28 @@ public class MailTemplateServiceImpl extends BaseService implements MailTemplate
     public void update(MailTemplateFilter filter, CheckError checkError) {
         MailTemplate mailTemplate = mailTemplateRepository.findOne(filter.getId());
         if (ObjectUtils.isEmpty(mailTemplate)) {
-            checkError.putError("邮件模版不存在");
+            checkError.putError("邮件模版异常");
             return;
         }
-        IFile file = iFileService.findById(filter.getFid());
-        if (ObjectUtils.isEmpty(file) || !file.exists()) {
-            checkError.putError("邮件模版文件不存在");
-            return;
-        }
-        try {
-            mailTemplate.setTemplateString(FileKit.read(file.getFile()));
-        } catch (IOException e) {
-            e.printStackTrace();
-            checkError.putError("读取文件出现异常");
-            return;
-        }
+    
+        // 处理图片及UID
+        HashMap<String, IFile> imageMap = new HashMap<>();
+        iFileService.findByIdIn(filter.getImagesId()).forEach(image -> {
+            if (image.exists()) {
+                imageMap.put(image.getId(), image);
+            }
+        });
+        mailTemplate.setImages(imageMap);
+    
+        // 处理附件
+        HashMap<String, IFile> fileMap = new HashMap<>();
+        iFileService.findByIdIn(filter.getFilesId()).forEach(f -> {
+            if (f.exists()) {
+                fileMap.put(f.getId(), f);
+            }
+        });
+        mailTemplate.setFiles(fileMap);
+        
         mailTemplateRepository.save(filter.update(mailTemplate));
     }
     
