@@ -49,26 +49,6 @@
                                            type="text">
                                 </div>
                                 <div class="form-group">
-                                    <label for="template">上传模版文件 <span class="i-label label-warning">必填</span></label>
-                                    <input type="hidden" name="fid" id="template" th:value="${mailTemplate.template?.id}" >
-                                    <table class="table table-bordered i-upload-box">
-                                        <tbody>
-                                        <tr>
-                                            <th style="width: 180px">选择文件</th>
-                                            <th>文件名</th>
-                                            <th>状态</th>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div class="i-upload-choose">选择文件</div>
-                                            </td>
-                                            <td class="i-upload-description" th:text="${mailTemplate.template?.uploadName}">请选择上传文件...</td>
-                                            <td class="i-upload-status"></td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="form-group">
                                     <label for="param">设置参数及默认值 </label>
                                     <textarea class="form-control" id="param" name="param"
                                               style="height: 5em;"

@@ -52,7 +52,7 @@
                     </div>
                     <div>
                         <ul class="upload-tip">
-                            <!--<li>不能上传超过 500M 的文件</li>-->
+                            <li>不能上传超过 500M 的文件</li>
                         </ul>
                         <div class="upload-btn">
                             选择文件
@@ -75,7 +75,7 @@
 <script xmlns:th="http://www.thymeleaf.org"
         th:inline="javascript">
     $(function () {
-        var Uploader = UploadBox.init({
+        var Uploader = new UploadBox({
             id: '#' + [[${id}]],
             maxCount: [[${maxCount?:1}]],
             server: '/admin/system/file/upload',

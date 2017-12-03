@@ -22,6 +22,8 @@ public class SendGroupMailFilter extends BaseFilter {
     private String department; // 单位ID
     private String params; // 参数
     private String defSubject; // 标题
+    private String[] imagesId; // 嵌入图片
+    private String[] filesId; // 附件
     
     
     public Map<String, Object> getParams() {

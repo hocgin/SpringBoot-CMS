@@ -9,9 +9,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 import org.thymeleaf.context.WebContext;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.templateresolver.TemplateResolver;
+import org.thymeleaf.util.MapUtils;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -20,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.io.ObjectInput;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -89,24 +92,24 @@ public class MailService {
         messageHelper.setCc(from); // - 给自己邮箱抄录一份
         messageHelper.setSubject(subject);
         messageHelper.setText(text, true);
-        Optional.ofNullable(attachment).ifPresent(map -> {
-            map.forEach((k, v) -> {
+        if (!MapUtils.isEmpty(attachment)) {
+            attachment.forEach((k, v) -> {
                 try {
                     messageHelper.addAttachment(k, v);
                 } catch (javax.mail.MessagingException e) {
                     e.printStackTrace();
                 }
             });
-        });
-        Optional.ofNullable(inline).ifPresent(map -> {
-            map.forEach((k, v) -> {
+        }
+        if (!MapUtils.isEmpty(inline)) {
+            inline.forEach((k, v) -> {
                 try {
                     messageHelper.addInline(k, v);
                 } catch (javax.mail.MessagingException e) {
                     e.printStackTrace();
                 }
             });
-        });
+        }
         mailSender.send(messageHelper.getMimeMessage());
     }
     public void send(@NotNull String to, @NotNull String subject, @NotNull String text,

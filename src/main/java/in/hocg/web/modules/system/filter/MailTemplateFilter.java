@@ -32,6 +32,8 @@ public class MailTemplateFilter extends BaseFilter {
     
     @NotBlank(message = "请上传模版文件", groups = {Insert.class, Update.class})
     private String fid; // 文件ID
+    private String[] imagesId; // 嵌入图片
+    private String[] filesId; // 附件
     private String param; // 参数
     @NotBlank(message = "主题为必填", groups = {Insert.class, Update.class})
     private String defSubject; // 主题名

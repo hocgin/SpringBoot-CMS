@@ -4,6 +4,8 @@ import in.hocg.web.modules.system.domain.IFile;
 import org.springframework.data.mongodb.datatables.repository.DataTablesRepository;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
+import java.util.List;
+
 /**
  * Created by hocgin on 2017/11/19.
  * email: hocgin@gmail.com
@@ -17,4 +19,6 @@ public interface IFileRepository extends DataTablesRepository<IFile, String>,
     void removeAllByKeepNameNotIn(String... keepName);
     
     IFile findByKeepName(String keepName);
+    
+    List<IFile> findAllByIdIn(String... iFilesId);
 }

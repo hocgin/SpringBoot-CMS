@@ -19,6 +19,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import javax.mail.MessagingException;
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -84,12 +85,14 @@ public class MailTemplateServiceImpl extends BaseService implements MailTemplate
             checkError.putError("模版名称已存在");
             return;
         }
+        // 处理模版文件
         IFile file = iFileService.findById(filter.getFid());
         if (ObjectUtils.isEmpty(file)
                 || !file.exists()) {
             checkError.putError("模版文件丢失");
             return;
         }
+        
         try {
             mailTemplate.setTemplateString(FileKit.read(file.getFile()));
         } catch (IOException e) {
@@ -97,6 +100,23 @@ public class MailTemplateServiceImpl extends BaseService implements MailTemplate
             checkError.putError("读取文件出现异常");
             return;
         }
+        // 处理图片及UID
+        HashMap<String, IFile> imageMap = new HashMap<>();
+        iFileService.findByIdIn(filter.getImagesId()).forEach(image -> {
+            if (image.exists()) {
+                imageMap.put(image.getUploadName(), image);
+            }
+        });
+        mailTemplate.setImages(imageMap);
+    
+        // 处理附件
+        HashMap<String, IFile> fileMap = new HashMap<>();
+        iFileService.findByIdIn(filter.getFilesId()).forEach(f -> {
+            if (f.exists()) {
+                fileMap.put(f.getUploadName(), f);
+            }
+        });
+        mailTemplate.setFiles(fileMap);
         mailTemplateRepository.insert(mailTemplate);
     }
     
@@ -130,6 +150,7 @@ public class MailTemplateServiceImpl extends BaseService implements MailTemplate
     /**
      * 群发邮件
      * - 角色为最细颗粒
+     *
      * @param id
      * @param filter
      * @param checkError
@@ -171,7 +192,7 @@ public class MailTemplateServiceImpl extends BaseService implements MailTemplate
                     .stream()
                     .map(User::getEmail)
                     .collect(Collectors.toList());
-        }else{
+        } else {
             emailAll = Collections.emptyList();
         }
         
@@ -179,6 +200,21 @@ public class MailTemplateServiceImpl extends BaseService implements MailTemplate
             checkError.putError("未匹配到接收人");
             return;
         }
+        // 处理图片及UID
+        HashMap<String, File> imageMap = new HashMap<>();
+        iFileService.findByIdIn(filter.getImagesId()).forEach(image -> {
+            if (image.exists()) {
+                imageMap.put(image.getUploadName(), image.getFile());
+            }
+        });
+        
+        // 处理附件
+        HashMap<String, File> fileMap = new HashMap<>();
+        iFileService.findByIdIn(filter.getFilesId()).forEach(file -> {
+            if (file.exists()) {
+                fileMap.put(file.getUploadName(), file.getFile());
+            }
+        });
         
         // 发送
         try {
@@ -186,7 +222,7 @@ public class MailTemplateServiceImpl extends BaseService implements MailTemplate
                     filter.getDefSubject(),
                     template.getTemplateString(),
                     filter.getParams(),
-                    null, null);
+                    imageMap, fileMap);
             sysLogService.aInfo("邮件模版群发", String.format("邮件模版(%s) 接收者 %s", id, Arrays.toString(emailAll.toArray())));
         } catch (IOException | MessagingException e) {
             e.printStackTrace();
@@ -210,6 +246,21 @@ public class MailTemplateServiceImpl extends BaseService implements MailTemplate
             userService.findAllById(filter.getIds())
                     .forEach(user -> emailAll.add(user.getEmail()));
         }
+        // 处理图片及UID
+        HashMap<String, File> imageMap = new HashMap<>();
+        iFileService.findByIdIn(filter.getImagesId()).forEach(image -> {
+            if (image.exists()) {
+                imageMap.put(image.getUploadName(), image.getFile());
+            }
+        });
+    
+        // 处理附件
+        HashMap<String, File> fileMap = new HashMap<>();
+        iFileService.findByIdIn(filter.getFilesId()).forEach(file -> {
+            if (file.exists()) {
+                fileMap.put(file.getUploadName(), file.getFile());
+            }
+        });
         
         // 发送
         try {
@@ -217,7 +268,7 @@ public class MailTemplateServiceImpl extends BaseService implements MailTemplate
                     filter.getDefSubject(),
                     template.getTemplateString(),
                     filter.getParams(),
-                    null, null);
+                    imageMap, fileMap);
             sysLogService.aInfo("邮件模版指定发送", String.format("邮件模版(%s) 接收者 %s", id, Arrays.toString(emailAll.toArray())));
         } catch (IOException | MessagingException e) {
             e.printStackTrace();

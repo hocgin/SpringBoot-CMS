@@ -22,6 +22,8 @@ public class SendMailFilter extends BaseFilter {
     private String defSubject; // 标题
     @Size(min = 1, message = "请选择用户")
     private String[] ids; // 接收者
+    private String[] imagesId; // 嵌入图片
+    private String[] filesId; // 附件
     
     
     public Map<String, Object> getParams() {

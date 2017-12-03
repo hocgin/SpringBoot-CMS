@@ -17,18 +17,13 @@
         <div class="center-block">
             <div class="row">
                 <div class="col-md-12">
-                    <div>
-                        <a class="upload-btn">
-                            选择文件
-                        </a>
-                    </div>
                     <!--/*@thymesVar id="height" type="java.lang.Integer"*/-->
                     <div class="upload-area" th:style="'height:'+(45*(${height}?:5))+'px;'">
                         <!--/*@thymesVar id="iFiles" type="java.util.ArrayList<in.hocg.web.modules.system.domain.IFile"*/-->
                         <p class="text-sub text-center"
-                           th:styleappend="${iFiles.isEmpty()}?'':'display:none'">请选择需要上传的文件</p>
+                           th:styleappend="${iFiles==null || iFiles.isEmpty()}?'':'display:none'">请选择需要上传的文件</p>
                         <div class="upload-progress"
-                             th:="${iFiles.isEmpty()}"
+                             th:if="${iFiles != null}"
                              th:classappend="${iFile.id}"
                              th:each="iFile,i : ${iFiles}"
                              th:attr="data-fid=${iFile.id}">
@@ -50,6 +45,14 @@
                         </div>
 
                     </div>
+                    <div>
+                        <ul class="upload-tip">
+                            <li>不能上传超过 500M 的文件</li>
+                        </ul>
+                        <div class="upload-btn">
+                            选择文件
+                        </div>
+                    </div>
                 </div>
                 <!--<div class="col-md-4">-->
                 <!--参数设置-->
@@ -59,13 +62,13 @@
     </div>
     <script th:inline="javascript">
         $(function () {
-            UploadBox.init({
+            new UploadBox({
                 id: '#' + [[${id}]],
                 maxCount: [[${maxCount?:1}]],
                 server: '/admin/system/file/upload',
                 token: $('meta[name="_csrf"]').attr('content'),
                 header: $('meta[name="_csrf_header"]').attr('content'),
-                count: [[${iFiles.size()}]],
+                count: [[${iFiles?.size()?:0}]],
                 input: 'input[name="' + [[${var}]] + '"'
             });
         });

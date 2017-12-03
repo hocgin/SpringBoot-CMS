@@ -147,4 +147,9 @@ public class IFileServiceImpl extends BaseService
     public List<IFile> findAll() {
         return iFileRepository.findAll();
     }
+    
+    @Override
+    public List<IFile> findByIdIn(String... iFilesId) {
+        return iFileRepository.findAllByIdIn(iFilesId);
+    }
 }

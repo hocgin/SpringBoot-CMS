@@ -56,7 +56,7 @@ const DATA_TABLE_CONFIG = {
     }
 };
 
-var UploadBox = {
+UploadBox.prototype = {
     id: undefined,
     $textSub: undefined,
     $uploadArea: undefined, // 上传显示信息
@@ -109,6 +109,7 @@ var UploadBox = {
             that.error($this, reason);
         }).on('uploadSuccess', function (file, data) {
             var $this = $(that.id + ' .' + file.id);
+            console.log(that.id);
             if (data.code === 200) {
                 $this.data('fid', data.data.id);
                 that.success($this);
@@ -217,3 +218,10 @@ var UploadBox = {
         $(this.input).val(ids.toString());
     }
 };
+
+function UploadBox(option) {
+    var ub = {};
+    ub.__proto__ = UploadBox.prototype;
+    ub.init(option);
+    return ub;
+}

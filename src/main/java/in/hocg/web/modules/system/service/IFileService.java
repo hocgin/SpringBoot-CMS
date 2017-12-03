@@ -30,4 +30,6 @@ public interface IFileService {
     void clear(boolean isRemoveFile) throws IOException;
     
     List<IFile> findAll();
+    
+    List<IFile> findByIdIn(String... iFilesId);
 }

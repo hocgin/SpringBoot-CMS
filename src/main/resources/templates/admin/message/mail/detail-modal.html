@@ -2,6 +2,7 @@
      xmlns:th="http://www.thymeleaf.org">
     <button aria-label="Close" class="close" data-dismiss="modal" type="button">
         <span aria-hidden="true">×</span></button>
+    <!--/*@thymesVar id="mailTemplate" type="in.hocg.web.modules.system.domain.MailTemplate"*/-->
     <h4 class="modal-title" th:text="|${mailTemplate.name}|">邮件详情</h4>
     <small th:text="|ID: [${mailTemplate.id}]|"></small>
 </div>
@@ -11,22 +12,28 @@
         <div class="col-xs-12">
             <div class="list-group">
                 <a href="javascript:;" class="list-group-item" title="默认邮件主题">
-                    <span class="i-mr10 i-bold">默认邮件主题</span> <span
-                        th:utext="${mailTemplate.defSubject}"></span>
+                    <span class="i-mr10 i-bold">默认邮件主题</span>
+                    <!--/*@thymesVar id="mailTemplate" type="in.hocg.web.modules.system.domain.MailTemplate"*/-->
+                    <span th:utext="${mailTemplate.defSubject}"></span>
                 </a>
                 <a href="javascript:;" class="list-group-item" title="描述">
-                    <span class="i-mr10 i-bold">描述</span> <span
-                        th:utext="${mailTemplate.description?:@iText.danger('暂未')}"></span>
+                    <span class="i-mr10 i-bold">描述</span>
+                    <!--/*@thymesVar id="mailTemplate" type="in.hocg.web.modules.system.domain.MailTemplate"*/-->
+                    <span th:utext="${mailTemplate.description?:@iText.danger('暂未')}"></span>
                 </a>
                 <a href="javascript:;" class="list-group-item" title="创建时间">
-                    <span class="i-mr10 i-bold">创建时间</span><span th:utext="${@iText.format(mailTemplate.createdAt)}"></span>
+                    <span class="i-mr10 i-bold">创建时间</span>
+                    <!--/*@thymesVar id="mailTemplate" type="in.hocg.web.modules.system.domain.MailTemplate"*/-->
+                    <span th:utext="${@iText.format(mailTemplate.createdAt)}"></span>
                 </a>
                 <a href="javascript:;" class="list-group-item" title="创建时间">
-                    <span class="i-mr10 i-bold">更新时间</span><span th:utext="${@iText.format(mailTemplate.updatedAt)}"></span>
+                    <span class="i-mr10 i-bold">更新时间</span>
+                    <!--/*@thymesVar id="mailTemplate" type="in.hocg.web.modules.system.domain.MailTemplate"*/-->
+                    <span th:utext="${@iText.format(mailTemplate.updatedAt)}"></span>
                 </a>
             </div>
         </div>
-        <div class="col-xs-12">
+        <div class="col-xs-12" th:if="${mailTemplate.param}">
             <table class="table no-m">
                 <thead>
                 <tr>
@@ -35,10 +42,49 @@
                 </tr>
                 </thead>
                 <tbody>
+                <!--/*@thymesVar id="mailTemplate" type="in.hocg.web.modules.system.domain.MailTemplate"*/-->
                 <th:block th:each="param, i:${mailTemplate.param}">
                     <tr>
                         <td th:text="${param.key}"></td>
                         <td th:text="${param.value}"></td>
+                    </tr>
+                </th:block>
+                </tbody>
+            </table>
+        </div>
+        <!--/*@thymesVar id="mailTemplate" type="in.hocg.web.modules.system.domain.MailTemplate"*/-->
+        <div class="col-xs-12" th:if="${mailTemplate.images}">
+            <table class="table no-m">
+                <thead>
+                <tr>
+                    <th>图片UID</th>
+                    <th>文件</th>
+                </tr>
+                </thead>
+                <tbody>
+                <th:block th:each="image, i:${mailTemplate.images}">
+                    <tr>
+                        <td th:text="${image.key}"></td>
+                        <td th:text="${image.value}"></td>
+                    </tr>
+                </th:block>
+                </tbody>
+            </table>
+        </div>
+        <!--/*@thymesVar id="mailTemplate" type="in.hocg.web.modules.system.domain.MailTemplate"*/-->
+        <div class="col-xs-12" th:if="${mailTemplate.files}">
+            <table class="table no-m">
+                <thead>
+                <tr>
+                    <th>文件名</th>
+                    <th>文件</th>
+                </tr>
+                </thead>
+                <tbody>
+                <th:block th:each="file, i:${mailTemplate.files}">
+                    <tr>
+                        <td th:text="${file.key}"></td>
+                        <td th:text="${file.value}"></td>
                     </tr>
                 </th:block>
                 </tbody>
