@@ -50,6 +50,7 @@ public class AdminController extends BaseController {
         return Results.success();
     }
     
+    // TODO: 2017/12/3 测试文件上传框
     @GetMapping("/index.html")
     public String index(Model model) {
         List<IFile> all = iFileService.findAll();
@@ -57,6 +58,7 @@ public class AdminController extends BaseController {
         return "/admin/index";
     }
     
+    // TODO: 2017/12/3 测试文件上传框
     @GetMapping("/upload-box-modal.html")
     public String uploadBoxModal(Model model) {
         List<IFile> all = iFileService.findAll();
