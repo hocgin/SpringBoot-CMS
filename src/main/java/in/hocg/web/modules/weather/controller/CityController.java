@@ -1,4 +1,4 @@
-package in.hocg.web.modules.weather.web;
+package in.hocg.web.modules.weather.controller;
 
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.modules.base.BaseController;

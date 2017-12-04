@@ -1,5 +1,6 @@
 package in.hocg.web.modules.system.domain;
 
+import in.hocg.web.lang.utils.tree.TreeNode;
 import in.hocg.web.modules.base.BaseDomain;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -12,7 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
  */
 @Data
 @Document(collection = "SysMenu")
-public class SysMenu extends BaseDomain {
+public class SysMenu extends BaseDomain implements TreeNode {
     @Transient
     public static String Document = "SysMenu";
     
@@ -42,5 +43,20 @@ public class SysMenu extends BaseDomain {
             default:
                 return "未知";
         }
+    }
+    
+    @Override
+    public String getId() {
+        return id;
+    }
+    
+    @Override
+    public String getParent() {
+        return parent;
+    }
+    
+    @Override
+    public boolean getHasChildren() {
+        return hasChildren;
     }
 }

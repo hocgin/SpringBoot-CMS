@@ -132,6 +132,7 @@ public class SysMenuController extends BaseController {
         sysMenuService.sort(filter.getId());
         return Results.success().setMessage("保存成功");
     }
+    
     /**
      * 更新
      *

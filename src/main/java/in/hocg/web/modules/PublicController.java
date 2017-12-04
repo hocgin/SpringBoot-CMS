@@ -1,4 +1,4 @@
-package in.hocg.web.modules.pub;
+package in.hocg.web.modules;
 
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.modules.base.BaseController;
