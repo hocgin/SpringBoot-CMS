@@ -178,6 +178,7 @@ public class MailTemplateController extends BaseController {
     
     @PostMapping("/send-group")
     @ResponseBody
+    @PreAuthorize("hasPermission(null, 'message.mail.send')")
     public Results sendGroup(@Validated IdFilter idFilter,
                              @Validated SendGroupMailFilter filter,
                              BindingResult bindingResult) {
@@ -191,6 +192,7 @@ public class MailTemplateController extends BaseController {
     
     @PostMapping("/send")
     @ResponseBody
+    @PreAuthorize("hasPermission(null, 'message.mail.send')")
     public Results send(@Validated IdFilter idFilter,
                         @Validated SendMailFilter filter,
                         BindingResult bindingResult) {

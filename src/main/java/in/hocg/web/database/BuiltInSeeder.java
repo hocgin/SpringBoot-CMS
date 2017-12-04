@@ -227,6 +227,8 @@ public class BuiltInSeeder {
         menu512 = sysMenuRepository.insert(menu512);
         SysMenu menu513 = DocumentFactory.data("修改邮件模版", "000500010003", "message.mail.edit", menu51.getId());
         menu513 = sysMenuRepository.insert(menu513);
+        SysMenu menu514 = DocumentFactory.data("发送邮件", "000500010003", "message.mail.send", menu51.getId());
+        menu514 = sysMenuRepository.insert(menu514);
         
         SysMenu[] role_admin = new SysMenu[]{
                 menu1,
@@ -249,7 +251,7 @@ public class BuiltInSeeder {
                 menu41, menu411, menu412, menu413,
                 
                 menu5,
-                menu51, menu511, menu512, menu513
+                menu51, menu511, menu512, menu513, menu514
         };
         
         SysMenu[] role_admin_old = new SysMenu[]{
