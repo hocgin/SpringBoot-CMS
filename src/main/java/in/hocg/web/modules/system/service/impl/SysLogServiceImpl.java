@@ -115,6 +115,11 @@ public class SysLogServiceImpl implements SysLogService {
     }
     
     @Override
+    public SysLog findOne(String id) {
+        return sysLogRepository.findOne(id);
+    }
+    
+    @Override
     public void empty() {
         sysLogRepository.deleteAll();
     }

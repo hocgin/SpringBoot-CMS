@@ -46,6 +46,14 @@ public class SysLogController extends BaseController {
         return sysLogService.data(filter);
     }
     
+    
+    
+    @GetMapping("/detail/{id}")
+    public String vDetail(@PathVariable("id") String detailId, Model model) {
+        model.addAttribute("log", sysLogService.findOne(detailId));
+        return String.format(BASE_TEMPLATES_PATH, "detail-modal");
+    }
+    
     @PostMapping("/empty")
     @ResponseBody
     @PreAuthorize("hasPermission(null, 'safety.log.empty')")

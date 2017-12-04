@@ -1,0 +1,77 @@
+<div class="modal-header"
+     xmlns:th="http://www.thymeleaf.org">
+    <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+        <span aria-hidden="true">×</span></button>
+    <!--/*@thymesVar id="log" type="in.hocg.web.modules.system.domain.SysLog"*/-->
+    <h4 class="modal-title">日志详情</h4>
+    <small th:text="|ID: [${log.id}]|"></small>
+</div>
+<div class="modal-body"
+     xmlns:th="http://www.thymeleaf.org">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="list-group">
+                <a href="javascript:;" class="list-group-item" title="默认邮件主题">
+                    <span class="i-mr10 i-bold">日志级别</span>
+                    <!--/*@thymesVar id="log" type="in.hocg.web.modules.system.domain.SysLog"*/-->
+                    <span th:utext="${log.type}"></span>
+                </a>
+                <a href="javascript:;" class="list-group-item" title="事件">
+                    <span class="i-mr10 i-bold">事件</span>
+                    <!--/*@thymesVar id="log" type="in.hocg.web.modules.system.domain.SysLog"*/-->
+                    <span th:utext="${log.tag?:@iText.danger('未记录')}"></span>
+                </a>
+                <a href="javascript:;" class="list-group-item" title="日志内容">
+                    <span class="i-mr10 i-bold">日志内容</span>
+                    <!--/*@thymesVar id="log" type="in.hocg.web.modules.system.domain.SysLog"*/-->
+                    <span th:utext="${log.msg?:@iText.danger('未记录')}"></span>
+                </a>
+                <a href="javascript:;" class="list-group-item" title="参数">
+                    <span class="i-mr10 i-bold">参数</span>
+                    <!--/*@thymesVar id="log" type="in.hocg.web.modules.system.domain.SysLog"*/-->
+                    <span th:utext="${log.params?:@iText.danger('未记录')}"></span>
+                </a>
+                <a href="javascript:;" class="list-group-item" title="触发位置">
+                    <span class="i-mr10 i-bold">触发位置</span>
+                    <!--/*@thymesVar id="log" type="in.hocg.web.modules.system.domain.SysLog"*/-->
+                    <span th:utext="${log.src?:@iText.danger('未记录')}"></span>
+                </a>
+                <a href="javascript:;" class="list-group-item" title="操作结果">
+                    <span class="i-mr10 i-bold">操作结果</span>
+                    <!--/*@thymesVar id="log" type="in.hocg.web.modules.system.domain.SysLog"*/-->
+                    <span th:utext="${log.result?:@iText.danger('未记录')}"></span>
+                </a>
+                <a href="javascript:;" class="list-group-item" title="操作平台">
+                    <span class="i-mr10 i-bold">操作平台</span>
+                    <!--/*@thymesVar id="log" type="in.hocg.web.modules.system.domain.SysLog"*/-->
+                    <span th:utext="${log.from?:@iText.danger('未记录')}"></span>
+                </a>
+                <a href="javascript:;" class="list-group-item" title="操作人">
+                    <span class="i-mr10 i-bold">操作人</span>
+                    <!--/*@thymesVar id="log" type="in.hocg.web.modules.system.domain.SysLog"*/-->
+                    <span th:utext="${log.username?:@iText.danger('未记录')}"></span>
+                </a>
+                <a href="javascript:;" class="list-group-item" title="操作IP">
+                    <span class="i-mr10 i-bold">操作IP</span>
+                    <!--/*@thymesVar id="log" type="in.hocg.web.modules.system.domain.SysLog"*/-->
+                    <span th:utext="${log.ip?:@iText.danger('未记录')}"></span>
+                </a>
+                <a href="javascript:;" class="list-group-item" title="消耗时间">
+                    <span class="i-mr10 i-bold">消耗时间(ms)</span>
+                    <!--/*@thymesVar id="log" type="in.hocg.web.modules.system.domain.SysLog"*/-->
+                    <span th:utext="${log.usageTime?:'none'}"></span>
+                </a>
+                <a href="javascript:;" class="list-group-item" title="创建时间">
+                    <span class="i-mr10 i-bold">创建时间</span>
+                    <!--/*@thymesVar id="log" type="in.hocg.web.modules.system.domain.SysLog"*/-->
+                    <span th:utext="${@iText.format(log.createdAt)}"></span>
+                </a>
+                <a href="javascript:;" class="list-group-item" title="更新时间">
+                    <span class="i-mr10 i-bold">更新时间</span>
+                    <!--/*@thymesVar id="log" type="in.hocg.web.modules.system.domain.SysLog"*/-->
+                    <span th:utext="${@iText.format(log.updatedAt)}"></span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -78,6 +78,7 @@
                                     <th>模版名称</th>
                                     <th>默认主题名</th>
                                     <th>描述</th>
+                                    <th>创建时间</th>
                                     <th>操作</th>
                                 </tr>
                                 </thead>
@@ -156,10 +157,17 @@
                         columns: [
                             {data: 'name', bSortable: true},
                             {data: 'defSubject', bSortable: true},
-                            {data: 'description', bSortable: true}
+                            {data: 'description', bSortable: true},
+                            {data: 'createdAt', bSortable: true},
+                            {bSortable: false}
                         ],
-                        order: [[0, "desc"]],
-                        columnDefs: [{ // 操作
+                        order: [[3, "desc"]],
+                        columnDefs: [{
+                            render: function (data, type, row) {
+                                return new Date(row.createdAt).toLocaleString();
+                            },
+                            targets: 3
+                        }, { // 操作
                             render: function (data, type, row) {
                                 return '<div class="btn-group">' +
                                     '         <button type="button" class="btn btn-default btn-flat">操作</button>' +
@@ -181,7 +189,7 @@
                                     '         </ul>' +
                                     '   </div>'
                             },
-                            targets: 3
+                            targets: 4
                         }]
                     });
                     // 绑定多选

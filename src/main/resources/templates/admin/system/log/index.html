@@ -12,6 +12,14 @@
     <div th:replace="/admin/fragments/header::header"></div>
     <div th:replace="/admin/fragments/left-menu::left-menu"></div>
     <div id="pjax-container" class="content-wrapper">
+        <!--Modal 详情-->
+        <div class="modal fade in" id="js-detail-modal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                </div>
+            </div>
+        </div>
+        <!--./Modal 详情-->
         <!--Modal 查询框-->
         <div class="modal fade in" id="js-query-modal">
             <div class="modal-dialog">
@@ -49,7 +57,7 @@
                                            class="btn btn-info"
                                            data-toggle="modal"
                                            data-target="#js-query-modal"
-                                           >
+                                        >
                                             <i class="fa fa-search"></i> 查询
                                         </a>
                                     </div>
@@ -61,13 +69,11 @@
                                     <thead>
                                     <tr>
                                         <th>日志类型</th>
-                                        <th>平台</th>
-                                        <th>位置</th>
                                         <th>内容</th>
                                         <th>操作人</th>
                                         <th>记录时间</th>
                                         <th>操作IP</th>
-                                        <th>消耗时间</th>
+                                        <th>操作</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -140,25 +146,32 @@
                             },
                             columns: [
                                 {data: 'tag', bSortable: true},
-                                {data: 'from', bSortable: true},
-                                {data: 'src', bSortable: true},
                                 {data: 'msg', bSortable: true},
                                 {data: 'username', bSortable: true},
                                 {data: 'createdAt', bSortable: true},
                                 {data: 'ip', bSortable: true},
-                                {data: 'usageTime', bSortable: true}
+                                {bSortable: false}
                             ],
-                            order: [[5, "desc"]],
+                            order: [[3, "desc"]],
                             columnDefs: [{
                                 render: function (data, type, row) {
                                     return new Date(row.createdAt).toLocaleString();
                                 },
-                                targets: 5
-                            },{
+                                targets: 3
+                            }, { // 操作
                                 render: function (data, type, row) {
-                                    return row.usageTime + " ms";
+                                    return '<div class="btn-group">' +
+                                        '         <button type="button" class="btn btn-default btn-flat">操作</button>' +
+                                        '         <button type="button" class="btn btn-default btn-flat dropdown-toggle" data-toggle="dropdown">' +
+                                        '               <span class="caret"></span>' +
+                                        '               <span class="sr-only">Toggle Dropdown</span>' +
+                                        '         </button>' +
+                                        '         <ul class="dropdown-menu" role="menu">' +
+                                        '             <li><a class="js-modal" href="/admin/system/log/detail/' + row.id + '" data-target="#js-detail-modal" data-toggle="modal">查看</a></li>' +
+                                        '         </ul>' +
+                                        '   </div>';
                                 },
-                                targets: 7
+                                targets: 5
                             }]
                         });
                         // 绑定多选

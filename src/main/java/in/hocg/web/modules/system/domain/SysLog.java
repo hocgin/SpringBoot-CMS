@@ -33,12 +33,13 @@ public class SysLog extends BaseDomain {
     private String id;
     
     /**
+     * 日志平台
      * INFO, WANING, ERROR
      */
     private String type;
     
     /**
-     * 日志标识
+     * 事件
      * - 用户登陆
      * - 增加XX
      */
@@ -71,7 +72,7 @@ public class SysLog extends BaseDomain {
     private String username;
     
     /**
-     * 来着哪里
+     * 操作平台
      * [Admin, Web, WeiXin, Api]
      */
     private String from;

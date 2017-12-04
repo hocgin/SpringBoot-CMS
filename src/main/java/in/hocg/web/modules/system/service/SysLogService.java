@@ -20,4 +20,6 @@ public interface SysLogService {
     List getTags();
     
     void aInfo(String tag, String msg);
+    
+    SysLog findOne(String id);
 }
