@@ -25,5 +25,6 @@ public interface MailTemplateService {
     void update(MailTemplateFilter filter, CheckError checkError);
     
     void sendGroup(String id, SendGroupMailFilter filter, CheckError checkError);
+    
     void send(String id, SendMailFilter filter, CheckError checkError);
 }

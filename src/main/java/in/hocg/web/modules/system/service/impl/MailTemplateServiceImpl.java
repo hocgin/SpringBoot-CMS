@@ -108,7 +108,7 @@ public class MailTemplateServiceImpl extends BaseService implements MailTemplate
             }
         });
         mailTemplate.setImages(imageMap);
-    
+        
         // 处理附件
         HashMap<String, IFile> fileMap = new HashMap<>();
         iFileService.findByIdIn(filter.getFilesId()).forEach(f -> {
@@ -133,7 +133,7 @@ public class MailTemplateServiceImpl extends BaseService implements MailTemplate
             checkError.putError("邮件模版异常");
             return;
         }
-    
+        
         // 处理图片及UID
         HashMap<String, IFile> imageMap = new HashMap<>();
         iFileService.findByIdIn(filter.getImagesId()).forEach(image -> {
@@ -142,7 +142,7 @@ public class MailTemplateServiceImpl extends BaseService implements MailTemplate
             }
         });
         mailTemplate.setImages(imageMap);
-    
+        
         // 处理附件
         HashMap<String, IFile> fileMap = new HashMap<>();
         iFileService.findByIdIn(filter.getFilesId()).forEach(f -> {
@@ -212,7 +212,7 @@ public class MailTemplateServiceImpl extends BaseService implements MailTemplate
         HashMap<String, File> imageMap = new HashMap<>();
         iFileService.findByIdIn(filter.getImagesId()).forEach(image -> {
             if (image.exists()) {
-                imageMap.put(image.getUploadName(), image.getFile());
+                imageMap.put(image.getId(), image.getFile());
             }
         });
         
@@ -258,10 +258,10 @@ public class MailTemplateServiceImpl extends BaseService implements MailTemplate
         HashMap<String, File> imageMap = new HashMap<>();
         iFileService.findByIdIn(filter.getImagesId()).forEach(image -> {
             if (image.exists()) {
-                imageMap.put(image.getUploadName(), image.getFile());
+                imageMap.put(image.getId(), image.getFile());
             }
         });
-    
+        
         // 处理附件
         HashMap<String, File> fileMap = new HashMap<>();
         iFileService.findByIdIn(filter.getFilesId()).forEach(file -> {

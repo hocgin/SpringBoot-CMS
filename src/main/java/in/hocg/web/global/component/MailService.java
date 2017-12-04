@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.thymeleaf.context.WebContext;
@@ -17,6 +18,7 @@ import org.thymeleaf.util.MapUtils;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeUtility;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -81,6 +83,7 @@ public class MailService {
      * @throws javax.mail.MessagingException
      * @throws UnsupportedEncodingException
      */
+    @Async
     public void send(@NotNull String[] to, @NotNull String subject, @NotNull String text,
                      Map<String, File> inline,
                      Map<String, File> attachment) throws javax.mail.MessagingException, UnsupportedEncodingException {
@@ -92,26 +95,32 @@ public class MailService {
         messageHelper.setCc(from); // - 给自己邮箱抄录一份
         messageHelper.setSubject(subject);
         messageHelper.setText(text, true);
-        if (!MapUtils.isEmpty(attachment)) {
-            attachment.forEach((k, v) -> {
-                try {
-                    messageHelper.addAttachment(k, v);
-                } catch (javax.mail.MessagingException e) {
-                    e.printStackTrace();
-                }
-            });
-        }
+        // 图片
         if (!MapUtils.isEmpty(inline)) {
             inline.forEach((k, v) -> {
                 try {
                     messageHelper.addInline(k, v);
-                } catch (javax.mail.MessagingException e) {
+                } catch (MessagingException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+        // 附件
+        if (!MapUtils.isEmpty(attachment)) {
+            attachment.forEach((k, v) -> {
+                try {
+                    String filename = MimeUtility.encodeWord(k)
+                            .replaceAll("\r","")
+                            .replaceAll("\n","");
+                    messageHelper.addAttachment(filename, v);
+                } catch (MessagingException | UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
             });
         }
         mailSender.send(messageHelper.getMimeMessage());
     }
+    
     public void send(@NotNull String to, @NotNull String subject, @NotNull String text,
                      Map<String, File> inline,
                      Map<String, File> attachment) throws javax.mail.MessagingException, UnsupportedEncodingException {
@@ -143,6 +152,7 @@ public class MailService {
     
     /**
      * 解析 Thymeleaf 文本进行发送
+     *
      * @param to
      * @param subject
      * @param thymeleafText
@@ -161,6 +171,7 @@ public class MailService {
     
     /**
      * 文件路径
+     *
      * @param to
      * @param subject
      * @param thymeleafFilePath

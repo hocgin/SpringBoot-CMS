@@ -109,10 +109,10 @@ UploadBox.prototype = {
             that.error($this, reason);
         }).on('uploadSuccess', function (file, data) {
             var $this = $(that.id + ' .' + file.id);
-            console.log(that.id);
             if (data.code === 200) {
                 $this.data('fid', data.data.id);
                 that.success($this);
+                $this.find('.file-name').attr('title', data.data.id);
                 that.resetFilesId();
             } else if (data.code === 220) {
                 that.exits($this);
@@ -120,6 +120,8 @@ UploadBox.prototype = {
                 that.error($this, data.message);
             }
         });
+        // 初始化设置值
+        that.resetFilesId();
 
         /**
          * 取消上传, 仅从队列中移除

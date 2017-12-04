@@ -1,235 +1,226 @@
 <!DOCTYPE html>
-<html
-        xmlns:th="http://www.thymeleaf.org">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="/admin/_layouts/default">
 <head>
-    <meta th:replace="/admin/fragments/meta::meta"/>
     <title>邮件模版管理</title>
-    <css th:replace="/admin/fragments/all-css :: all-css"></css>
-    <js th:replace="/admin/fragments/head-js :: head-js"></js>
 </head>
-<body class="hold-transition skin-blue sidebar-mini">
-<div class="wrapper">
-    <div th:replace="/admin/fragments/header::header"></div>
-    <div th:replace="/admin/fragments/left-menu::left-menu"></div>
-    <div id="pjax-container" class="content-wrapper">
-        <!--Modal 详情-->
-        <div class="modal fade in" id="js-detail-modal">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                </div>
+<body>
+<div layout:fragment="content">
+    <!--Modal 详情-->
+    <div class="modal fade in" id="js-detail-modal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
             </div>
         </div>
-        <!--./Modal 详情-->
-        <!--Modal 预览-->
-        <div class="modal fade in" id="js-browser-modal">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                </div>
+    </div>
+    <!--./Modal 详情-->
+    <!--Modal 预览-->
+    <div class="modal fade in" id="js-browser-modal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
             </div>
         </div>
-        <!--./Modal 预览-->
-        <!--Modal 查询框-->
-        <div class="modal fade in" id="js-query-modal">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                </div>
+    </div>
+    <!--./Modal 预览-->
+    <!--Modal 查询框-->
+    <div class="modal fade in" id="js-query-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
             </div>
         </div>
-        <!--./Modal 查询框-->
-        <div class="i-right-box">
-            <!-- 位置提示 -->
-            <section class="content-header">
-                <h1>
-                    邮件模版管理
-                    <small>邮件模版管理</small>
-                </h1>
-                <ol class="breadcrumb">
-                    <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                    <li class="active">邮件模版管理</li>
-                </ol>
-            </section>
-            <!-- 内容区域 -->
-            <section class="content">
-                <!-- Small boxes (Stat box) -->
-                <div class="row">
-                    <div class="col-xs-12">
-                        <div class="box">
-                            <div class="box-header">
-                                <header class="tool-bar">
-                                    <h3 class="pull-left">邮件模版管理</h3>
-                                    <div class="pull-right tool-button">
-                                        <a th:href="@{/admin/message/mail/add-view.html}"
-                                           class="btn btn-primary" data-pjax>
-                                            <i class="fa fa-plus"></i> 上传邮件模版
-                                        </a>
-                                        <button class="btn btn-danger" id="js-trash">
-                                            <i class="fa fa-trash-o"></i> 删除选中
-                                        </button>
-                                        <a th:href="@{/admin/message/mail/query-modal.html}"
-                                           class="btn btn-info"
-                                           data-toggle="modal"
-                                           data-target="#js-query-modal">
-                                            <i class="fa fa-search"></i> 查询
-                                        </a>
-                                    </div>
-                                </header>
-                            </div>
-                            <!-- /.box-header -->
-                            <div class="box-body">
-                                <table id="js-table" class="table table-bordered table-hover">
-                                    <thead>
-                                    <tr>
-                                        <th>模版名称</th>
-                                        <th>默认主题名</th>
-                                        <th>描述</th>
-                                        <th>操作</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <!-- /.box-body -->
+    </div>
+    <!--./Modal 查询框-->
+    <div class="i-right-box">
+        <!-- 位置提示 -->
+        <section class="content-header">
+            <h1>
+                邮件模版管理
+                <small>邮件模版管理</small>
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+                <li class="active">邮件模版管理</li>
+            </ol>
+        </section>
+        <!-- 内容区域 -->
+        <section class="content">
+            <!-- Small boxes (Stat box) -->
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box">
+                        <div class="box-header">
+                            <header class="tool-bar">
+                                <h3 class="pull-left">邮件模版管理</h3>
+                                <div class="pull-right tool-button">
+                                    <a th:href="@{/admin/message/mail/add-view.html}"
+                                       class="btn btn-primary" data-pjax>
+                                        <i class="fa fa-plus"></i> 上传邮件模版
+                                    </a>
+                                    <button class="btn btn-danger" id="js-trash">
+                                        <i class="fa fa-trash-o"></i> 删除选中
+                                    </button>
+                                    <a th:href="@{/admin/message/mail/query-modal.html}"
+                                       class="btn btn-info"
+                                       data-toggle="modal"
+                                       data-target="#js-query-modal">
+                                        <i class="fa fa-search"></i> 查询
+                                    </a>
+                                </div>
+                            </header>
                         </div>
+                        <!-- /.box-header -->
+                        <div class="box-body">
+                            <table id="js-table" class="table table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <th>模版名称</th>
+                                    <th>默认主题名</th>
+                                    <th>描述</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.box-body -->
                     </div>
                 </div>
-                <!-- /.row -->
-            </section>
-            <!-- /内容区域 -->
-        </div>
-        <script>
-            var allRequest = {};
-            $(function () {
-                // 所有网络请求
-                allRequest = {
-                    deleteByIds: function (ids) {
-                        if (!!ids && !!ids.length) {
-                            layer.confirm('确定删除选中的 ' + ids.length + ' 行？', {
-                                btn: ['确定', '取消'] //按钮
-                            }, function () {
-                                $.post('/admin/message/mail/delete', {id: ids.toString()}, function (data) {
-                                    if (data.code === 200) {
-                                        layer.msg(data.message, {icon: 1});
-                                        table.reloadPage();
-                                    } else {
-                                        layer.msg(data.message, {icon: 2});
-                                    }
-                                }, 'json');
-                            }, function () {
-                                layer.msg('取消删除');
-                            });
-                        } else {
-                            layer.msg('请先选中行');
-                        }
-                    },
-                    deleteById: function (id) {
-                        this.deleteByIds([id])
-                    }
-                };
-
-                // 系统参数配置表格
-                table = {
-                    $obj: $('#js-table'),
-                    dataTableObject: {},
-                    getSelectedRow: function () {
-                        return this.dataTableObject.rows('.selected').data();
-                    },
-                    init: function () {
-                        // 初始化
-                        this.dataTableObject = this.$obj.DataTable({
-                            dom: '<"toolbar">frtip',
-                            ordering: true,
-                            searching: false,
-                            select: true,
-                            autoWidth: true,
-                            processing: false,
-                            serverSide: true,
-                            deferRender: true,
-                            language: DATA_TABLE_CONFIG.language,
-                            preDrawCallback: DATA_TABLE_CONFIG.preDrawCallback,
-                            ajax: {
-                                url: '/admin/message/mail/data',
-                                type: 'POST',
-                                contentType: 'application/json',
-                                data: function (params) {
-                                    // 携带参数
-                                    params.regexSearch = $('#regexSearch').val() || '';
-                                    return JSON.stringify(params);
-                                }
-                            },
-                            columns: [
-                                {data: 'name', bSortable: true},
-                                {data: 'defSubject', bSortable: true},
-                                {data: 'description', bSortable: true}
-                            ],
-                            order: [[0, "desc"]],
-                            columnDefs: [{ // 操作
-                                render: function (data, type, row) {
-                                    return '<div class="btn-group">' +
-                                        '         <button type="button" class="btn btn-default btn-flat">操作</button>' +
-                                        '         <button type="button" class="btn btn-default btn-flat dropdown-toggle" data-toggle="dropdown">' +
-                                        '               <span class="caret"></span>' +
-                                        '               <span class="sr-only">Toggle Dropdown</span>' +
-                                        '         </button>' +
-                                        '         <ul class="dropdown-menu" role="menu">' +
-                                        '             <li><a href="/admin/message/mail/detail/' + row.id + '" data-target="#js-detail-modal" data-toggle="modal">查看</a></li>' +
-                                        '             <li><a href="/admin/message/mail/browser/' + row.id + '" data-target="#js-browser-modal" data-toggle="modal">预览</a></li>' +
-                                        '             <li class="divider"></li>' +
-                                        '             <li><a href="/admin/message/mail/send-group-view/' + row.id + '" pjax-data>群发</a></li>' +
-                                        '             <li><a href="/admin/message/mail/send-user-view/' + row.id + '" pjax-data>发送 (后台)</a></li>' +
-                                        '             <li><a href="/admin/message/mail/send-member-view/' + row.id + '" pjax-data>发送 (会员)</a></li>' +
-                                        '             <li class="divider"></li>' +
-                                        '             <li><a href="/admin/message/mail/update-view/' + row.id + '" pjax-data>修改</a></li>' +
-                                        '             <li class="divider"></li>' +
-                                        '             <li><a href="javascript:;;" onclick="allRequest.deleteById(\'' + row.id + '\')">删除</a></li>' +
-                                        '         </ul>' +
-                                        '   </div>'
-                                },
-                                targets: 3
-                            }]
-                        });
-                        // 绑定多选
-                        this.$obj.children('tbody').on('click', 'tr', function () {
-                            $(this).toggleClass('selected');
-                        });
-
-                        var that = this;
-                        // ==========================自定义=============================
-                        // + 删除选中事件
-                        $('#js-trash').on('click', function () {
-                            var selectedRow = that.getSelectedRow();
-                            var ids = [];
-                            if (!!selectedRow.length) {
-                                $.each(selectedRow, function (i, obj) {
-                                    ids.push(obj.id);
-                                });
-                            }
-                            allRequest.deleteByIds(ids);
-                        });
-                    },
-                    reloadPage: function () {
-                        this.dataTableObject.ajax.reload(null, false);
-                    },
-                    reloadAll: function () {
-                        this.dataTableObject.ajax.reload();
-                    }
-                };
-                table.init();
-
-
-                $('#js-detail-modal').on("hidden.bs.modal", function () {
-                    $(this).removeData("bs.modal");
-                });
-                $('#js-browser-modal').on("hidden.bs.modal", function () {
-                    $(this).removeData("bs.modal");
-                });
-            });
-        </script>
+            </div>
+            <!-- /.row -->
+        </section>
+        <!-- /内容区域 -->
     </div>
-    <div th:replace="/admin/fragments/main-footer::main-footer"></div>
-    <div th:replace="/admin/fragments/right-setting::right-setting"></div>
-    <div class="control-sidebar-bg"></div>
+    <script>
+        var allRequest = {};
+        $(function () {
+            // 所有网络请求
+            allRequest = {
+                deleteByIds: function (ids) {
+                    if (!!ids && !!ids.length) {
+                        layer.confirm('确定删除选中的 ' + ids.length + ' 行？', {
+                            btn: ['确定', '取消'] //按钮
+                        }, function () {
+                            $.post('/admin/message/mail/delete', {id: ids.toString()}, function (data) {
+                                if (data.code === 200) {
+                                    layer.msg(data.message, {icon: 1});
+                                    table.reloadPage();
+                                } else {
+                                    layer.msg(data.message, {icon: 2});
+                                }
+                            }, 'json');
+                        }, function () {
+                            layer.msg('取消删除');
+                        });
+                    } else {
+                        layer.msg('请先选中行');
+                    }
+                },
+                deleteById: function (id) {
+                    this.deleteByIds([id])
+                }
+            };
+
+            // 系统参数配置表格
+            table = {
+                $obj: $('#js-table'),
+                dataTableObject: {},
+                getSelectedRow: function () {
+                    return this.dataTableObject.rows('.selected').data();
+                },
+                init: function () {
+                    // 初始化
+                    this.dataTableObject = this.$obj.DataTable({
+                        dom: '<"toolbar">frtip',
+                        ordering: true,
+                        searching: false,
+                        select: true,
+                        autoWidth: true,
+                        processing: false,
+                        serverSide: true,
+                        deferRender: true,
+                        language: DATA_TABLE_CONFIG.language,
+                        preDrawCallback: DATA_TABLE_CONFIG.preDrawCallback,
+                        ajax: {
+                            url: '/admin/message/mail/data',
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: function (params) {
+                                // 携带参数
+                                params.regexSearch = $('#regexSearch').val() || '';
+                                return JSON.stringify(params);
+                            }
+                        },
+                        columns: [
+                            {data: 'name', bSortable: true},
+                            {data: 'defSubject', bSortable: true},
+                            {data: 'description', bSortable: true}
+                        ],
+                        order: [[0, "desc"]],
+                        columnDefs: [{ // 操作
+                            render: function (data, type, row) {
+                                return '<div class="btn-group">' +
+                                    '         <button type="button" class="btn btn-default btn-flat">操作</button>' +
+                                    '         <button type="button" class="btn btn-default btn-flat dropdown-toggle" data-toggle="dropdown">' +
+                                    '               <span class="caret"></span>' +
+                                    '               <span class="sr-only">Toggle Dropdown</span>' +
+                                    '         </button>' +
+                                    '         <ul class="dropdown-menu" role="menu">' +
+                                    '             <li><a href="/admin/message/mail/detail/' + row.id + '" data-target="#js-detail-modal" data-toggle="modal">查看</a></li>' +
+                                    '             <li><a href="/admin/message/mail/browser/' + row.id + '" data-target="#js-browser-modal" data-toggle="modal">预览</a></li>' +
+                                    '             <li class="divider"></li>' +
+                                    '             <li><a href="/admin/message/mail/send-group-view/' + row.id + '" pjax-data>群发</a></li>' +
+                                    '             <li><a href="/admin/message/mail/send-user-view/' + row.id + '" pjax-data>发送 (后台)</a></li>' +
+                                    '             <li><a href="/admin/message/mail/send-member-view/' + row.id + '" pjax-data>发送 (会员)</a></li>' +
+                                    '             <li class="divider"></li>' +
+                                    '             <li><a href="/admin/message/mail/update-view/' + row.id + '" pjax-data>修改</a></li>' +
+                                    '             <li class="divider"></li>' +
+                                    '             <li><a href="javascript:;;" onclick="allRequest.deleteById(\'' + row.id + '\')">删除</a></li>' +
+                                    '         </ul>' +
+                                    '   </div>'
+                            },
+                            targets: 3
+                        }]
+                    });
+                    // 绑定多选
+                    this.$obj.children('tbody').on('click', 'tr', function () {
+                        $(this).toggleClass('selected');
+                    });
+
+                    var that = this;
+                    // ==========================自定义=============================
+                    // + 删除选中事件
+                    $('#js-trash').on('click', function () {
+                        var selectedRow = that.getSelectedRow();
+                        var ids = [];
+                        if (!!selectedRow.length) {
+                            $.each(selectedRow, function (i, obj) {
+                                ids.push(obj.id);
+                            });
+                        }
+                        allRequest.deleteByIds(ids);
+                    });
+                },
+                reloadPage: function () {
+                    this.dataTableObject.ajax.reload(null, false);
+                },
+                reloadAll: function () {
+                    this.dataTableObject.ajax.reload();
+                }
+            };
+            table.init();
+
+
+            $('#js-detail-modal').on("hidden.bs.modal", function () {
+                $(this).removeData("bs.modal");
+            });
+            $('#js-browser-modal').on("hidden.bs.modal", function () {
+                $(this).removeData("bs.modal");
+            });
+        });
+    </script>
 </div>
-<js th:replace="/admin/fragments/footer-js::footer-js"></js>
 </body>
 </html>

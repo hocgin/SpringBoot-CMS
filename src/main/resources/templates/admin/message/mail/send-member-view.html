@@ -91,10 +91,10 @@
                                               placeholder="请输入参数"></textarea>
                                 </div>
                                 <div class="form-group">
-                                    <label>图片及UID</label>
+                                    <label>图片及CID</label>
                                     <div th:include="/admin/_widgets/upload-box::upload-box"
                                          th:with="iFiles=${template?.images?.values()},id='UploadImages',var=imagesId,height=3"></div>
-                                    <p class="help-block">图片名即UID，如：logo.png</p>
+                                    <p class="help-block">上传文件的ID即CID，如：logo.png [ID: 5a23ed4d205f044b7c67e9e6]</p>
                                 </div>
                                 <div class="form-group">
                                     <label>附件</label>
