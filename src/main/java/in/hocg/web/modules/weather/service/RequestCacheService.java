@@ -13,9 +13,11 @@ import in.hocg.web.modules.weather.filter.WeatherQueryFilter;
  */
 public interface RequestCacheService {
     Weather currentWeather(WeatherParamQueryFilter filter, CheckError checkError);
+    
     Weather currentWeatherUseToken(WeatherQueryFilter filter, CheckError checkError);
     
     Forecast forecast(WeatherParamQueryFilter filter, CheckError checkError);
+    
     Forecast forecastUseToken(WeatherQueryFilter filter, CheckError checkError);
     
     Location getLocation(String ip,

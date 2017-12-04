@@ -2,6 +2,7 @@ package in.hocg.web.modules.weather.service.impl;
 
 import com.google.gson.Gson;
 import in.hocg.web.lang.CheckError;
+import in.hocg.web.lang.utils.RequestKit;
 import in.hocg.web.modules.system.domain.Member;
 import in.hocg.web.modules.system.service.MemberService;
 import in.hocg.web.modules.weather.body.Forecast;
@@ -18,6 +19,7 @@ import org.springframework.data.geo.Point;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.Optional;
 
@@ -113,6 +115,16 @@ public class RequestCacheServiceImpl implements RequestCacheService {
     @Override
     public Weather currentWeatherUseToken(WeatherQueryFilter filter, CheckError checkError) {
         if (_checkToken(filter, checkError)) {
+            if (StringUtils.isEmpty(filter.getLat())
+                    || StringUtils.isEmpty(filter.getLon())) {
+                Location location = getLocation(RequestKit.getClientIP(RequestKit.get()), checkError);
+                if (!checkError.isPass()) {
+                    checkError.putError("无法自动定位位置");
+                    return null;
+                }
+                filter.setLon(location.getContent().getPoint().getX());
+                filter.setLat(location.getContent().getPoint().getY());
+            }
             return currentWeather(filter, checkError);
         }
         return null;
@@ -182,6 +194,16 @@ public class RequestCacheServiceImpl implements RequestCacheService {
     @Override
     public Forecast forecastUseToken(WeatherQueryFilter filter, CheckError checkError) {
         if (_checkToken(filter, checkError)) {
+            if (StringUtils.isEmpty(filter.getLat())
+                    || StringUtils.isEmpty(filter.getLon())) {
+                Location location = getLocation(RequestKit.getClientIP(RequestKit.get()), checkError);
+                if (!checkError.isPass()) {
+                    checkError.putError("无法自动定位位置");
+                    return null;
+                }
+                filter.setLon(location.getContent().getPoint().getX());
+                filter.setLat(location.getContent().getPoint().getY());
+            }
             return forecast(filter, checkError);
         }
         return null;

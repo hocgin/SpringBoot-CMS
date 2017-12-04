@@ -31,7 +31,7 @@ public class MemberRepositoryImpl
     
     @Override
     public Member findOneByToken(String token) {
-        Query query = Query.query(Criteria.where("token.$token").is(token));
+        Query query = Query.query(Criteria.where("token.token").is(token));
         return findOne(query);
     }
     

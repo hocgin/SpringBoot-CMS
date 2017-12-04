@@ -7,11 +7,13 @@ import in.hocg.web.modules.weather.body.Forecast;
 import in.hocg.web.modules.weather.body.Weather;
 import in.hocg.web.modules.weather.filter.WeatherQueryFilter;
 import in.hocg.web.modules.weather.service.RequestCacheService;
-import io.swagger.annotations.*;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -44,14 +46,18 @@ public class ApiController extends BaseController {
             @ApiImplicitParam(name = "lang", dataTypeClass = String.class, paramType = "query",
                     value = "语言(zh_cn/en/..,默认为:zh_cn)")
     })
-    @PostMapping("/current")
+    @RequestMapping("/current")
     @ResponseBody
-    public ResponseEntity<Results<Weather>> current(@Validated WeatherQueryFilter filter) {
+    public ResponseEntity<Results<Weather>> current(@Validated WeatherQueryFilter filter,
+                                                    BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return Results.check(bindingResult)
+                    .asOkResponseEntity();
+        }
         CheckError checkError = CheckError.get();
         Weather weather = requestCacheService.currentWeatherUseToken(filter, checkError);
-        return Results.check(checkError)
+        return Results.check(checkError, "当前天气")
                 .setData(weather)
-                .setMessage("当前天气")
                 .asOkResponseEntity();
     }
     
@@ -69,14 +75,19 @@ public class ApiController extends BaseController {
             @ApiImplicitParam(name = "lang", dataTypeClass = String.class, paramType = "query",
                     value = "语言(zh_cn/en/..,默认为:zh_cn)")
     })
-    @PostMapping("/forecast")
+    
+    @RequestMapping("/forecast")
     @ResponseBody
-    public ResponseEntity<Results<Forecast>> forecast(@Validated WeatherQueryFilter filter) {
+    public ResponseEntity<Results<Forecast>> forecast(@Validated WeatherQueryFilter filter,
+                                                      BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return Results.check(bindingResult)
+                    .asOkResponseEntity();
+        }
         CheckError checkError = CheckError.get();
         Forecast forecast = requestCacheService.forecastUseToken(filter, checkError);
-        return Results.check(checkError)
+        return Results.check(checkError, "天气预报")
                 .setData(forecast)
-                .setMessage("天气预报")
                 .asOkResponseEntity();
     }
 }
