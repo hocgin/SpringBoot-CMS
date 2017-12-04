@@ -29,16 +29,16 @@ import javax.servlet.http.HttpServletRequest;
  * email: hocgin@gmail.com
  */
 @Controller
-public class IndexController extends BaseController {
+public class WebController extends BaseController {
     public final String BASE_TEMPLATES_PATH = "/web/%s";
     private CityService cityService;
     private MemberService memberService;
     private RequestCacheService requestCacheService;
     
     @Autowired
-    public IndexController(CityService cityService,
-                           RequestCacheService requestCacheService,
-                           MemberService memberService) {
+    public WebController(CityService cityService,
+                         RequestCacheService requestCacheService,
+                         MemberService memberService) {
         this.cityService = cityService;
         this.memberService = memberService;
         this.requestCacheService = requestCacheService;

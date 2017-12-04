@@ -1,5 +1,7 @@
 package in.hocg.web.lang.utils;
 
+import org.springframework.util.DigestUtils;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -41,4 +43,7 @@ public class StringKit {
         return lines;
     }
     
+    public static String md5(String text) {
+        return DigestUtils.md5DigestAsHex(text.getBytes());
+    }
 }

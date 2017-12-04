@@ -4,7 +4,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="/admin/_layouts/default">
 <head>
-    <title>系统参数页面</title>
+    <title>修改短链</title>
 </head>
 <body>
 <div layout:fragment="content">
@@ -13,45 +13,40 @@
         <!-- Small boxes (Stat box) -->
         <div class="row">
             <div class="col-xs-12 i-navbar">
-                <a class="btn btn-primary" th:href="@{/admin/system/variable/index.html}" data-pjax><i
+                <a class="btn btn-primary" th:href="@{/admin/system/short-url/index.html}" data-pjax><i
                         class="fa fa-arrow-left"></i> 返回
                 </a>
             </div>
             <div class="col-xs-12">
                 <div class="box box-primary">
                     <div class="box-header with-border">
-                        <h3 class="box-title">修改系统参数</h3>
+                        <h3 class="box-title">修改短链</h3>
                     </div>
                     <!-- /.box-header -->
                     <!-- form start -->
-                    <form id="systemVariableForm" th:action="@{/admin/system/variable/update}" method="POST">
+                    <form id="systemVariableForm" th:action="@{/admin/system/short-url/update}" method="POST">
+                        <!--/*@thymesVar id="shortUrl" type="in.hocg.web.modules.system.domain.ShortUrl"*/-->
                         <input type="hidden" name="id"
-                               th:value="${variable.id}">
+                               th:value="${shortUrl.id}">
                         <div class="box-body">
-                            <div class="form-group">
-                                <label for="key">字段名</label>
-                                <input class="form-control" id="key" name="key"
-                                       th:value="${variable.key}"
-                                       readonly
-                                       placeholder="请输入字段名"
-                                       required
-                                       type="text">
-                            </div>
-                            <div class="form-group">
-                                <label for="value">值 <span class="i-label label-warning">必填</span></label>
-                                <input class="form-control" id="value" name="value"
-                                       th:value="${variable.value}"
-                                       required
-                                       placeholder="请输入值"
-                                       type="text">
-                            </div>
-                            <div class="form-group">
-                                <label for="note">说明</label>
-                                <textarea class="form-control" id="note" name="note"
-                                          placeholder="请输入 ..."
-                                          th:text="${variable.note}"
-                                          style="resize:none"
-                                          rows="3"></textarea>
+                            <div class="box-body">
+                                <div class="form-group">
+                                    <label for="originalUrl">原始URL <span class="i-label label-warning">必填</span></label>
+                                    <input class="form-control" id="originalUrl" name="originalUrl"
+                                           placeholder="请输入原始URL"
+                                           th:value="${shortUrl.originalUrl}"
+                                           readonly
+                                           type="text">
+                                </div>
+                                <div class="form-group">
+                                    <label for="code">Code</label>
+                                    <input class="form-control" id="code" name="code"
+                                           placeholder="请输入期望的Code, 未填写将自动生成"
+                                           th:value="${shortUrl.code}"
+                                           required
+                                           type="text">
+                                    <p>自定义不允许_开头</p>
+                                </div>
                             </div>
                         </div>
                         <!-- /.box-body -->

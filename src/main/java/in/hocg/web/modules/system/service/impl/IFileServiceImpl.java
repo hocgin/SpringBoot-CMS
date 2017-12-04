@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -63,7 +62,7 @@ public class IFileServiceImpl extends BaseService
         String MD5;
         try {
             MD5 = FileKit.MD5(file.getInputStream());
-        } catch (NoSuchAlgorithmException | IOException e) {
+        } catch (IOException e) {
             checkError.putError(e.getMessage());
             return null;
         }

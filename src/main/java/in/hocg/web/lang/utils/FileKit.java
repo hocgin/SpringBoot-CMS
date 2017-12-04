@@ -27,11 +27,11 @@ public class FileKit {
         return MD5(new FileInputStream(file));
     }
     
-    public static String MD5(String filePath) throws IOException, NoSuchAlgorithmException {
+    public static String MD5(String filePath) throws IOException {
         return MD5(Files.newInputStream(Paths.get(filePath)));
     }
     
-    public static String MD5(InputStream is) throws NoSuchAlgorithmException, IOException {
+    public static String MD5(InputStream is) throws IOException {
         byte[] bytes = DigestUtils.md5Digest(is);
         char[] encode = Hex.encode(bytes);
         return String.valueOf(encode);

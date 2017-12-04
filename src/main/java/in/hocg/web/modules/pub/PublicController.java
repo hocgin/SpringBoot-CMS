@@ -7,8 +7,12 @@ import in.hocg.web.modules.base.body.Results;
 import in.hocg.web.modules.system.domain.IFile;
 import in.hocg.web.modules.system.service.IFileService;
 import in.hocg.web.modules.system.service.MemberService;
+import in.hocg.web.modules.weather.body.Forecast;
+import in.hocg.web.modules.weather.body.Weather;
 import in.hocg.web.modules.weather.domain.City;
+import in.hocg.web.modules.weather.filter.WeatherParamQueryFilter;
 import in.hocg.web.modules.weather.service.CityService;
+import in.hocg.web.modules.weather.service.RequestCacheService;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
@@ -39,14 +43,17 @@ public class PublicController extends BaseController {
     private IFileService iFileService;
     private MemberService memberService;
     private CityService cityService;
+    private RequestCacheService requestCacheService;
     
     @Autowired
     public PublicController(IFileService iFileService,
                             CityService cityService,
+                            RequestCacheService requestCacheService,
                             MemberService memberService) {
         this.iFileService = iFileService;
         this.memberService = memberService;
         this.cityService = cityService;
+        this.requestCacheService = requestCacheService;
     }
     
     /**
@@ -171,6 +178,25 @@ public class PublicController extends BaseController {
         }
         List<City> cities = cityService.searchForCity(q);
         return Results.success(cities);
+    }
+    
+    
+    @RequestMapping("/weather/current")
+    @ResponseBody
+    public Results current(WeatherParamQueryFilter filter) {
+        CheckError checkError = CheckError.get();
+        Weather weather = requestCacheService.currentWeather(filter, checkError);
+        return Results.check(checkError, "当前天气")
+                .setData(weather);
+    }
+    
+    @RequestMapping("/weather/forecast")
+    @ResponseBody
+    public Results forecast(WeatherParamQueryFilter filter) {
+        CheckError checkError = CheckError.get();
+        Forecast forecast = requestCacheService.forecast(filter, checkError);
+        return Results.check(checkError, "天气预测")
+                .setData(forecast);
     }
     
 //    @CrossOrigin(origins = "http://localhost:63342")

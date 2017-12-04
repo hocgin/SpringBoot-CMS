@@ -25,4 +25,13 @@ public class ResponseKit {
             e.printStackTrace();
         }
     }
+    
+    /**
+     * 重定向
+     * @param page
+     * @throws IOException
+     */
+    public static void redirect(String page) throws IOException {
+        get().sendRedirect(page);
+    }
 }

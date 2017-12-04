@@ -169,6 +169,17 @@ public class BuiltInSeeder {
         menu182 = sysMenuRepository.insert(menu182);
         SysMenu menu183 = DocumentFactory.data("修改任务", "000100080003", "sys.task.edit", menu18.getId());
         menu183 = sysMenuRepository.insert(menu183);
+        // 系统管理 - 短链管理
+        SysMenu menu19 = DocumentFactory.menu("短链管理", "00010009",
+                "sys.short-url", "/admin/system/short-url/index.html");
+        menu19.setParent(menu1.getId());
+        menu19 = sysMenuRepository.insert(menu19);
+        SysMenu menu191 = DocumentFactory.data("添加短链", "000100090001", "sys.short-url.add", menu19.getId());
+        menu191 = sysMenuRepository.insert(menu191);
+        SysMenu menu192 = DocumentFactory.data("删除短链", "000100090002", "sys.short-url.delete", menu19.getId());
+        menu192 = sysMenuRepository.insert(menu192);
+        SysMenu menu193 = DocumentFactory.data("修改短链", "000100090003", "sys.short-url.edit", menu19.getId());
+        menu193 = sysMenuRepository.insert(menu193);
         
         
         // 系统安全
@@ -240,6 +251,7 @@ public class BuiltInSeeder {
                 menu16, menu161, menu162, menu163,
                 menu17, menu171, menu172, menu173,
                 menu18, menu181, menu182, menu183,
+                menu19, menu191, menu192, menu193,
                 
                 menu2,
                 menu26, menu261,
@@ -256,7 +268,7 @@ public class BuiltInSeeder {
         
         SysMenu[] role_admin_old = new SysMenu[]{
                 menu1,
-                menu11, menu12, menu13, menu14, menu15, menu16, menu17, menu18,
+                menu11, menu12, menu13, menu14, menu15, menu16, menu17, menu18, menu19,
                 menu2,
                 menu26,
                 menu3,
