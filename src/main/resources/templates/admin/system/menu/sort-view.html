@@ -1,119 +1,110 @@
 <!DOCTYPE html>
-<html
-        xmlns:th="http://www.thymeleaf.org">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="/admin/_layouts/default">
 <head>
-    <meta th:replace="/admin/fragments/meta::meta"/>
     <title>菜单排序</title>
-    <css th:replace="/admin/fragments/all-css :: all-css"></css>
-    <js th:replace="/admin/fragments/head-js :: head-js"></js>
 </head>
-<body class="hold-transition skin-blue sidebar-mini">
-<div class="wrapper">
-    <div th:replace="/admin/fragments/header::header"></div>
-    <div th:replace="/admin/fragments/left-menu::left-menu"></div>
-    <div id="pjax-container" class="content-wrapper">
-        <!-- 位置提示 -->
-        <section class="content-header">
-            <h1>
-                菜单排序
-                <small>配置相关菜单</small>
-            </h1>
-            <ol class="breadcrumb">
-                <li><a href="#"><i class="fa fa-dashboard"></i> 首页</a></li>
-                <li class="active">菜单排序</li>
-            </ol>
-        </section>
-        <!-- 内容区域 -->
-        <section class="content">
-            <!-- Small boxes (Stat box) -->
-            <div class="row">
-                <div class="col-xs-12">
-                    <div class="box">
-                        <div class="box-header">
-                            <header class="tool-bar">
-                                <h3 class="pull-left">菜单排序</h3>
-                                <div class="pull-right tool-button">
-                                    <button class="btn btn-primary"
-                                            onclick="allRequest.complete()">
-                                        <i class="fa fa-floppy-o"></i> 保存
-                                    </button>
-                                </div>
-                            </header>
-                        </div>
-                        <!-- /.box-header -->
-                        <div class="box-body">
-
-                            <div class="dd" id="nestable">
-                                <ol class="dd-list">
-                                    <li class="dd-item"
-                                        th:attr="data-id=${root.id}"
-                                        th:each="root, i: ${leftMenu.root}">
-                                        <div class="dd-handle" th:text="${root.name}">Item 1</div>
-                                        <ol class="dd-list">
-                                            <li class="dd-item"
-                                                th:attr="data-id=${children.id}"
-                                                th:each="children, i: ${leftMenu.children.get(root.path)}">
-                                                <div class="dd-handle" th:text="${children.name}">Item 1-1</div>
-                                            </li>
-                                        </ol>
-                                    </li>
-                                </ol>
+<body>
+<div layout:fragment="content">
+    <!-- 位置提示 -->
+    <section class="content-header">
+        <h1>
+            菜单排序
+            <small>配置相关菜单</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> 首页</a></li>
+            <li class="active">菜单排序</li>
+        </ol>
+    </section>
+    <!-- 内容区域 -->
+    <section class="content">
+        <!-- Small boxes (Stat box) -->
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+                    <div class="box-header">
+                        <header class="tool-bar">
+                            <h3 class="pull-left">菜单排序</h3>
+                            <div class="pull-right tool-button">
+                                <button class="btn btn-primary"
+                                        onclick="allRequest.complete()">
+                                    <i class="fa fa-floppy-o"></i> 保存
+                                </button>
                             </div>
-
-                        </div>
-                        <!-- /.box-body -->
+                        </header>
                     </div>
+                    <!-- /.box-header -->
+                    <div class="box-body">
+
+                        <div class="dd" id="nestable">
+                            <ol class="dd-list">
+                                <li class="dd-item"
+                                    th:attr="data-id=${root.id}"
+                                    th:each="root, i: ${leftMenu.root}">
+                                    <div class="dd-handle" th:text="${root.name}">Item 1</div>
+                                    <ol class="dd-list">
+                                        <li class="dd-item"
+                                            th:attr="data-id=${children.id}"
+                                            th:each="children, i: ${leftMenu.children.get(root.path)}">
+                                            <div class="dd-handle" th:text="${children.name}">Item 1-1</div>
+                                        </li>
+                                    </ol>
+                                </li>
+                            </ol>
+                        </div>
+
+                    </div>
+                    <!-- /.box-body -->
                 </div>
             </div>
-            <!-- /.row -->
-        </section>
-        <!-- /内容区域 -->
-        <script>
-            var allRequest = {};
-            $(function () {
-                // 所有网络请求
-                allRequest = {
-                    complete: function () {
-                        var ids = getId($("#nestable").nestable('serialize'));
-                        if (!!ids) {
-                            layer.confirm('确定保存排序?', {
-                                btn: ['确定', '取消'] //按钮
-                            }, function () {
-                                $.post('/admin/system/menu/update-sort', {id: ids.toString()}, function (data) {
-                                    if (data.code === 200) {
-                                        layer.msg(data.message, {icon: 1});
-                                    } else {
-                                        layer.msg(data.message, {icon: 2});
-                                    }
-                                }, 'json');
-                            }, function () {
-                                layer.msg('取消保存');
-                            });
-                        } else {
-                            layer.msg('菜单列表不存在');
-                        }
+        </div>
+        <!-- /.row -->
+    </section>
+    <!-- /内容区域 -->
+    <script>
+        var allRequest = {};
+        $(function () {
+            // 所有网络请求
+            allRequest = {
+                complete: function () {
+                    var ids = getId($("#nestable").nestable('serialize'));
+                    if (!!ids) {
+                        layer.confirm('确定保存排序?', {
+                            btn: ['确定', '取消'] //按钮
+                        }, function () {
+                            $.post('/admin/system/menu/update-sort', {id: ids.toString()}, function (data) {
+                                if (data.code === 200) {
+                                    layer.msg(data.message, {icon: 1});
+                                } else {
+                                    layer.msg(data.message, {icon: 2});
+                                }
+                            }, 'json');
+                        }, function () {
+                            layer.msg('取消保存');
+                        });
+                    } else {
+                        layer.msg('菜单列表不存在');
                     }
-                };
-
-                function getId(ob) {
-                    var ids = [];
-                    $.each(ob, function (i, o) {
-                        ids.push(o.id);
-                        if (o.children) {
-                            ids = ids.concat(getId(o.children))
-                        }
-                    });
-                    return ids;
                 }
+            };
 
-                $('#nestable').nestable();
-            })
-        </script>
-    </div>
-    <div th:replace="/admin/fragments/main-footer::main-footer"></div>
-    <div th:replace="/admin/fragments/right-setting::right-setting"></div>
-    <div class="control-sidebar-bg"></div>
+            function getId(ob) {
+                var ids = [];
+                $.each(ob, function (i, o) {
+                    ids.push(o.id);
+                    if (o.children) {
+                        ids = ids.concat(getId(o.children))
+                    }
+                });
+                return ids;
+            }
+
+            $('#nestable').nestable();
+        })
+    </script>
 </div>
-<js th:replace="/admin/fragments/footer-js::footer-js"></js>
 </body>
 </html>

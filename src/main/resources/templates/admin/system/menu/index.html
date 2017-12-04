@@ -1,175 +1,166 @@
 <!DOCTYPE html>
-<html
-        xmlns:th="http://www.thymeleaf.org">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="/admin/_layouts/default">
 <head>
-    <meta th:replace="/admin/fragments/meta::meta"/>
     <title>菜单管理</title>
-    <css th:replace="/admin/fragments/all-css :: all-css"></css>
-    <js th:replace="/admin/fragments/head-js :: head-js"></js>
 </head>
-<body class="hold-transition skin-blue sidebar-mini">
-<div class="wrapper">
-    <div th:replace="/admin/fragments/header::header"></div>
-    <div th:replace="/admin/fragments/left-menu::left-menu"></div>
-    <div id="pjax-container" class="content-wrapper">
-        <!--Modal 单位详情-->
-        <div class="modal fade in" id="js-detail-modal">
-            <div class="modal-dialog">
-                <div class="modal-content">
+<body>
+<div layout:fragment="content">
+    <!--Modal 单位详情-->
+    <div class="modal fade in" id="js-detail-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            </div>
+        </div>
+    </div>
+    <!--./Modal 单位详情-->
+    <!-- 位置提示 -->
+    <section class="content-header">
+        <h1>
+            菜单管理
+            <small>配置相关菜单</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> 首页</a></li>
+            <li class="active">菜单管理</li>
+        </ol>
+    </section>
+    <!-- 内容区域 -->
+    <section class="content">
+        <!-- Small boxes (Stat box) -->
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+                    <div class="box-header">
+                        <header class="tool-bar">
+                            <h3 class="pull-left">菜单管理</h3>
+                            <div class="pull-right tool-button">
+                                <a th:href="@{/admin/system/menu/add-view.html}"
+                                   class="btn btn-primary" data-pjax>
+                                    <i class="fa fa-plus"></i> 新建菜单
+                                </a>
+                                <a th:href="@{/admin/system/menu/sort-view.html}"
+                                   class="btn btn-info" data-pjax>
+                                    <i class="fa fa-sort"></i> 排序
+                                </a>
+                            </div>
+                        </header>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body">
+                        <table id="js-system-department-table" class="table treetable">
+                            <thead>
+                            <tr>
+                                <th>菜单名称</th>
+                                <th>路径</th>
+                                <th>类型</th>
+                                <th>权限标识</th>
+                                <th>启用状态</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody th:utext="${root}">
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.box-body -->
                 </div>
             </div>
         </div>
-        <!--./Modal 单位详情-->
-        <!-- 位置提示 -->
-        <section class="content-header">
-            <h1>
-                菜单管理
-                <small>配置相关菜单</small>
-            </h1>
-            <ol class="breadcrumb">
-                <li><a href="#"><i class="fa fa-dashboard"></i> 首页</a></li>
-                <li class="active">菜单管理</li>
-            </ol>
-        </section>
-        <!-- 内容区域 -->
-        <section class="content">
-            <!-- Small boxes (Stat box) -->
-            <div class="row">
-                <div class="col-xs-12">
-                    <div class="box">
-                        <div class="box-header">
-                            <header class="tool-bar">
-                                <h3 class="pull-left">菜单管理</h3>
-                                <div class="pull-right tool-button">
-                                    <a th:href="@{/admin/system/menu/add-view.html}"
-                                       class="btn btn-primary" data-pjax>
-                                        <i class="fa fa-plus"></i> 新建菜单
-                                    </a>
-                                    <a th:href="@{/admin/system/menu/sort-view.html}"
-                                       class="btn btn-info" data-pjax>
-                                        <i class="fa fa-sort"></i> 排序
-                                    </a>
-                                </div>
-                            </header>
-                        </div>
-                        <!-- /.box-header -->
-                        <div class="box-body">
-                            <table id="js-system-department-table" class="table treetable">
-                                <thead>
-                                <tr>
-                                    <th>菜单名称</th>
-                                    <th>路径</th>
-                                    <th>类型</th>
-                                    <th>权限标识</th>
-                                    <th>启用状态</th>
-                                    <th>操作</th>
-                                </tr>
-                                </thead>
-                                <tbody th:utext="${root}">
-                                </tbody>
-                            </table>
-                        </div>
-                        <!-- /.box-body -->
-                    </div>
-                </div>
-            </div>
-            <!-- /.row -->
-        </section>
-        <!-- /内容区域 -->
-        <script>
-            var allRequest = {};
-            $(function () {
-                // 所有网络请求
-                allRequest = {
-                    deleteById: function (ids) {
-                        if (!!ids && ids.length === 1) {
-                            layer.confirm('删除后无法恢复，并且角色也将失去此权限的关系；<br/>'
-                                + '如果选中的是父级权限，那么父级权限下面的所有子权限也全部会删除，请谨慎操作！<br/>'
-                                + '确定要删除吗？', {
-                                btn: ['确定', '取消'] //按钮
-                            }, function () {
-                                $.post('/admin/system/menu/delete', {id: ids.toString()}, function (data) {
-                                    if (data.code === 200) {
-                                        layer.msg(data.message, {icon: 1});
-                                        table.treetableObject.treetable("removeNode", ids);
-                                    } else {
-                                        layer.msg(data.message, {icon: 2});
-                                    }
-                                }, 'json');
-                            }, function () {
-                                layer.msg('取消删除');
-                            });
-                        } else {
-                            layer.msg('请先选中行');
-                        }
-                    },
-                    available: function (id, isAvailable) { // isAvailable 1:0
-                        var available = !!isAvailable;
-                        if (!!id
-                            && isAvailable !== undefined) {
-                            layer.confirm('确定要' + (available ? '开启' : '关闭') + '它？', {
-                                btn: ['确定', '取消'] //按钮
-                            }, function () {
-                                $.post('/admin/system/menu/available/' + id.toString(), {available: available}, function (data) {
-                                    if (data.code === 200) {
-                                        layer.msg(data.message, {icon: 1});
-                                        $('#js-' + id).attr('class', 'fa fa-circle ' + (available ? 'text-success' : 'text-danger'));
-                                    } else {
-                                        layer.msg(data.message, {icon: 2});
-                                    }
-                                }, 'json');
-                            }, function () {
-                                layer.msg('取消' + (available ? '开启' : '关闭'));
-                            });
-                        }
-                    }
-                };
-
-                $('#js-detail-modal').on("hidden.bs.modal", function () {
-                    $(this).removeData("bs.modal");
-                });
-
-                // 系统参数配置表格
-                const table = {
-                    $obj: $('#js-system-department-table'),
-                    treetableObject: null,
-                    getSelectedRow: function () {
-//                        return this.dataTableObject.rows('.selected').data();
-                    },
-                    init: function () {
-                        var that = this;
-                        // 初始化
-                        this.treetableObject = this.$obj.treetable({
-                            expandable: true,
-                            stringCollapse: '收起',
-                            stringExpand: '展开',
-                            clickableNodeNames: true,
-                            //展开
-                            onNodeExpand: function () {
-                                var that = this;
-                                console.log("loading node", that.id);
-                                //是否已经加载
-                                var rows = "<tr data-tt-id=\"loading\" data-tt-parent-id=\"" + that.id + "\" data-tt-branch=\"false\"><td colspan='5'>loading</td></tr>";
-                                table.treetableObject.treetable("loadBranch", that, rows);
-                                $.post("/admin/system/menu/children/" + that.id, {}, function (result) {
-                                    table.treetableObject.treetable("unloadBranch", that);
-                                    table.treetableObject.treetable("loadBranch", that, result.data);
-                                });
-
-                            }
+        <!-- /.row -->
+    </section>
+    <!-- /内容区域 -->
+    <script>
+        var allRequest = {};
+        $(function () {
+            // 所有网络请求
+            allRequest = {
+                deleteById: function (ids) {
+                    if (!!ids && ids.length === 1) {
+                        layer.confirm('删除后无法恢复，并且角色也将失去此权限的关系；<br/>'
+                            + '如果选中的是父级权限，那么父级权限下面的所有子权限也全部会删除，请谨慎操作！<br/>'
+                            + '确定要删除吗？', {
+                            btn: ['确定', '取消'] //按钮
+                        }, function () {
+                            $.post('/admin/system/menu/delete', {id: ids.toString()}, function (data) {
+                                if (data.code === 200) {
+                                    layer.msg(data.message, {icon: 1});
+                                    table.treetableObject.treetable("removeNode", ids);
+                                } else {
+                                    layer.msg(data.message, {icon: 2});
+                                }
+                            }, 'json');
+                        }, function () {
+                            layer.msg('取消删除');
                         });
-                        // 绑定多选
-                        // ==========================自定义=============================
+                    } else {
+                        layer.msg('请先选中行');
                     }
-                };
-                table.init();
-            })
-        </script>
-    </div>
-    <div th:replace="/admin/fragments/main-footer::main-footer"></div>
-    <div th:replace="/admin/fragments/right-setting::right-setting"></div>
-    <div class="control-sidebar-bg"></div>
+                },
+                available: function (id, isAvailable) { // isAvailable 1:0
+                    var available = !!isAvailable;
+                    if (!!id
+                        && isAvailable !== undefined) {
+                        layer.confirm('确定要' + (available ? '开启' : '关闭') + '它？', {
+                            btn: ['确定', '取消'] //按钮
+                        }, function () {
+                            $.post('/admin/system/menu/available/' + id.toString(), {available: available}, function (data) {
+                                if (data.code === 200) {
+                                    layer.msg(data.message, {icon: 1});
+                                    $('#js-' + id).attr('class', 'fa fa-circle ' + (available ? 'text-success' : 'text-danger'));
+                                } else {
+                                    layer.msg(data.message, {icon: 2});
+                                }
+                            }, 'json');
+                        }, function () {
+                            layer.msg('取消' + (available ? '开启' : '关闭'));
+                        });
+                    }
+                }
+            };
+
+            $('#js-detail-modal').on("hidden.bs.modal", function () {
+                $(this).removeData("bs.modal");
+            });
+
+            // 系统参数配置表格
+            const table = {
+                $obj: $('#js-system-department-table'),
+                treetableObject: null,
+                getSelectedRow: function () {
+//                        return this.dataTableObject.rows('.selected').data();
+                },
+                init: function () {
+                    var that = this;
+                    // 初始化
+                    this.treetableObject = this.$obj.treetable({
+                        expandable: true,
+                        stringCollapse: '收起',
+                        stringExpand: '展开',
+                        clickableNodeNames: true,
+                        //展开
+                        onNodeExpand: function () {
+                            var that = this;
+                            console.log("loading node", that.id);
+                            //是否已经加载
+                            var rows = "<tr data-tt-id=\"loading\" data-tt-parent-id=\"" + that.id + "\" data-tt-branch=\"false\"><td colspan='5'>loading</td></tr>";
+                            table.treetableObject.treetable("loadBranch", that, rows);
+                            $.post("/admin/system/menu/children/" + that.id, {}, function (result) {
+                                table.treetableObject.treetable("unloadBranch", that);
+                                table.treetableObject.treetable("loadBranch", that, result.data);
+                            });
+
+                        }
+                    });
+                    // 绑定多选
+                    // ==========================自定义=============================
+                }
+            };
+            table.init();
+        })
+    </script>
 </div>
-<js th:replace="/admin/fragments/footer-js::footer-js"></js>
 </body>
 </html>
