@@ -106,16 +106,16 @@ public class SysMenuServiceImpl extends BaseService implements SysMenuService {
     
     @Override
     public List<SysMenu> queryChildren(String parentId) {
-        return sysMenuRepository.findAllByParentIn(parentId);
+        return sysMenuRepository.findAllByParentInOrderByLocationAscAndPathAsc(parentId);
     }
     
     @Override
     public List<SysMenu> queryRoot() {
-        return sysMenuRepository.findAllByParentIn(null, "");
+        return sysMenuRepository.findAllByParentInOrderByLocationAscAndPathAsc(null, "");
     }
     
     @Override
-    public SysMenu findById(String id) {
+    public SysMenu findOne(String id) {
         return sysMenuRepository.findOne(id);
     }
     

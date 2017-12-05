@@ -41,4 +41,7 @@ public interface ChannelRepositoryCustom {
     List<Channel> findAllOrderByLocationAscAndPathAsc();
     
     List<Channel> findAllByParentInOrderByLocationAscAndPathAsc(String... parent);
+    
+    
+    boolean existsByParent(String parent);
 }

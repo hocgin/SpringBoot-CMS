@@ -1,7 +1,7 @@
 package in.hocg.web.modules.system.service;
 
 import in.hocg.web.lang.CheckError;
-import in.hocg.web.modules.system.body.LeftMenu;
+import in.hocg.web.lang.utils.tree.Node;
 import in.hocg.web.modules.system.domain.Role;
 import in.hocg.web.modules.system.domain.SysMenu;
 import in.hocg.web.modules.system.domain.User;
@@ -45,7 +45,7 @@ public interface UserService {
     
     Collection<SysMenu> findSysMenuByUser(String id);
     
-    LeftMenu getLeftMenu(String id);
+    List<Node<SysMenu>> getLeftMenu(String id);
     
     
     List<User> findAllByRoles(String... rolesId);

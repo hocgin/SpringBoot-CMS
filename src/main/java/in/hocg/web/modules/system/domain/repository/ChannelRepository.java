@@ -18,4 +18,14 @@ public interface ChannelRepository extends MongoRepository<Channel, String>,
     List<Channel> findAllByParentIn(String... parent);
     
     void deleteAllByIdIn(String[] id);
+    
+    
+    
+    /**
+     * 用正则匹配查询目录路径的值
+     *
+     * @param path
+     * @return
+     */
+    List<Channel> findAllByPathRegex(String path);
 }

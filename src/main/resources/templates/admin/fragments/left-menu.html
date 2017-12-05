@@ -27,23 +27,18 @@
         <!-- sidebar menu: : style can be found in sidebar.less -->
         <ul class="sidebar-menu" data-widget="tree">
             <li class="header">操作面板</li>
-            <th:block th:with="leftMenu=${@langService.getLeftMenu()}">
+            <!--/*@thymesVar id="nodes" type="java.util.List<in.hocg.web.lang.utils.tree.Node<in.hocg.web.modules.system.domain.SysMenu>>"*/-->
+            <th:block th:with="nodes=${@langService.getLeftMenu()}">
                 <li class="treeview"
-                    th:each="root, i: ${leftMenu?.root}">
-                    <a th:href="${root.url?:'#'}">
-                        <i th:class="${root.icon}"></i> <span th:text="${root.name}">系统配置</span>
+                    th:each="root, i: ${nodes}">
+                    <a th:href="${root.node.url?:'#'}">
+                        <i th:class="${root.node.icon}"></i> <span th:text="${root.node.name}">系统配置</span>
                         <span class="pull-right-container">
                           <i class="fa fa-angle-left pull-right"></i>
                         </span>
                     </a>
-                    <ul class="treeview-menu">
-                        <li th:each="children, i: ${leftMenu.children.get(root.path)}">
-                            <a data-pjax
-                               th:href="${children.url}"
-                               th:inline="text"><i th:class="${children.icon}"></i>
-                                [[${children.name}]]</a>
-                        </li>
-                    </ul>
+                    <ol th:if="${root.children != null}"
+                        th:replace="/admin/_widgets/tree-menu::tree-menu(${root.children})"></ol>
                 </li>
             </th:block>
             <li class="header">标签</li>

@@ -204,6 +204,7 @@ public class BuiltInSeeder {
         SysMenu menu31 = DocumentFactory.menu("主界面", "00030001",
                 "dashboard.index", "/admin/dashboard/index.html");
         menu31.setParent(menu3.getId());
+        menu31.setHasChildren(false);
         menu31 = sysMenuRepository.insert(menu31);
         
         
@@ -222,7 +223,7 @@ public class BuiltInSeeder {
         menu412 = sysMenuRepository.insert(menu412);
         SysMenu menu413 = DocumentFactory.data("修改城市", "000400010003", "weather.city.edit", menu41.getId());
         menu413 = sysMenuRepository.insert(menu413);
-        
+    
         // 消息系统
         SysMenu menu5 = DocumentFactory.menu("消息系统", "0005", "message", "");
         menu5.setLocation(4);
@@ -240,6 +241,22 @@ public class BuiltInSeeder {
         menu513 = sysMenuRepository.insert(menu513);
         SysMenu menu514 = DocumentFactory.data("发送邮件", "000500010003", "message.mail.send", menu51.getId());
         menu514 = sysMenuRepository.insert(menu514);
+        
+        // 内容管理
+        SysMenu menu6 = DocumentFactory.menu("内容管理", "0006", "content", "");
+        menu6.setLocation(5);
+        menu6 = sysMenuRepository.insert(menu6);
+        // - 栏目管理
+        SysMenu menu61 = DocumentFactory.menu("栏目管理", "00060001",
+                "message.mail", "/admin/content/channel/index.html");
+        menu61.setParent(menu6.getId());
+        menu61 = sysMenuRepository.insert(menu61);
+        SysMenu menu611 = DocumentFactory.data("添加栏目", "000600010001", "content.channel.add", menu61.getId());
+        menu611 = sysMenuRepository.insert(menu611);
+        SysMenu menu612 = DocumentFactory.data("删除栏目", "000600010002", "content.channel.delete", menu61.getId());
+        menu612 = sysMenuRepository.insert(menu612);
+        SysMenu menu613 = DocumentFactory.data("修改栏目", "000600010003", "content.channel.edit", menu61.getId());
+        menu613 = sysMenuRepository.insert(menu613);
         
         SysMenu[] role_admin = new SysMenu[]{
                 menu1,
@@ -263,7 +280,12 @@ public class BuiltInSeeder {
                 menu41, menu411, menu412, menu413,
                 
                 menu5,
-                menu51, menu511, menu512, menu513, menu514
+                menu51, menu511, menu512, menu513, menu514,
+        
+                
+                menu6,
+                // - 栏目管理
+                menu61, menu611, menu612, menu613
         };
         
         SysMenu[] role_admin_old = new SysMenu[]{
@@ -276,7 +298,9 @@ public class BuiltInSeeder {
                 menu4,
                 menu41,
                 menu5,
-                menu51
+                menu51,
+                menu6,
+                menu61
         };
         
         /**

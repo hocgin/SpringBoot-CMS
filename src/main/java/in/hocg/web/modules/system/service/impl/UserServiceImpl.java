@@ -1,16 +1,16 @@
 package in.hocg.web.modules.system.service.impl;
 
-import in.hocg.web.modules.system.filter.UserDataTablesInputFilter;
-import in.hocg.web.modules.system.filter.UserFilter;
 import in.hocg.web.lang.CheckError;
-import in.hocg.web.modules.system.body.LeftMenu;
-import in.hocg.web.lang.utils.DocumentKit;
 import in.hocg.web.lang.utils.RequestKit;
+import in.hocg.web.lang.utils.tree.Node;
+import in.hocg.web.lang.utils.tree.TreeKit;
 import in.hocg.web.modules.system.domain.Department;
-import in.hocg.web.modules.system.domain.SysMenu;
 import in.hocg.web.modules.system.domain.Role;
+import in.hocg.web.modules.system.domain.SysMenu;
 import in.hocg.web.modules.system.domain.User;
 import in.hocg.web.modules.system.domain.repository.UserRepository;
+import in.hocg.web.modules.system.filter.UserDataTablesInputFilter;
+import in.hocg.web.modules.system.filter.UserFilter;
 import in.hocg.web.modules.system.service.DepartmentService;
 import in.hocg.web.modules.system.service.RoleService;
 import in.hocg.web.modules.system.service.UserService;
@@ -74,12 +74,16 @@ public class UserServiceImpl implements UserService {
         HashSet<SysMenu> menus = new HashSet<>();
         roles.forEach(role -> {
             Collection<SysMenu> menuCollection = role.getPermissions();
-            if (!CollectionUtils.isEmpty(menuCollection)) {
-                menus.addAll(menuCollection);
-            }
+            menuCollection.stream()
+                    // 过滤掉未开启菜单
+                    .filter(SysMenu::getAvailable)
+                    // 过滤掉按钮菜单
+                    .filter(sysMenu -> sysMenu.getType() != 1)
+                    .forEach(menus::add);
         });
         return menus.stream()
-                .sorted(Comparator.comparing(SysMenu::getLocation))
+                .sorted(Comparator.comparing(SysMenu::getLocation)
+                        .thenComparing(SysMenu::getPath))
                 .collect(Collectors.toList());
     }
     
@@ -90,29 +94,42 @@ public class UserServiceImpl implements UserService {
      * @return
      */
     @Override
-    public LeftMenu getLeftMenu(String id) {
-        Collection<SysMenu> menus = findSysMenuByUser(id);
-        List<SysMenu> root = new ArrayList<>();
-        Map<String, List<SysMenu>> childMenus = new HashMap<>();
-        for (SysMenu menu : menus) {
-            if (!menu.getAvailable()) { // 如果被关闭的话, 跳过
-                continue;
-            }
-            if (menu.getPath().length() > 4) {
-                List<SysMenu> s = childMenus.get(DocumentKit.getParentId(menu.getPath()));
-                if (CollectionUtils.isEmpty(s)) {
-                    s = new ArrayList<>();
-                }
-                s.add(menu);
-                childMenus.put(DocumentKit.getParentId(menu.getPath()), s);
-            } else if (menu.getPath().length() == 4) {
-                root.add(menu);
+    public List<Node<SysMenu>> getLeftMenu(String id) {
+//        Collection<SysMenu> menus = findSysMenuByUser(id);
+//        List<SysMenu> root = new ArrayList<>();
+//        Map<String, List<SysMenu>> childMenus = new HashMap<>();
+//        for (SysMenu menu : menus) {
+//            if (menu.getPath().length() > 4) {
+//                List<SysMenu> s = childMenus.get(DocumentKit.getParentPath(menu.getPath()));
+//                if (CollectionUtils.isEmpty(s)) {
+//                    s = new ArrayList<>();
+//                }
+//                s.add(menu);
+//                childMenus.put(DocumentKit.getParentPath(menu.getPath()), s);
+//            } else if (menu.getPath().length() == 4) {
+//                root.add(menu);
+//            }
+//        }
+//        LeftMenu leftMenu = new LeftMenu();
+//        leftMenu.setRoot(root);
+//        leftMenu.setChildren(childMenus);
+        
+        
+        Collection<SysMenu> allNodes = findSysMenuByUser(id);
+        // 最后的结果
+        List<Node<SysMenu>> rootNodes = new ArrayList<>();
+        for (SysMenu menu : allNodes) {
+            if (StringUtils.isEmpty(menu.getParent())) { // 根结点
+                Node<SysMenu> node = new Node<>();
+                node.setNode(menu);
+                rootNodes.add(node);
             }
         }
-        LeftMenu leftMenu = new LeftMenu();
-        leftMenu.setRoot(root);
-        leftMenu.setChildren(childMenus);
-        return leftMenu;
+        // 查找子节点
+        for (Node<SysMenu> node : rootNodes) {
+            node.setChildren(TreeKit.getChild(node.getNode().getId(), allNodes));
+        }
+        return rootNodes;
     }
     
     @Override

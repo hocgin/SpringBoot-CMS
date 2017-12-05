@@ -1,23 +1,22 @@
 package in.hocg.web.modules.system.controller.system;
 
-import in.hocg.web.modules.system.filter.MenuFilter;
+import in.hocg.web.lang.CheckError;
+import in.hocg.web.lang.iText;
+import in.hocg.web.lang.utils.tree.Node;
+import in.hocg.web.lang.utils.tree.TreeKit;
+import in.hocg.web.modules.base.BaseController;
+import in.hocg.web.modules.base.body.Results;
 import in.hocg.web.modules.base.filter.group.Insert;
 import in.hocg.web.modules.base.filter.group.Update;
 import in.hocg.web.modules.base.filter.lang.IdFilter;
 import in.hocg.web.modules.base.filter.lang.IdsFilter;
-import in.hocg.web.lang.CheckError;
-import in.hocg.web.modules.system.body.LeftMenu;
-import in.hocg.web.modules.base.body.Results;
-import in.hocg.web.lang.iText;
-import in.hocg.web.lang.utils.DocumentKit;
 import in.hocg.web.modules.system.domain.SysMenu;
+import in.hocg.web.modules.system.filter.MenuFilter;
 import in.hocg.web.modules.system.service.SysMenuService;
-import in.hocg.web.modules.base.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
@@ -59,7 +58,7 @@ public class SysMenuController extends BaseController {
     @GetMapping("/add-view.html")
     public String vAdd(@RequestParam(value = "id", required = false) String parentId, Model model) {
         if (!StringUtils.isEmpty(parentId)) {
-            SysMenu permission = sysMenuService.findById(parentId);
+            SysMenu permission = sysMenuService.findOne(parentId);
             model.addAttribute("permission", permission);
         }
         return String.format(BASE_TEMPLATES_PATH, "add-view");
@@ -67,17 +66,17 @@ public class SysMenuController extends BaseController {
     
     @GetMapping("/detail/{id}")
     public String vDetail(@PathVariable("id") String detailId, Model model) {
-        model.addAttribute("o", sysMenuService.findById(detailId));
+        model.addAttribute("o", sysMenuService.findOne(detailId));
         return String.format(BASE_TEMPLATES_PATH, "detail-modal");
     }
     
     @GetMapping("/{id}")
     public String vUpdate(@PathVariable("id") String permissionId, Model model) {
-        SysMenu permission = sysMenuService.findById(permissionId);
+        SysMenu permission = sysMenuService.findOne(permissionId);
         if (!ObjectUtils.isEmpty(permission)) {
             model.addAttribute("permission", permission);
             if (!StringUtils.isEmpty(permission.getParent())) {
-                model.addAttribute("parent", sysMenuService.findById(permission.getParent()));
+                model.addAttribute("parent", sysMenuService.findOne(permission.getParent()));
             }
         }
         return String.format(BASE_TEMPLATES_PATH, "update-view");
@@ -85,25 +84,21 @@ public class SysMenuController extends BaseController {
     
     @GetMapping("/sort-view.html")
     public String vSort(Model model) {
-        List<SysMenu> sysMenus = sysMenuService.queryAllOrderByLocationAscAndPathAsc();
-        List<SysMenu> root = new ArrayList<>();
-        Map<String, List<SysMenu>> childMenus = new HashMap<>();
-        for (SysMenu menu : sysMenus) {
-            if (menu.getPath().length() > 4) {
-                List<SysMenu> s = childMenus.get(DocumentKit.getParentId(menu.getPath()));
-                if (CollectionUtils.isEmpty(s)) {
-                    s = new ArrayList<>();
-                }
-                s.add(menu);
-                childMenus.put(DocumentKit.getParentId(menu.getPath()), s);
-            } else if (menu.getPath().length() == 4) {
-                root.add(menu);
+        List<SysMenu> allNodes = sysMenuService.queryAllOrderByLocationAscAndPathAsc();
+        // 最后的结果
+        List<Node<SysMenu>> rootNodes = new ArrayList<>();
+        for (SysMenu channel : allNodes) {
+            if (StringUtils.isEmpty(channel.getParent())) { // 根结点
+                Node<SysMenu> node = new Node<>();
+                node.setNode(channel);
+                rootNodes.add(node);
             }
         }
-        LeftMenu leftMenu = new LeftMenu();
-        leftMenu.setRoot(root);
-        leftMenu.setChildren(childMenus);
-        model.addAttribute("leftMenu", leftMenu);
+        // 查找子节点
+        for (Node<SysMenu> node : rootNodes) {
+            node.setChildren(TreeKit.getChild(node.getNode().getId(), allNodes));
+        }
+        model.addAttribute("nodes", rootNodes);
         return String.format(BASE_TEMPLATES_PATH, "sort-view");
     }
     

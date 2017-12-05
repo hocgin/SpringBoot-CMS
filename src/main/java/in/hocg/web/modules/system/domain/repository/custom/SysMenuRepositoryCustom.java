@@ -37,4 +37,6 @@ public interface SysMenuRepositoryCustom {
      * @return
      */
     List<SysMenu> findAllOrderByLocationAscAndPathAsc();
+    
+    List<SysMenu> findAllByParentInOrderByLocationAscAndPathAsc(String... parent);
 }

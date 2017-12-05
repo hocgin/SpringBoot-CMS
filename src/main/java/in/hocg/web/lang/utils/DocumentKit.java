@@ -14,7 +14,7 @@ public class DocumentKit {
      * @param path
      * @return
      */
-    public static String getParentId(String path) {
+    public static String getParentPath(String path) {
         if (!StringUtils.isEmpty(path) && path.length() > 4) {
             return path.substring(0, path.length() - 4);
         }

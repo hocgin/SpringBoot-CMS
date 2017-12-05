@@ -73,8 +73,23 @@ public class ChannelServiceImpl
     
     @Override
     public void delete(String id, CheckError checkError) {
+        Channel channel = repository.findOne(id);
+        if (ObjectUtils.isEmpty(channel)) {
+            return;
+        }
+        List<Channel> all = repository.findAllByPathRegex(String.format("%s.*", (StringUtils.isEmpty(channel.getPath()) ? "" : channel.getPath())));
+        String[] ids = all
+                .stream()
+                .map(Channel::getId)
+                .toArray(String[]::new);
+        // 删除此栏目 及 子栏目
+        repository.deleteAllByIdIn(ids);
+        // 判断是否把父节点设置为根结点
+        if (!StringUtils.isEmpty(channel.getParent())
+                && repository.existsByParent(channel.getParent())) {
+            repository.updateHasChildren(channel.getParent(), false);
+        }
         // todo 删除关联文章
-        repository.delete(id);
     }
     
     @Override

@@ -71,4 +71,9 @@ public class ChannelRepositoryImpl
                 new Sort.Order(Sort.Direction.ASC, "location"),
                 new Sort.Order(Sort.Direction.ASC, "path"))));
     }
+    
+    @Override
+    public boolean existsByParent(String parent) {
+        return exists(Query.query(Criteria.where("parent").is(parent)));
+    }
 }

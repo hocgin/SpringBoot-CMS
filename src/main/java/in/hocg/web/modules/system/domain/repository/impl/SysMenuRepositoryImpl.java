@@ -1,8 +1,8 @@
 package in.hocg.web.modules.system.domain.repository.impl;
 
+import in.hocg.web.modules.base.BaseMongoCustom;
 import in.hocg.web.modules.system.domain.SysMenu;
 import in.hocg.web.modules.system.domain.repository.custom.SysMenuRepositoryCustom;
-import in.hocg.web.modules.base.BaseMongoCustom;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -60,6 +60,14 @@ public class SysMenuRepositoryImpl
     @Override
     public List<SysMenu> findAllOrderByLocationAscAndPathAsc() {
         return find(new Query().with(new Sort(
+                new Sort.Order(Sort.Direction.ASC, "location"),
+                new Sort.Order(Sort.Direction.ASC, "path"))));
+    }
+    
+    
+    @Override
+    public List<SysMenu> findAllByParentInOrderByLocationAscAndPathAsc(String... parent) {
+        return find(Query.query(Criteria.where("parent").in(parent)).with(new Sort(
                 new Sort.Order(Sort.Direction.ASC, "location"),
                 new Sort.Order(Sort.Direction.ASC, "path"))));
     }

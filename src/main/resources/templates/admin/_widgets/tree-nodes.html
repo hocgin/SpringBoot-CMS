@@ -1,8 +1,7 @@
-
 <ol class="dd-list"
     th:fragment="tree-nodes(nodes)"
     xmlns:th="http://www.thymeleaf.org">
-    <!--/*@thymesVar id="nodes" type="java.util.List<in.hocg.web.lang.utils.tree.Node<in.hocg.web.modules.system.domain.Channel>>"*/-->
+    <!--/*@thymesVar id="nodes" type="java.util.List<in.hocg.web.lang.utils.tree.Node<?>>"*/-->
     <li class="dd-item"
         th:each="node, i: ${nodes}"
         th:attr="data-id=${node.node.id}">

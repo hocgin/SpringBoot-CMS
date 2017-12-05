@@ -1,0 +1,20 @@
+<!--
+    左侧树形按钮
+-->
+<ul class="treeview-menu"
+         th:fragment="tree-menu(nodes)"
+         xmlns:th="http://www.thymeleaf.org">
+    <li th:each="node, i: ${nodes}">
+        <a data-pjax
+           th:href="${node.node.url}"
+           th:inline="text"><i th:class="${node.node.icon}"></i>
+            [[${node.node.name}]]
+            <span class="pull-right-container"
+                  th:if="${node.children != null}">
+                      <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+        </a>
+        <ol th:if="${node.children != null}"
+            th:replace="/admin/_widgets/tree-menu::tree-menu(${node.children})"></ol>
+    </li>
+</ul>

@@ -8,21 +8,15 @@
 </head>
 <body>
 <div layout:fragment="content">
-    <!-- 位置提示 -->
-    <section class="content-header">
-        <h1>
-            栏目排序
-            <small>栏目排序</small>
-        </h1>
-        <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-dashboard"></i> 首页</a></li>
-            <li class="active">栏目排序</li>
-        </ol>
-    </section>
     <!-- 内容区域 -->
     <section class="content">
         <!-- Small boxes (Stat box) -->
         <div class="row">
+            <div class="col-xs-12 i-navbar">
+                <a class="btn btn-primary" th:href="@{/admin/content/channel/index.html}" data-pjax><i
+                        class="fa fa-arrow-left"></i> 返回
+                </a>
+            </div>
             <div class="col-xs-12">
                 <div class="box">
                     <div class="box-header">

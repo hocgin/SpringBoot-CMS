@@ -3,6 +3,7 @@ package in.hocg.web.lang.utils.tree;
 import org.thymeleaf.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -41,7 +42,7 @@ public class TreeKit {
 //
 //    }
     
-    public static  <T extends TreeNode> List<Node<T>> getChild(String id, List<T> rootMenu) {
+    public static  <T extends TreeNode> List<Node<T>> getChild(String id, Collection<T> rootMenu) {
         // 子菜单
         List<Node<T>> childList = new ArrayList<>();
         for (T menu : rootMenu) {

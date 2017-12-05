@@ -19,7 +19,7 @@ public interface SysMenuService {
     
     List<SysMenu> queryRoot();
     
-    SysMenu findById(String id);
+    SysMenu findOne(String id);
     
     List<SysMenu> queryById(String... id);
     
