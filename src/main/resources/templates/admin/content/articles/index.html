@@ -54,6 +54,7 @@
                             <tr>
                                 <th>标题</th>
                                 <th>作者</th>
+                                <th>栏目</th>
                                 <th>发布时间</th>
                                 <th>状态</th>
                                 <th>操作</th>
@@ -140,7 +141,7 @@
                         deferRender: true,
                         language: DATA_TABLE_CONFIG.language,
                         preDrawCallback: DATA_TABLE_CONFIG.preDrawCallback,
-                        order: [[0, "desc"]],
+                        order: [[3, "desc"]],
                         ajax: {
                             url: '/admin/content/articles/data',
                             type: 'POST',
@@ -153,6 +154,7 @@
                         columns: [
                             {data: 'title', bSortable: true},
                             {data: 'author', bSortable: true},
+                            {data: 'channel.name', bSortable: true},
                             {data: 'sendAt', bSortable: true},
                             {data: 'available', bSortable: true},
                             {}
@@ -163,7 +165,7 @@
                                 render: function (data, type, row) {
                                     return new Date(row.sendAt).toLocaleString();
                                 },
-                                targets: 2
+                                targets: 3
                             }, {
                                 render: function (data, type, row) { // 状态
                                     if (!!data) {
@@ -172,7 +174,7 @@
                                         return '<i id="js-' + row.id + '" class="fa fa-circle text-danger"></i>';
                                     }
                                 },
-                                targets: 3
+                                targets: 4
                             }, { // 操作
                                 render: function (data, type, row) {
                                     return '<div class="btn-group">' +
@@ -194,7 +196,7 @@
                                         '         </ul>' +
                                         '   </div>';
                                 },
-                                targets: 4
+                                targets: 5
                             }]
                     });
                     // 绑定多选
