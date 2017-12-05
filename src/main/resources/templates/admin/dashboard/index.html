@@ -1,20 +1,13 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="/admin/_layouts/default">
 <head>
-    <meta th:replace="@{/admin/fragments/meta}::meta"/>
-    <title>AdminLTE 2 | Dashboard</title>
-    <css th:replace="@{/admin/fragments/all-css} :: all-css"></css>
-    <js th:replace="@{/admin/fragments/head-js} :: head-js"></js>
+    <title>主界面</title>
 </head>
-<body class="hold-transition skin-blue sidebar-mini">
-<div class="wrapper">
-
-    <div th:replace="@{/admin/fragments/header}::header"></div>
-    <!-- Left side column. contains the logo and sidebar -->
-    <div th:replace="@{/admin/fragments/left-menu}::left-menu"></div>
-
-    <!-- Content Wrapper. Contains page content -->
-    <div  id="pjax-container" class="content-wrapper">
+<body>
+<div layout:fragment="content">
         <!-- 位置提示 -->
         <section class="content-header">
             <h1>
@@ -36,18 +29,5 @@
         </section>
         <!-- /内容区域 -->
     </div>
-    <!-- /.content-wrapper -->
-    <div th:replace="@{/admin/fragments/main-footer}::main-footer"></div>
-
-    <!-- Control Sidebar -->
-    <div th:replace="@{/admin/fragments/right-setting}::right-setting"></div>
-    <!-- /.control-sidebar -->
-    <!-- Add the sidebar's background. This div must be placed
-         immediately after the control sidebar -->
-    <div class="control-sidebar-bg"></div>
-</div>
-<!-- ./wrapper -->
-
-<js th:replace="@{/admin/fragments/footer-js}::footer-js"></js>
 </body>
 </html>

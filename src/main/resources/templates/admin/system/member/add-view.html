@@ -1,17 +1,13 @@
 <!DOCTYPE html>
-<html
-        xmlns:th="http://www.thymeleaf.org">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="/admin/_layouts/default">
 <head>
-    <meta th:replace="/admin/fragments/meta::meta"/>
-    <title>单位管理</title>
-    <css th:replace="/admin/fragments/all-css :: all-css"></css>
-    <js th:replace="/admin/fragments/head-js :: head-js"></js>
+    <title>新增会员</title>
 </head>
-<body class="hold-transition skin-blue sidebar-mini">
-<div class="wrapper">
-    <div th:replace="/admin/fragments/header::header"></div>
-    <div th:replace="/admin/fragments/left-menu::left-menu"></div>
-    <div id="pjax-container" class="content-wrapper">
+<body>
+<div layout:fragment="content">
         <!-- 内容区域 -->
         <section class="content">
             <!-- Small boxes (Stat box) -->
@@ -92,10 +88,5 @@
             });
         </script>
     </div>
-    <div th:replace="/admin/fragments/main-footer::main-footer"></div>
-    <div th:replace="/admin/fragments/right-setting::right-setting"></div>
-    <div class="control-sidebar-bg"></div>
-</div>
-<js th:replace="/admin/fragments/footer-js::footer-js"></js>
 </body>
 </html>

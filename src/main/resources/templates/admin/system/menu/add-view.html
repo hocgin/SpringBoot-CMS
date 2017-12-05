@@ -4,7 +4,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="/admin/_layouts/default">
 <head>
-    <title>菜单管理</title>
+    <title>新增菜单</title>
 </head>
 <body>
 <div layout:fragment="content">
@@ -14,7 +14,7 @@
                 <div class="modal-header">
                     <button aria-label="Close" class="close" data-dismiss="modal" type="button">
                         <span aria-hidden="true">×</span></button>
-                    <h4 class="modal-title">选择上级权限</h4>
+                    <h4 class="modal-title">选择上级菜单</h4>
                 </div>
                 <div class="modal-body">
                     <div id="js-tree"></div>
@@ -22,7 +22,7 @@
                 <div class="modal-footer">
                     <div class="pull-left">
                         <button type="button" class="btn btn-success" data-dismiss="modal"
-                                onclick="tree.selectFirstMenu()">设为顶级权限
+                                onclick="tree.selectFirstMenu()">设为顶级菜单
                         </button>
                     </div>
                     <button class="btn btn-default" data-dismiss="modal" type="button">取消</button>
@@ -57,7 +57,7 @@
                                 <label for="parent">上级菜单</label>
                                 <div class="input-group">
                                     <input type="text" class="form-control" id="parent"
-                                           placeholder="不选择默认为顶级权限"
+                                           placeholder="不选择默认为顶级菜单"
                                            th:value="${permission?.name}?:''"
                                            disabled="disabled">
                                     <input type="hidden" name="parent"
@@ -178,7 +178,7 @@
                     $("#js-select-model").modal("hide");
                 },
                 selectFirstMenu: function () { // 选择顶级权限
-                    $("#parent").val("顶级权限");
+                    $("#parent").val("顶级菜单");
                     $("input[name='parent']").val("");
                     $("#js-select-model").modal("hide");
                 }

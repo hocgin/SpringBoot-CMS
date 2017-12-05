@@ -1,173 +1,165 @@
 <!DOCTYPE html>
-<html
-        xmlns:th="http://www.thymeleaf.org">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="/admin/_layouts/default">
 <head>
-    <meta th:replace="/admin/fragments/meta::meta"/>
-    <title>单位管理</title>
-    <css th:replace="/admin/fragments/all-css :: all-css"></css>
-    <js th:replace="/admin/fragments/head-js :: head-js"></js>
+    <title>新增单位</title>
 </head>
-<body class="hold-transition skin-blue sidebar-mini">
-<div class="wrapper">
-    <div th:replace="/admin/fragments/header::header"></div>
-    <div th:replace="/admin/fragments/left-menu::left-menu"></div>
-    <div id="pjax-container" class="content-wrapper">
-        <div class="modal fade in" id="js-select-model">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
-                            <span aria-hidden="true">×</span></button>
-                        <h4 class="modal-title">选择上级单位</h4>
+<body>
+<div layout:fragment="content">
+    <div class="modal fade in" id="js-select-model">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                        <span aria-hidden="true">×</span></button>
+                    <h4 class="modal-title">选择上级单位</h4>
+                </div>
+                <div class="modal-body">
+                    <div id="js-tree"></div>
+                </div>
+                <div class="modal-footer">
+                    <div class="pull-left">
+                        <button type="button" class="btn btn-success" data-dismiss="modal"
+                                onclick="tree.selectFirstMenu()">设为顶级单位
+                        </button>
                     </div>
-                    <div class="modal-body">
-                        <div id="js-tree"></div>
-                    </div>
-                    <div class="modal-footer">
-                        <div class="pull-left">
-                            <button type="button" class="btn btn-success" data-dismiss="modal"
-                                    onclick="tree.selectFirstMenu()">设为顶级单位
-                            </button>
-                        </div>
-                        <button class="btn btn-default" data-dismiss="modal" type="button">取消</button>
-                        <button class="btn btn-primary" type="submit"
-                                onclick="tree.selectParentMenu()">确定</button>
-                    </div>
+                    <button class="btn btn-default" data-dismiss="modal" type="button">取消</button>
+                    <button class="btn btn-primary" type="submit"
+                            onclick="tree.selectParentMenu()">确定
+                    </button>
                 </div>
             </div>
         </div>
-        <!-- 内容区域 -->
-        <section class="content">
-            <!-- Small boxes (Stat box) -->
-            <div class="row">
-                <div class="col-xs-12 i-navbar">
-                    <a class="btn btn-primary" th:href="@{/admin/system/department/index.html}" data-pjax><i
-                            class="fa fa-arrow-left"></i> 返回
-                    </a>
-                </div>
-                <div class="col-xs-12">
-                    <div class="box box-primary">
-                        <div class="box-header with-border">
-                            <h3 class="box-title">新建单位</h3>
-                        </div>
-                        <!-- /.box-header -->
-                        <!-- form start -->
-                        <form id="systemVariableForm"
-                              th:action="@{/admin/system/department/insert}"
-                              method="POST">
-                            <div class="box-body">
-                                <div class="form-group">
-                                    <label for="parent">上级单位</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" id="parent"
-                                               placeholder="不选择默认为顶级单位"
-                                               th:value="${department?.name}?:''"
-                                               disabled="disabled">
-                                        <input type="hidden" name="parent"
-                                               th:value="${department?.id}?:''">
-                                        <span class="input-group-btn">
+    </div>
+    <!-- 内容区域 -->
+    <section class="content">
+        <!-- Small boxes (Stat box) -->
+        <div class="row">
+            <div class="col-xs-12 i-navbar">
+                <a class="btn btn-primary" th:href="@{/admin/system/department/index.html}" data-pjax><i
+                        class="fa fa-arrow-left"></i> 返回
+                </a>
+            </div>
+            <div class="col-xs-12">
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">新建单位</h3>
+                    </div>
+                    <!-- /.box-header -->
+                    <!-- form start -->
+                    <form id="systemVariableForm"
+                          th:action="@{/admin/system/department/insert}"
+                          method="POST">
+                        <div class="box-body">
+                            <div class="form-group">
+                                <label for="parent">上级单位</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="parent"
+                                           placeholder="不选择默认为顶级单位"
+                                           th:value="${department?.name}?:''"
+                                           disabled="disabled">
+                                    <input type="hidden" name="parent"
+                                           th:value="${department?.id}?:''">
+                                    <span class="input-group-btn">
                                             <button type="button" class="btn btn-info btn-flat"
                                                     data-target="#js-select-model" data-toggle="modal">选择</button>
                                         </span>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="name">单位名称 <span class="i-label label-warning">必填</span></label>
-                                    <input class="form-control" id="name" name="name"
-                                           placeholder="请输入单位名称"
-                                           type="text">
-                                </div>
-                                <div class="form-group">
-                                    <label for="phone">联系电话</label>
-                                    <input class="form-control" id="phone" name="phone"
-                                           placeholder="请输入联系电话"
-                                           type="text">
-                                </div>
-                                <div class="form-group">
-                                    <label for="address">单位地址</label>
-                                    <input class="form-control" id="address" name="address"
-                                           placeholder="请输入单位地址"
-                                           type="text">
-                                </div>
-                                <div class="form-group">
-                                    <label for="description">单位描述</label>
-                                    <textarea class="form-control" id="description" name="description"
-                                              placeholder="请输入 ..."
-                                              style="resize:none"
-                                              rows="3"></textarea>
                                 </div>
                             </div>
-                            <!-- /.box-body -->
+                            <div class="form-group">
+                                <label for="name">单位名称 <span class="i-label label-warning">必填</span></label>
+                                <input class="form-control" id="name" name="name"
+                                       placeholder="请输入单位名称"
+                                       type="text">
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">联系电话</label>
+                                <input class="form-control" id="phone" name="phone"
+                                       placeholder="请输入联系电话"
+                                       type="text">
+                            </div>
+                            <div class="form-group">
+                                <label for="address">单位地址</label>
+                                <input class="form-control" id="address" name="address"
+                                       placeholder="请输入单位地址"
+                                       type="text">
+                            </div>
+                            <div class="form-group">
+                                <label for="description">单位描述</label>
+                                <textarea class="form-control" id="description" name="description"
+                                          placeholder="请输入 ..."
+                                          style="resize:none"
+                                          rows="3"></textarea>
+                            </div>
+                        </div>
+                        <!-- /.box-body -->
 
-                            <div class="box-footer">
-                                <button class="btn btn-primary" type="submit">提交</button>
-                            </div>
-                        </form>
-                    </div>
+                        <div class="box-footer">
+                            <button class="btn btn-primary" type="submit">提交</button>
+                        </div>
+                    </form>
                 </div>
             </div>
-            <!-- /.row -->
-        </section>
-        <!-- /内容区域 -->
-        <script>
-            var tree;
-            $(function () {
-                $('#systemVariableForm').ajaxForm({
-                    dataType: 'json',
-                    beforeSubmit: function (arr, form, option) {
-                        form.find("button:submit").attr('disable', true);
-                    },
-                    success: function (data, statusText, xhr, form) {
-                        if (data.code === 200) {
-                            form.resetForm(); // 重置表单
-                            layer.msg(data.message, {icon: 1});
-                        } else {
-                            layer.msg(data.message, {icon: 2});
-                        }
-                        form.find("button:submit").attr('disable', false);
+        </div>
+        <!-- /.row -->
+    </section>
+    <!-- /内容区域 -->
+    <script>
+        var tree;
+        $(function () {
+            $('#systemVariableForm').ajaxForm({
+                dataType: 'json',
+                beforeSubmit: function (arr, form, option) {
+                    form.find("button:submit").attr('disable', true);
+                },
+                success: function (data, statusText, xhr, form) {
+                    if (data.code === 200) {
+                        form.resetForm(); // 重置表单
+                        layer.msg(data.message, {icon: 1});
+                    } else {
+                        layer.msg(data.message, {icon: 2});
                     }
-                });
+                    form.find("button:submit").attr('disable', false);
+                }
+            });
 
-                tree = {
-                    $el: $('#js-tree'),
-                    obj: null,
-                    init: function () {
-                        var that = this;
-                        this.$el.jstree({
-                            plugins: ['wholerow', 'json_data'],
-                            core: {
-                                dataType: 'json',
-                                data: {
-                                    url: function (node) {
-                                        return node.id === '#' ? '/admin/system/department/tree' : ('/admin/system/department/tree/' + node.id)
-                                    }
+            tree = {
+                $el: $('#js-tree'),
+                obj: null,
+                init: function () {
+                    var that = this;
+                    this.$el.jstree({
+                        plugins: ['wholerow', 'json_data'],
+                        core: {
+                            dataType: 'json',
+                            data: {
+                                url: function (node) {
+                                    return node.id === '#' ? '/admin/system/department/tree' : ('/admin/system/department/tree/' + node.id)
                                 }
                             }
-                        }).on("dblclick.jstree", function (node) {
-                            that.selectParentMenu();
-                        });
-                    },
-                    selectParentMenu: function () { //选择父菜单
-                        var tree = $.jstree.reference("#js-tree");
-                        var node = tree.get_selected(true);
-                        $("#parent").val(node[0].text);
-                        $("input[name='parent']").val(node[0].id);
-                        $("#js-select-model").modal("hide");
-                    },
-                    selectFirstMenu: function () { // 选择顶级菜单
-                        $("#parent").val("顶级单位");
-                        $("input[name='parent']").val("");
-                        $("#js-select-model").modal("hide");
-                    }
-                };
-                tree.init();
-            });
-        </script>
-    </div>
-    <div th:replace="/admin/fragments/main-footer::main-footer"></div>
-    <div th:replace="/admin/fragments/right-setting::right-setting"></div>
-    <div class="control-sidebar-bg"></div>
+                        }
+                    }).on("dblclick.jstree", function (node) {
+                        that.selectParentMenu();
+                    });
+                },
+                selectParentMenu: function () { //选择父菜单
+                    var tree = $.jstree.reference("#js-tree");
+                    var node = tree.get_selected(true);
+                    $("#parent").val(node[0].text);
+                    $("input[name='parent']").val(node[0].id);
+                    $("#js-select-model").modal("hide");
+                },
+                selectFirstMenu: function () { // 选择顶级菜单
+                    $("#parent").val("顶级单位");
+                    $("input[name='parent']").val("");
+                    $("#js-select-model").modal("hide");
+                }
+            };
+            tree.init();
+        });
+    </script>
 </div>
-<js th:replace="/admin/fragments/footer-js::footer-js"></js>
 </body>
 </html>

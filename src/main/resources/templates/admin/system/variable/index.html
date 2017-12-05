@@ -1,29 +1,25 @@
 <!DOCTYPE html>
-<html
-        xmlns:th="http://www.thymeleaf.org">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="/admin/_layouts/default">
 <head>
-    <meta th:replace="/admin/fragments/meta::meta"/>
-    <title>系统参数页面</title>
-    <css th:replace="/admin/fragments/all-css :: all-css"></css>
-    <js th:replace="/admin/fragments/head-js :: head-js"></js>
+    <title>系统参数管理</title>
 </head>
-<body class="hold-transition skin-blue sidebar-mini">
-<div class="wrapper">
-    <div th:replace="/admin/fragments/header::header"></div>
-    <div th:replace="/admin/fragments/left-menu::left-menu"></div>
-    <div id="pjax-container" class="content-wrapper">
+<body>
+<div layout:fragment="content">
         <!--查询框-->
         <query-modal th:replace="/admin/system/variable/query-modal :: query-modal"></query-modal>
         <!--./查询框-->
         <!-- 位置提示 -->
         <section class="content-header">
             <h1>
-                系统参数
+                系统参数管理
                 <small>设置系统参数或配置</small>
             </h1>
             <ol class="breadcrumb">
                 <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                <li class="active">系统参数</li>
+                <li class="active">系统参数管理</li>
             </ol>
         </section>
         <!-- 内容区域 -->
@@ -34,7 +30,7 @@
                     <div class="box">
                         <div class="box-header">
                             <header class="tool-bar">
-                                <h3 class="pull-left">系统参数配置</h3>
+                                <h3 class="pull-left">系统参数管理</h3>
                                 <div class="pull-right tool-button">
                                     <a th:href="@{/admin/system/variable/add-view.html}"
                                        class="btn btn-primary" data-pjax>
@@ -187,10 +183,5 @@
             });
         </script>
     </div>
-    <div th:replace="/admin/fragments/main-footer::main-footer"></div>
-    <div th:replace="/admin/fragments/right-setting::right-setting"></div>
-    <div class="control-sidebar-bg"></div>
-</div>
-<js th:replace="/admin/fragments/footer-js::footer-js"></js>
 </body>
 </html>
