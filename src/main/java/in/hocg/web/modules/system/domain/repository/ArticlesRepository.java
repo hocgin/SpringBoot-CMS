@@ -10,4 +10,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
  */
 public interface ArticlesRepository extends MongoRepository<Articles, String>,
         DataTablesRepository<Articles, String> {
+    void deleteAllByIdIn(String[] id);
 }

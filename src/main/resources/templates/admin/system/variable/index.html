@@ -69,7 +69,7 @@
             $(function () {
                 // 所有网络请求
                 allRequest = {
-                    deleteSystemVars: function (ids) {
+                    deletes: function (ids) {
                         if (!!ids && !!ids.length) {
                             layer.confirm('确定删除选中的 ' + ids.length + ' 行？', {
                                 btn: ['确定', '取消'] //按钮
@@ -90,7 +90,7 @@
                         }
                     },
                     deleteById: function (id) {
-                        this.deleteSystemVars([id])
+                        this.deletes([id])
                     }
                 };
 
@@ -163,7 +163,7 @@
                                     ids.push(obj.id);
                                 });
                             }
-                            allRequest.deleteSystemVars(ids);
+                            allRequest.deletes(ids);
                         });
                         // + 查询事件
                         $("#js-query").on('click', function () {

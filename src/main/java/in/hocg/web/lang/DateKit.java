@@ -27,11 +27,16 @@ public class DateKit {
         return date;
     }
     
-    public static Date format(String dateStr) throws ParseException {
+    public static Date format(String dateStr)  {
         if (StringUtils.isEmpty(dateStr)) {
             return null;
         }
-        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateStr);
+        try {
+            return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateStr);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
     
 }

@@ -248,7 +248,7 @@ public class BuiltInSeeder {
         menu6 = sysMenuRepository.insert(menu6);
         // - 栏目管理
         SysMenu menu61 = DocumentFactory.menu("栏目管理", "00060001",
-                "message.mail", "/admin/content/channel/index.html");
+                "content.channel", "/admin/content/channel/index.html");
         menu61.setParent(menu6.getId());
         menu61 = sysMenuRepository.insert(menu61);
         SysMenu menu611 = DocumentFactory.data("添加栏目", "000600010001", "content.channel.add", menu61.getId());
@@ -257,6 +257,17 @@ public class BuiltInSeeder {
         menu612 = sysMenuRepository.insert(menu612);
         SysMenu menu613 = DocumentFactory.data("修改栏目", "000600010003", "content.channel.edit", menu61.getId());
         menu613 = sysMenuRepository.insert(menu613);
+        // - 文章管理
+        SysMenu menu71 = DocumentFactory.menu("文章管理", "00060002",
+                "content.articles", "/admin/content/articles/index.html");
+        menu71.setParent(menu6.getId());
+        menu71 = sysMenuRepository.insert(menu71);
+        SysMenu menu711 = DocumentFactory.data("添加文章", "000600020001", "content.articles.add", menu71.getId());
+        menu711 = sysMenuRepository.insert(menu711);
+        SysMenu menu712 = DocumentFactory.data("删除文章", "000600020002", "content.articles.delete", menu71.getId());
+        menu712 = sysMenuRepository.insert(menu712);
+        SysMenu menu713 = DocumentFactory.data("修改文章", "000600020003", "content.articles.edit", menu71.getId());
+        menu713 = sysMenuRepository.insert(menu713);
         
         SysMenu[] role_admin = new SysMenu[]{
                 menu1,
@@ -285,7 +296,9 @@ public class BuiltInSeeder {
                 
                 menu6,
                 // - 栏目管理
-                menu61, menu611, menu612, menu613
+                menu61, menu611, menu612, menu613,
+                // - 文章管理
+                menu71, menu711, menu712, menu713
         };
         
         SysMenu[] role_admin_old = new SysMenu[]{
@@ -300,7 +313,7 @@ public class BuiltInSeeder {
                 menu5,
                 menu51,
                 menu6,
-                menu61
+                menu61, menu71
         };
         
         /**

@@ -5,7 +5,9 @@ import org.springframework.util.ObjectUtils;
 
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by hocgin on 2017/11/8.
@@ -79,5 +81,9 @@ public class iText {
      */
     public String urlEncode(String url) {
         return URLEncoder.encode(url);
+    }
+    
+    public List toList(Object o) {
+        return Collections.singletonList(o);
     }
 }

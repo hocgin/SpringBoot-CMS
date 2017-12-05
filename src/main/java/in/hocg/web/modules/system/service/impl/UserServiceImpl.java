@@ -95,25 +95,6 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public List<Node<SysMenu>> getLeftMenu(String id) {
-//        Collection<SysMenu> menus = findSysMenuByUser(id);
-//        List<SysMenu> root = new ArrayList<>();
-//        Map<String, List<SysMenu>> childMenus = new HashMap<>();
-//        for (SysMenu menu : menus) {
-//            if (menu.getPath().length() > 4) {
-//                List<SysMenu> s = childMenus.get(DocumentKit.getParentPath(menu.getPath()));
-//                if (CollectionUtils.isEmpty(s)) {
-//                    s = new ArrayList<>();
-//                }
-//                s.add(menu);
-//                childMenus.put(DocumentKit.getParentPath(menu.getPath()), s);
-//            } else if (menu.getPath().length() == 4) {
-//                root.add(menu);
-//            }
-//        }
-//        LeftMenu leftMenu = new LeftMenu();
-//        leftMenu.setRoot(root);
-//        leftMenu.setChildren(childMenus);
-        
         
         Collection<SysMenu> allNodes = findSysMenuByUser(id);
         // 最后的结果

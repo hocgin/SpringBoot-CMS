@@ -43,9 +43,9 @@ public class RoleServiceImpl implements RoleService {
     
     @Override
     public DataTablesOutput<Role> data(RoleDataTablesInputFilter input) {
-        Criteria criteria = null;
+        Criteria criteria = new Criteria();
         if (!StringUtils.isEmpty(input.getDepartment())) {
-            criteria = Criteria.where("department.$id").is(new ObjectId(input.getDepartment()));
+            criteria.andOperator(Criteria.where("department.$id").is(new ObjectId(input.getDepartment())));
         }
         DataTablesOutput<Role> all = roleRepository.findAll(input, criteria);
         all.setDraw(0);

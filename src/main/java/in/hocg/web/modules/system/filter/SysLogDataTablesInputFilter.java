@@ -4,7 +4,6 @@ import in.hocg.web.lang.DateKit;
 import lombok.Data;
 import org.springframework.data.mongodb.datatables.mapping.DataTablesInput;
 
-import java.text.ParseException;
 import java.util.Date;
 
 /**
@@ -19,20 +18,10 @@ public class SysLogDataTablesInputFilter extends DataTablesInput {
     private String createdAtRange;
     
     public Date getFormatCreatedAtStart() {
-        try {
-            return DateKit.format(createdAtRange.split(" 至 ")[0]);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return null;
-        }
+        return DateKit.format(createdAtRange.split(" 至 ")[0]);
     }
     
     public Date getFormatCreatedAtEnd() {
-        try {
-            return DateKit.format(createdAtRange.split(" 至 ")[1]);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return null;
-        }
+        return DateKit.format(createdAtRange.split(" 至 ")[1]);
     }
 }

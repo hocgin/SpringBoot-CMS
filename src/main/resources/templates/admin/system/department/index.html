@@ -71,7 +71,7 @@
             $(function () {
                 // 所有网络请求
                 allRequest = {
-                    deleteSystemVars: function (ids) {
+                    deletes: function (ids) {
                         if (!!ids
                             && ids.length === 1) {
                             layer.confirm('删除后无法恢复，并且用户也将失去此单位的关系；<br/>'
@@ -95,7 +95,7 @@
                         }
                     },
                     deleteSystemVar: function (id) {
-                        this.deleteSystemVars([id])
+                        this.deletes([id])
                     }
                 };
 

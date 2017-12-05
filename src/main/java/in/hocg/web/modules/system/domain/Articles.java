@@ -42,6 +42,7 @@ public class Articles extends BaseDomain {
     /**
      * 标题图
      */
+    @DBRef
     private IFile image;
     
     /**
@@ -59,6 +60,7 @@ public class Articles extends BaseDomain {
      */
     @DBRef
     private Channel channel;
+    
     
     /**
      * 是否启用, 默认禁止。

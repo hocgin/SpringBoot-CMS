@@ -1,0 +1,44 @@
+<div class="modal-header">
+    <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+        <span aria-hidden="true">×</span></button>
+    <h4 class="modal-title">选择栏目</h4>
+</div>
+<div class="modal-body">
+    <div id="js-tree"></div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-default" data-dismiss="modal" type="button">取消</button>
+    <button class="btn btn-primary" type="submit"
+            onclick="tree.selectParentMenu()">确定
+    </button>
+</div>
+<script>
+    tree = {
+        $el: $('#js-tree'),
+        obj: null,
+        init: function () {
+            var that = this;
+            this.$el.jstree({
+                plugins: ['wholerow', 'json_data'],
+                core: {
+                    dataType: 'json',
+                    data: {
+                        url: function (node) {
+                            return '/admin/content/channel/tree/' + (node.id === '#' ? '' : node.id)
+                        }
+                    }
+                }
+            }).on("dblclick.jstree", function (node) {
+                that.selectParentMenu();
+            });
+        },
+        selectParentMenu: function () { //选择栏目
+            var tree = $.jstree.reference("#js-tree");
+            var node = tree.get_selected(true);
+            $("#channel").val(node[0].text);
+            $("input[name='channel']").val(node[0].id);
+            $("#js-select-model").modal("hide");
+        }
+    };
+    tree.init();
+</script>
