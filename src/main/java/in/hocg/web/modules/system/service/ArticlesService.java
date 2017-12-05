@@ -22,4 +22,6 @@ public interface ArticlesService {
     void available(String id, boolean available);
     
     void deletes(String[] id, CheckError checkError);
+    
+    void deletesByChannel(String... channelsId);
 }

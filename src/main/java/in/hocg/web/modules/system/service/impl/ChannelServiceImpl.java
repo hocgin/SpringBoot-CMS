@@ -5,7 +5,10 @@ import in.hocg.web.modules.base.Base2Service;
 import in.hocg.web.modules.system.domain.Channel;
 import in.hocg.web.modules.system.domain.repository.ChannelRepository;
 import in.hocg.web.modules.system.filter.ChannelFilter;
+import in.hocg.web.modules.system.service.ArticlesService;
 import in.hocg.web.modules.system.service.ChannelService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
@@ -19,6 +22,14 @@ import java.util.List;
 @Service
 public class ChannelServiceImpl
         extends Base2Service<Channel, String, ChannelRepository> implements ChannelService {
+    
+    
+    private ArticlesService articlesService;
+    
+    @Autowired
+    public ChannelServiceImpl(@Lazy ArticlesService articlesService) {
+        this.articlesService = articlesService;
+    }
     
     @Override
     public List<Channel> queryRoot() {
@@ -77,6 +88,7 @@ public class ChannelServiceImpl
         if (ObjectUtils.isEmpty(channel)) {
             return;
         }
+        // 查处此栏目 及 子栏目
         List<Channel> all = repository.findAllByPathRegex(String.format("%s.*", (StringUtils.isEmpty(channel.getPath()) ? "" : channel.getPath())));
         String[] ids = all
                 .stream()
@@ -89,7 +101,9 @@ public class ChannelServiceImpl
                 && repository.existsByParent(channel.getParent())) {
             repository.updateHasChildren(channel.getParent(), false);
         }
-        // todo 删除关联文章
+        
+        // 删除 此栏目 及 子栏目 关联文章
+        articlesService.deletesByChannel(ids);
     }
     
     @Override

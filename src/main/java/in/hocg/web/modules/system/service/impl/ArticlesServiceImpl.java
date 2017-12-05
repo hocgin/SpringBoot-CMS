@@ -11,6 +11,7 @@ import in.hocg.web.modules.system.service.ArticlesService;
 import in.hocg.web.modules.system.service.ChannelService;
 import in.hocg.web.modules.system.service.IFileService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.mongodb.datatables.mapping.DataTablesInput;
 import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
 import org.springframework.stereotype.Service;
@@ -26,8 +27,9 @@ public class ArticlesServiceImpl
     
     private IFileService iFileService;
     private ChannelService channelService;
+    
     @Autowired
-    public ArticlesServiceImpl(IFileService iFileService, ChannelService channelService) {
+    public ArticlesServiceImpl(IFileService iFileService, @Lazy ChannelService channelService) {
         this.iFileService = iFileService;
         this.channelService = channelService;
     }
@@ -92,5 +94,11 @@ public class ArticlesServiceImpl
     @Override
     public void deletes(String[] id, CheckError checkError) {
         repository.deleteAllByIdIn(id);
+    }
+    
+    
+    @Override
+    public void deletesByChannel(String... channelsId) {
+        repository.deleteAllByChannelIdIn(channelsId);
     }
 }
