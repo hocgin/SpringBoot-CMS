@@ -1,5 +1,6 @@
 package in.hocg.web.lang.utils.tree;
 
+import in.hocg.web.modules.system.body.JsTreeNode;
 import org.thymeleaf.util.StringUtils;
 
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.List;
  * email: hocgin@gmail.com
  */
 public class TreeKit {
-    
+
 //    public void testQueryMenuList() {
 //        // 原始的数据
 //        List<SysMenu> rootMenu = service.queryAllOrderByLocationAscAndPathAsc();
@@ -42,7 +43,7 @@ public class TreeKit {
 //
 //    }
     
-    public static  <T extends TreeNode> List<Node<T>> getChild(String id, Collection<T> rootMenu) {
+    public static <T extends TreeNode> List<Node<T>> getChild(String id, Collection<T> rootMenu) {
         // 子菜单
         List<Node<T>> childList = new ArrayList<>();
         for (T menu : rootMenu) {
@@ -67,4 +68,30 @@ public class TreeKit {
         }
         return childList;
     }
+    
+    public static List<JsTreeNode> getChildX(String id, Collection<JsTreeNode> rootMenu) {
+        // 子菜单
+        List<JsTreeNode> childList = new ArrayList<>();
+        for (JsTreeNode menu : rootMenu) {
+            // 遍历所有节点，将父菜单id与传过来的id比较
+            if (!StringUtils.isEmpty(menu.getParent())
+                    && menu.getParent().equals(id)) {
+                childList.add(menu);
+            }
+        }
+        // 把子菜单的子菜单再循环一遍
+        for (JsTreeNode menu : childList) {// 没有url子菜单还有子菜单
+            if (menu.getHasChildren()) {
+                // 递归
+                menu.setChildren(getChildX(menu.getId(), rootMenu));
+            }
+        }
+        // 递归退出条件
+        if (childList.isEmpty()) {
+            return null;
+        }
+        return childList;
+    }
+    
+    
 }

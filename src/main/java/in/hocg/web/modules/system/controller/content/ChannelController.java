@@ -14,6 +14,7 @@ import in.hocg.web.modules.system.domain.Channel;
 import in.hocg.web.modules.system.filter.ChannelFilter;
 import in.hocg.web.modules.system.service.ChannelService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
@@ -82,7 +83,7 @@ public class ChannelController extends BaseController {
      */
     @RequestMapping("/insert")
     @ResponseBody
-//    @PreAuthorize("hasPermission(null, 'sys.menu.add')")
+    @PreAuthorize("hasPermission(null, 'content.channel.add')")
     public Results insert(@Validated({Insert.class}) ChannelFilter filter,
                           BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -111,7 +112,7 @@ public class ChannelController extends BaseController {
      */
     @RequestMapping("/update")
     @ResponseBody
-//    @PreAuthorize("hasPermission(null, 'sys.menu.edit')")
+    @PreAuthorize("hasPermission(null, 'content.channel.edit')")
     public Results update(@Validated({Update.class}) ChannelFilter filter,
                           BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -157,7 +158,7 @@ public class ChannelController extends BaseController {
     
     @PostMapping("/available/{id}")
     @ResponseBody
-//    @PreAuthorize("hasPermission(null, 'sys.menu.edit')")
+    @PreAuthorize("hasPermission(null, 'content.channel.edit')")
     public Results available(@PathVariable("id") String id, boolean available) {
         channelService.available(id, available);
         return Results.success()
@@ -193,7 +194,7 @@ public class ChannelController extends BaseController {
      */
     @RequestMapping("/delete")
     @ResponseBody
-//    @PreAuthorize("hasPermission(null, 'sys.menu.delete')")
+    @PreAuthorize("hasPermission(null, 'content.channel.delete')")
     public Results delete(@Validated IdFilter filter,
                           BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -208,6 +209,7 @@ public class ChannelController extends BaseController {
     
     @RequestMapping("/update-sort")
     @ResponseBody
+    @PreAuthorize("hasPermission(null, 'content.channel.edit')")
     public Results updateSort(@Validated IdsFilter filter) {
         channelService.sort(filter.getId());
         return Results.success().setMessage("保存成功");

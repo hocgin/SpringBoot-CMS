@@ -1,6 +1,8 @@
 package in.hocg.web.modules.base;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.datatables.mapping.DataTablesInput;
+import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.io.Serializable;

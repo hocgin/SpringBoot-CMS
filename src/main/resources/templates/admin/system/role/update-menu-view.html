@@ -8,100 +8,112 @@
 </head>
 <body>
 <div layout:fragment="content">
-        <!-- 内容区域 -->
-        <section class="content">
-            <!-- Small boxes (Stat box) -->
-            <div class="row">
-                <div class="col-xs-12 i-navbar">
-                    <a class="btn btn-primary" th:href="@{/admin/system/role/index.html}" data-pjax><i
-                            class="fa fa-arrow-left"></i> 返回
-                    </a>
-                </div>
-                <div class="col-xs-12">
-                    <div class="box box-primary">
-                        <div class="box-header with-border">
-                            <h3 class="box-title">分配菜单</h3>
-                        </div>
-                        <div class="box-body">
-                            <input type="hidden" id="id" name="id" th:value="${role.id}"/>
-                            <div class="form-group">
-                                <div class="row">
-                                    <div class="col-sm-8">
-                                        <div class="panel">
-                                            <div class="panel-heading">
-                                                <h5>分配<b>菜单</b></h5>
+    <!-- 内容区域 -->
+    <section class="content">
+        <!-- Small boxes (Stat box) -->
+        <div class="row">
+            <div class="col-xs-12 i-navbar">
+                <a class="btn btn-primary" th:href="@{/admin/system/role/index.html}" data-pjax><i
+                        class="fa fa-arrow-left"></i> 返回
+                </a>
+            </div>
+            <div class="col-xs-12">
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">分配菜单</h3>
+                    </div>
+                    <div class="box-body">
+                        <input type="hidden" id="id" name="id" th:value="${role.id}"/>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <div class="panel">
+                                        <div class="panel-heading">
+                                            <h5>分配<b>菜单</b></h5>
+                                        </div>
+                                        <div class="panel-body">
+
+                                            <div id="js-tree">
+                                                <!--<ul>-->
+                                                <!--<li class="dd-item"-->
+                                                <!--th:each="node, i: ${nodes}"-->
+                                                <!--th:attr="data-id=${node.node.id}">-->
+                                                <!--<div class="dd-handle" th:text="${node.node.name}">Item 1-1</div>-->
+                                                <!--<ol th:if="${node.children != null}"-->
+                                                <!--th:replace="/admin/_widgets/tree-nodes::tree-nodes(${node.children})"></ol>-->
+                                                <!--</li>-->
+                                                <!--</ul>-->
                                             </div>
-                                            <div class="panel-body">
-                                                <div id="js-permission-tree"></div>
-                                            </div>
+
                                         </div>
                                     </div>
-                                    <div class="col-sm-4">
-                                        <div class="panel">
-                                            <div class="panel-heading">
-                                                <h5>菜单<b>描述</b></h5>
-                                            </div>
-                                            <div id="js-description" class="panel-body">
-                                                <div class='alert alert-info'>请勾选每一个需要分配的菜单</div>
-                                            </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="panel">
+                                        <div class="panel-heading">
+                                            <h5>菜单<b>描述</b></h5>
+                                        </div>
+                                        <div id="js-description" class="panel-body">
+                                            <div class='alert alert-info'>请勾选每一个需要分配的菜单</div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <button class="stepy-finish btn btn-primary pull-right" onclick="allRequest.save()">完成
-                            </button>
                         </div>
+                        <button class="stepy-finish btn btn-primary pull-right" onclick="allRequest.save()">完成
+                        </button>
                     </div>
                 </div>
             </div>
-            <!-- /.row -->
-        </section>
-        <!-- /内容区域 -->
-        <script>
-            var allRequest = {};
-            $(function () {
-                allRequest = {
-                    save: function () {
-                        var tree = $.jstree.reference("#js-permission-tree");
-                        var nodes = tree.get_selected();
-                        if (!!nodes
-                            && nodes.length > 0) {
-                            $.post('/admin/system/role/update-menu', {
-                                id: $('#id').val(),
-                                permissionIds: nodes.toString()
-                            }, function (data) {
-                                layer.msg(data.message, {icon: 1});
-                            }, 'json');
-                        }
+        </div>
+        <!-- /.row -->
+    </section>
+    <!-- /内容区域 -->
+    <script>
+        var allRequest = {};
+        $(function () {
+            allRequest = {
+                save: function () {
+                    var tree = $.jstree.reference("#js-tree");
+                    var nodes = tree.get_selected();
+                    if (!!nodes
+                        && nodes.length > 0) {
+                        $.post('/admin/system/role/update-menu', {
+                            id: $('#id').val(),
+                            permissionIds: nodes.toString()
+                        }, function (data) {
+                            layer.msg(data.message, {icon: 1});
+                        }, 'json');
                     }
-                };
+                }
+            };
 
-                $("#js-permission-tree").jstree({
-                    plugins: ["wholerow", "checkbox"],
-                    core: {
-                        data: {
-                            url: function (node) {
-                                return '/admin/system/menu/tree/' + (node.id === '#' ? '' : node.id)
-                            }
-                        }
-                    },
-                    checkbox: {
-                        three_state: false,
-                        cascade: 'down'
+            $("#js-tree").jstree({
+                plugins: ["wholerow", "checkbox"],
+                core: {
+                    data: {
+                        url: '/admin/system/role/menus-tree?id='+$('#id').val(),
+                        dataType: "json"
                     }
-                }).on("hover_node.jstree", function (e, data) {
-                    if (!!data.node.original.permission
-                        && !!data.node.original.name) {
-                        $("#js-description .alert-info").html(
-                            '权限标识符: ' + data.node.original.permission + '<br/>' +
-                            '权限描述: ' + data.node.original.name + '<br/>'
-                        );
-                    }
-                }).on("dehover_node.jstree", function (e, data) {
-                    $("#js-description .alert-info").html('请勾选每一个需要分配的菜单');
-                });
+                },
+                checkbox: {
+                    keep_selected_style : false,
+                    three_state: false,
+                    cascade: ''
+                }
+            }).on("hover_node.jstree", function (e, data) {
+                if (!!data.node.original.permission
+                    && !!data.node.original.name) {
+                    $("#js-description .alert-info").html(
+                        '权限标识符: ' + data.node.original.permission + '<br/>' +
+                        '权限描述: ' + data.node.original.name + '<br/>'
+                    );
+                }
+            }).on("dehover_node.jstree", function (e, data) {
+                $("#js-description .alert-info").html('请勾选每一个需要分配的菜单');
             });
-        </script>
-    </div>
+        });
+    </script>
+</div>
 </body>
 </html>

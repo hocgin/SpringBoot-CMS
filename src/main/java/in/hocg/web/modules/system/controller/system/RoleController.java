@@ -1,28 +1,37 @@
 package in.hocg.web.modules.system.controller.system;
 
 import in.hocg.web.lang.CheckError;
+import in.hocg.web.lang.utils.tree.TreeKit;
 import in.hocg.web.modules.base.BaseController;
+import in.hocg.web.modules.base.body.ResultCode;
 import in.hocg.web.modules.base.body.Results;
 import in.hocg.web.modules.base.filter.group.Insert;
 import in.hocg.web.modules.base.filter.group.Update1;
 import in.hocg.web.modules.base.filter.group.Update2;
+import in.hocg.web.modules.base.filter.lang.IdFilter;
 import in.hocg.web.modules.base.filter.lang.IdsFilter;
+import in.hocg.web.modules.system.body.JsTreeNode;
 import in.hocg.web.modules.system.domain.Role;
+import in.hocg.web.modules.system.domain.SysMenu;
 import in.hocg.web.modules.system.filter.RoleDataTablesInputFilter;
 import in.hocg.web.modules.system.filter.RoleFilter;
 import in.hocg.web.modules.system.filter.UserToRoleFilter;
 import in.hocg.web.modules.system.service.RoleService;
+import in.hocg.web.modules.system.service.SysMenuService;
 import in.hocg.web.modules.system.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by hocgin on 2017/10/29.
@@ -34,13 +43,16 @@ import java.util.List;
 public class RoleController extends BaseController {
     private UserService userService;
     private RoleService roleService;
+    private SysMenuService sysMenuService;
     public final String BASE_TEMPLATES_PATH = "/admin/system/role/%s";
     
     @Autowired
     public RoleController(RoleService roleService,
+                          SysMenuService sysMenuService,
                           UserService userService) {
         this.roleService = roleService;
         this.userService = userService;
+        this.sysMenuService = sysMenuService;
     }
     
     @GetMapping({"/index.html", "/"})
@@ -67,7 +79,6 @@ public class RoleController extends BaseController {
     @GetMapping("/detail/{id}")
     public String vDetail(@PathVariable("id") String id, Model model) {
         Role role = roleService.find(id);
-        
         model.addAttribute("role", role);
         return "/admin/system/role/detail-modal";
     }
@@ -142,6 +153,51 @@ public class RoleController extends BaseController {
         CheckError checkError = CheckError.get();
         roleService.updatePermission(filter, checkError);
         return Results.check(checkError, "更新权限成功");
+    }
+    
+    @RequestMapping("/menus-tree")
+    @ResponseBody
+    public Object getMenusTree(@Validated IdFilter filter,
+                               BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return Results.check(bindingResult);
+        }
+        Role role = roleService.find(filter.getId());
+        if (ObjectUtils.isEmpty(role)) {
+            return Results.error(ResultCode.PRECONDITION_FAILED, "未找到角色");
+        }
+        Collection<String> permissions = Optional.ofNullable(role.getPermissions()).orElse(Collections.emptyList())
+                .stream()
+                .map(SysMenu::getPermission)
+                .collect(Collectors.toList());
+        
+        // 获取所有权限
+        List<JsTreeNode> allNodes = sysMenuService.queryAllOrderByLocationAscAndPathAsc().stream()
+                .map(node -> {
+                    JsTreeNode treeNode = new JsTreeNode();
+                    treeNode.setHasChildren(node.getHasChildren());
+                    treeNode.setId(node.getId());
+                    treeNode.setParent(node.getParent());
+                    JsTreeNode.StateBean state = new JsTreeNode.StateBean();
+                    state.setOpened(permissions.contains(node.getPermission()));
+                    state.setSelected(permissions.contains(node.getPermission()));
+                    treeNode.setState(state);
+                    treeNode.setText(node.getName());
+                    return treeNode;
+                }).collect(Collectors.toList());
+        
+        // 最后的结果
+        List<JsTreeNode> rootNodes = new ArrayList<>();
+        for (JsTreeNode node : allNodes) {
+            if (StringUtils.isEmpty(node.getParent())) { // 根结点
+                rootNodes.add(node);
+            }
+        }
+        // 查找子节点
+        for (JsTreeNode node : rootNodes) {
+            node.setChildren(TreeKit.getChildX(node.getId(), allNodes));
+        }
+        return rootNodes;
     }
     
     /**

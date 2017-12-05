@@ -50,6 +50,11 @@ public class Articles extends BaseDomain {
     private String content;
     
     /**
+     * 作者
+     */
+    private String author;
+    
+    /**
      * 栏目
      */
     @DBRef

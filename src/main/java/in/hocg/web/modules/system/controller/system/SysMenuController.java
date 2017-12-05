@@ -10,6 +10,7 @@ import in.hocg.web.modules.base.filter.group.Insert;
 import in.hocg.web.modules.base.filter.group.Update;
 import in.hocg.web.modules.base.filter.lang.IdFilter;
 import in.hocg.web.modules.base.filter.lang.IdsFilter;
+import in.hocg.web.modules.system.body.JsTreeNode;
 import in.hocg.web.modules.system.domain.SysMenu;
 import in.hocg.web.modules.system.filter.MenuFilter;
 import in.hocg.web.modules.system.service.SysMenuService;
@@ -24,6 +25,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by hocgin on 2017/10/28.
@@ -191,6 +193,40 @@ public class SysMenuController extends BaseController {
                     result.add(one);
                 });
         return result;
+    }
+    
+    /**
+     * 获取所有权限 使用 jstree 插件格式
+     * @return
+     */
+    @GetMapping("/tree-all")
+    @ResponseBody
+    public Object treeAll() {
+        List<JsTreeNode> allNodes = sysMenuService.queryAllOrderByLocationAscAndPathAsc().stream()
+                .map(node -> {
+                    JsTreeNode treeNode = new JsTreeNode();
+                    treeNode.setHasChildren(node.getHasChildren());
+                    treeNode.setId(node.getId());
+                    treeNode.setParent(node.getParent());
+                    JsTreeNode.StateBean state = new JsTreeNode.StateBean();
+                    state.setOpened(false);
+                    state.setSelected(false);
+                    treeNode.setState(state);
+                    treeNode.setText(node.getName());
+                    return treeNode;
+                }).collect(Collectors.toList());
+        // 最后的结果
+        List<JsTreeNode> rootNodes = new ArrayList<>();
+        for (JsTreeNode node : allNodes) {
+            if (StringUtils.isEmpty(node.getParent())) { // 根结点
+                rootNodes.add(node);
+            }
+        }
+        // 查找子节点
+        for (JsTreeNode node : rootNodes) {
+            node.setChildren(TreeKit.getChildX(node.getId(), allNodes));
+        }
+        return rootNodes;
     }
     
     @GetMapping("/tree/{id}")
