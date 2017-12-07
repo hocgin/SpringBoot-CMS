@@ -1,5 +1,6 @@
 package in.hocg.web.lang.utils;
 
+import in.hocg.web.modules.security.details.member.IMember;
 import in.hocg.web.modules.security.details.user.IUser;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,5 +33,9 @@ public class SecurityKit {
     
     public static IUser iUser() {
         return ((IUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+    }
+    
+    public static IMember iMember() {
+        return ((IMember) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
     }
 }

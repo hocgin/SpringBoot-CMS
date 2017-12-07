@@ -17,10 +17,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -79,5 +76,11 @@ public class WebController extends BaseController {
         memberService.insert(filter, checkError);
         return Results.check(checkError)
                 .setMessage("注册成功, 请检查邮箱");
+    }
+    
+    
+    @GetMapping("comment-test")
+    public String comment() {
+        return String.format(BASE_TEMPLATES_PATH, "comment-test");
     }
 }

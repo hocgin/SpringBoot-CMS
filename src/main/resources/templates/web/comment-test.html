@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="/web/_layouts/default">
+<head>
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/web-lte/css/comment.css}">
+</head>
+<body>
+<div layout:fragment="content">
+    <!--评论框测试-->
+    <h3>顶级评论</h3>
+    <form th:action="@{/api/v1/reply/add}" method="post">
+        OID: <input type="text" name="oid" value="5a2672f0205f04b3392ab89b"> <br>
+        type: <input type="text" name="type" value="1"> <br>
+        root: <input type="text" name="root" value=""> <br>
+        parent: <input type="text" name="parent" value=""> <br>
+        message: <input type="text" name="message" value="评论内容"> <br>
+        <input type="submit" value="提交">
+    </form>
+
+    <div class="container">
+        <div class="comment-holder" data-oid="5a2672f0205f04b3392ab89b" data-type="1"></div>
+    </div>
+
+    <script>
+        $(function () {
+            $('form').ajaxForm({
+                dataType: 'json',
+                beforeSubmit: function (arr, form, option) {
+                    form.find("button:submit").attr('disable', true);
+                },
+                success: function (data, statusText, xhr, form) {
+                    if (data.code === 200) {
+                        form.resetForm(); // 重置表单
+                        layer.msg(data.message, {icon: 1});
+                    } else {
+                        layer.msg(data.message, {icon: 2});
+                    }
+                    form.find("button:submit").attr('disable', false);
+                }
+            });
+            var CommentWidget = {
+                el: undefined,
+                oid: undefined,
+                type: undefined,
+                init: function (el) {
+                    var that = this;
+                    this.el = el;
+                    this.oid = $(el).data('oid');
+                    this.type = $(el).data('type');
+                    var $commentBox = $('<div class="comment-box"></div>');
+                    $(this.el).append($commentBox);
+                    $commentBox.append('<div class="reply-notice"></div>');
+                    // comment-header
+                    var $commentHeader = $('<div class="comment-header clearfix"></div>');
+                    $commentBox.append($commentHeader);
+                    var $tabsOrder = '<div class="tabs-order">'
+                        + '<ul class="clearfix">'
+                        + '<li class="on" data-sort="0">全部评论</li>'
+                        + '<li data-sort="2" class="hot-sort" style="display: list-item;">按热度排序</li>'
+                        + '</ul>'
+                        + '</div>';
+                    $commentHeader.append($tabsOrder);
+                    var $headerPage = '<div class="header-page paging-box"><span class="result">共1页</span><span class="current">1</span></div>';
+                    $commentHeader.append($headerPage);
+
+                    // comment-send
+                    var $commentSend = $('<div class="comment-send"></div>');
+                    $commentSend.append('<div class="user-face">\n' +
+                        '                <img class="user-head"\n' +
+                        '                     src="http://i0.hdslb.com/bfs/face/b8266c50d9a3bbd45bf5ebba8164bc057816d29f.jpg@72w_72h.webp">\n' +
+                        '            </div>\n' +
+                        '            <div class="textarea-container">\n' +
+                        '                <i class="ipt-arrow"></i>\n' +
+                        '                <textarea cols="80" name="msg" rows="5"\n' +
+                        '                          placeholder="请自觉遵守互联网相关的政策法规，严禁发布色情、暴力、反动的言论。"\n' +
+                        '                          class="ipt-txt"></textarea>\n' +
+                        '                <button type="submit" class="comment-submit">发表评论</button>\n' +
+                        '            </div>');
+                    $commentBox.append($commentSend);
+                    var $commentList = $('<div class="comment-list"></div>');
+                    $commentBox.append($commentList);
+
+                    // 初始化
+                    this.requestReply($commentList, this.oid, this.type, 1, 10);
+
+                    // 全局事件
+                    $(this.el).on('click', '.btn-more', function (e) {
+                        var $target = $(e.target);
+                        var $replyBox = $target.parents('.reply-box');
+                        var root = $target.parents('.list-item').data('id');
+                        that.requestReplyReply($replyBox, that.oid, that.type, root, 1, 10);
+                    }).on('click', '.reply', function (e) {
+                        var $target = $(e.target);
+                        var rid = $target.parents('.list-item').data('id');
+                        var pid = $target.parents('.reply-item').data('id') || rid;
+                        var name = $target.parent('.info').prev('.user').children('.name')
+                            .text();
+
+                        var $con = $target.parents('.con');
+                        that.showSendBoxHTML($con, rid, pid, name)
+                    }).on('click', '.comment-submit', function (e) {
+                        var $target = $(e.target);
+                        var $textarea = $target.prevAll('textarea.ipt-txt');
+                        var message = $textarea.val();
+                        that.addReply($target, that.oid, that.type, $target.data('rid'), $target.data('pid'), message);
+                    });
+                },
+                getReplyHTML: function (reply) {
+                    return '<div class="list-item reply-wrap " data-id="' + reply.id + '">\n' +
+                        '                <div class="user-face">\n' +
+                        '                    <a href="http://space.bilibili.com/40876948" target="_blank">\n' +
+                        '                        <img src="http://i0.hdslb.com/bfs/face/b8266c50d9a3bbd45bf5ebba8164bc057816d29f.jpg@72w_72h.webp"\n' +
+                        '                             alt="">\n' +
+                        '                    </a>\n' +
+                        '                </div>\n' +
+                        '                <div class="con">\n' +
+                        '                    <div class="user">\n' +
+                        '                        <a class="name">' + reply.member.nickname + '</a>\n' +
+                        '                    </div>\n' +
+                        '                    <p class="text">' + reply.content.message +
+                        '                    </p>\n' +
+                        '                    <div class="info">\n' +
+                        '                        <span class="time">' + this.format(reply.createdAt) + '</span>\n' +
+                        '                        <span class="reply btn-hover btn-highlight">回复</span>\n' +
+                        '                    </div>\n' +
+                        '                    <div class="reply-box">\n' +
+                        this.getMoreHTML(reply) +
+                        '                    </div>\n' +
+                        '                    <div class="paging-box">\n' +
+                        '                    </div>\n' +
+                        '                </div>\n' +
+                        '            </div>';
+                },
+                getMoreHTML: function (reply) {
+                    if (!!reply.rcount && reply.rcount > 0) {
+                        return '<div class="view-more">共<b>' + reply.rcount + '</b>条回复, <a class="btn-more" data-pid="' + reply.id + '">点击查看</a></div>';
+                    }
+                    return '';
+                },
+                getReplyReplyHTML: function (reply) {
+                    return '<div class="reply-item reply-wrap" data-id="' + reply.id + '">\n' +
+                        '                            <a href="#" target="_blank" class="reply-face">\n' +
+                        '                                <img src="http://i0.hdslb.com/bfs/face/b8266c50d9a3bbd45bf5ebba8164bc057816d29f.jpg@52w_52h.webp"\n' +
+                        '                                     alt=""></a>\n' +
+                        '                            <div class="reply-con">\n' +
+                        '                                <div class="user">\n' +
+                        '                                    <a href="#" target="_blank" class="name">' + reply.member.nickname + '</a>\n' +
+                        '                                    <span></span>\n' +
+                        '                                    <span class="text-con">' + reply.content.message + '</span>\n' +
+                        '                                </div>\n' +
+                        '                                <div class="info">\n' +
+                        '                                    <span class="time">' + this.format(reply.createdAt) + '</span>\n' +
+                        '                                    <span class="reply btn-hover">回复</span>\n' +
+                        '                                </div>\n' +
+                        '                            </div>\n' +
+                        '                        </div>';
+                },
+                showSendBoxHTML: function ($con, rid, pid, name) {
+                    var placeholder = !!name ? '回复 ' + name + ' :' : '请自觉遵守互联网相关的政策法规，严禁发布色情、暴力、反动的言论。';
+                    $con.children('.comment-send').remove();
+                    $con.append($('<div class="comment-send ">\n' +
+                        '                        <div class="user-face">\n' +
+                        '                            <img class="user-head"\n' +
+                        '                                 src="http://i0.hdslb.com/bfs/face/b8266c50d9a3bbd45bf5ebba8164bc057816d29f.jpg@52w_52h.webp">\n' +
+                        '                        </div>\n' +
+                        '                        <div class="textarea-container">\n' +
+                        '                            <i class="ipt-arrow"></i>\n' +
+                        '                            <textarea cols="80" name="msg" rows="5" placeholder="' + placeholder + '" class="ipt-txt"\n' +
+                        '                                      style="z-index: auto; position: relative; line-height: normal; font-size: 12px; transition: none; background: transparent !important;"></textarea>\n' +
+                        '                            <button type="submit" class="comment-submit" data-rid="' + rid + '" data-pid="' + pid + '">\n' +
+                        '                                发表评论\n' +
+                        '                            </button>\n' +
+                        '                        </div>\n' +
+                        '                    </div>'));
+
+                },
+                requestReply: function ($commentList, oid, type, page, size) { // 根级分页
+                    var that = this;
+                    console.log('requestReply', $commentList, oid, type, page, size);
+                    $.post('/api/v1/reply', {
+                        oid: oid,
+                        type: type,
+                        page: page || 1,
+                        size: size || 10
+                    }, function (rs) {
+                        if (rs.code === 200 && rs.data.result.length > 0) {
+                            $commentList.empty();
+                            $.each(rs.data.result, function (i, reply) {
+                                $commentList.append($(that.getReplyHTML(reply)));
+                            });
+                            // TODO 刷新分页
+                        } else {
+                            layer.msg(rs.message, {icon: 2});
+                        }
+                    }, 'json');
+                },
+                requestReplyReply: function ($replyBox, oid, type, root, page, size) { // 子级分页
+                    var that = this;
+                    console.log('requestReplyReply', $replyBox, oid, type, root, page, size);
+                    $.post('/api/v1/reply/reply', {
+                        oid: oid,
+                        type: type,
+                        root: root,
+                        page: page || 1,
+                        size: size || 10
+                    }, function (rs) {
+                        if (rs.code === 200 && rs.data.result.length > 0) {
+                            $replyBox.empty();
+                            $.each(rs.data.result, function (i, reply) {
+                                $replyBox.append(that.getReplyReplyHTML(reply));
+                            });
+                            // TODO 刷新子分页
+                        } else {
+                            layer.msg(rs.message, {icon: 2});
+                        }
+                    }, 'json');
+                },
+                addReply: function ($commentSubmit, oid, type, rid, pid, message) {
+                    var that = this;
+                    $.post('/api/v1/reply/add', {
+                        oid: oid,
+                        type: type,
+                        root: rid || '',
+                        parent: pid || '',
+                        message: message
+                    }, function (rs) {
+                        if (rs.code === 200) {
+                            layer.msg(rs.message);
+                            // 清空内容
+                            $commentSubmit.prevAll('textarea.ipt-txt').val('');
+                            if (!rs.data.root) {// 根评论 添加到最前面
+                                $commentSubmit.parents('.comment-box').children('.comment-list')
+                                    .prepend(that.getReplyHTML(rs.data));
+                            }else { // 评论的评论 添加到后面
+                                $commentSubmit.parents('.con').children('.reply-box')
+                                    .append(that.getReplyReplyHTML(rs.data));
+                            }
+                        } else {
+                            layer.msg(rs.message, {icon: 2});
+                        }
+                    }, 'json');
+                },
+                format: function (timestamp) {
+                    return moment.unix(timestamp / 1000).format('YYYY-MM-DD hh:mm');
+                }
+            };
+            CommentWidget.init('.comment-holder');
+
+        });
+    </script>
+</div>
+</body>
+</html>

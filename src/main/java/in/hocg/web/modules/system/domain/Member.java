@@ -56,7 +56,7 @@ public class Member extends BaseDomain {
         private String token;
         // 使用次数
         private long count = 0;
-        // 是否可用, 默认不可用。
+        // 是否可用, 默认禁止。
         private Boolean available = Boolean.FALSE;
     
         // 目前只有一种级别

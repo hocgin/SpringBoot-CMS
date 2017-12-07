@@ -18,6 +18,7 @@ public class BuiltInSeeder {
     private RoleRepository roleRepository;
     private DepartmentRepository departmentRepository;
     private UserRepository userRepository;
+    private MemberRepository memberRepository;
     private SysMenuRepository sysMenuRepository;
     private VariableRepository variableRepository;
     private SysTaskRepository sysTaskRepository;
@@ -26,7 +27,12 @@ public class BuiltInSeeder {
     public BuiltInSeeder(
             VariableRepository variableRepository,
             SysTaskRepository sysTaskRepository,
-            RoleRepository roleRepository, DepartmentRepository departmentRepository, UserRepository userRepository, SysMenuRepository sysMenuRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+            RoleRepository roleRepository,
+            DepartmentRepository departmentRepository,
+            UserRepository userRepository,
+            SysMenuRepository sysMenuRepository,
+            MemberRepository memberRepository,
+            BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.roleRepository = roleRepository;
         this.departmentRepository = departmentRepository;
         this.userRepository = userRepository;
@@ -34,15 +40,19 @@ public class BuiltInSeeder {
         this.variableRepository = variableRepository;
         this.sysTaskRepository = sysTaskRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.memberRepository = memberRepository;
     }
     
-    public BuiltInSeeder drop() {
-        roleRepository.deleteAll();
-        departmentRepository.deleteAll();
-        userRepository.deleteAll();
-        sysMenuRepository.deleteAll();
-        variableRepository.deleteAll();
-        sysTaskRepository.deleteAll();
+    public BuiltInSeeder drop(boolean drop) {
+        if (drop) {
+            roleRepository.deleteAll();
+            departmentRepository.deleteAll();
+            userRepository.deleteAll();
+            sysMenuRepository.deleteAll();
+            variableRepository.deleteAll();
+            sysTaskRepository.deleteAll();
+            memberRepository.deleteAll();
+        }
         return this;
     }
     
@@ -373,5 +383,14 @@ public class BuiltInSeeder {
                 "0 0 0 1 * ? *",
                 "in.hocg.web.job.ResumeMemberTokenJob", new HashMap<>());
         sysTaskRepository.insert(task);
+    
+        /**
+         * 会员
+         */
+        Member hocgin = DocumentFactory.member("hocgin",
+                Collections.singleton(r1),
+                "578797748@qq.com",
+                bCryptPasswordEncoder.encode("123"));
+        memberRepository.insert(hocgin);
     }
 }

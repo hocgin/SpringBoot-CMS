@@ -8,6 +8,7 @@
 </head>
 <body>
 <div layout:fragment="content">
+    <!--文件上传测试-->
     <div th:include="/admin/_widgets/upload-box::upload-box" th:with="iFiles=${all},id='Upload1',var=imagesId"></div>
 
     <div class="modal fade in" id="js-template-modal">
@@ -21,6 +22,7 @@
     <a href="#" th:href="@{/admin/upload-box-modal.html}"
        data-toggle="modal"
        data-target="#js-template-modal">点击模态框</a>
+
 </div>
 </body>
 </html>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="/admin/_layouts/default">
+<head>
+    <title>评论管理</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <!--Modal 详情-->
+    <div class="modal fade in" id="js-detail-modal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+            </div>
+        </div>
+    </div>
+    <!--./Modal 详情-->
+    <!-- 位置提示 -->
+    <section class="content-header">
+        <h1>
+            评论管理
+            <small>评论管理</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">评论管理</li>
+        </ol>
+    </section>
+    <!-- 内容区域 -->
+    <section class="content">
+        <!-- Small boxes (Stat box) -->
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+                    <div class="box-header">
+                        <header class="tool-bar">
+                            <h3 class="pull-left">评论管理</h3>
+                            <div class="pull-right tool-button">
+                                <button class="btn btn-danger" id="js-trash">
+                                    <i class="fa fa-trash-o"></i> 删除选中
+                                </button>
+                                <button class="btn btn-info">
+                                    <i class="fa fa-search"></i> 查询
+                                </button>
+                            </div>
+                        </header>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body">
+                        <table id="js-table" class="table table-bordered table-hover">
+                            <thead>
+                            <tr>
+                                <th>文章ID</th>
+                                <th>评论类型</th>
+                                <th>评论内容</th>
+                                <th>发布时间</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+            </div>
+        </div>
+        <!-- /.row -->
+    </section>
+    <!-- /内容区域 -->
+    <script>
+        var allRequest = {};
+        $(function () {
+            // 所有网络请求
+            allRequest = {
+                deletes: function (ids) {
+                    if (!!ids && !!ids.length) {
+                        layer.confirm('确定删除选中的 ' + ids.length + ' 行？', {
+                            btn: ['确定', '取消'] //按钮
+                        }, function () {
+                            $.post('/admin/content/comment/delete', {id: ids.toString()}, function (data) {
+                                if (data.code === 200) {
+                                    layer.msg(data.message, {icon: 1});
+                                    table.reloadPage();
+                                } else {
+                                    layer.msg(data.message, {icon: 2});
+                                }
+                            }, 'json');
+                        }, function () {
+                            layer.msg('取消删除');
+                        });
+                    } else {
+                        layer.msg('请先选中行');
+                    }
+                },
+                deleteById: function (id) {
+                    this.deletes([id])
+                },
+                available: function (id, isAvailable) { // isAvailable 1:0
+                    var available = !!isAvailable;
+                    if (!!id
+                        && isAvailable !== undefined) {
+                        layer.confirm('确定要' + (available ? '开启' : '关闭') + '它？', {
+                            btn: ['确定', '取消'] //按钮
+                        }, function () {
+                            $.post('/admin/content/comment/available/' + id.toString(), {available: available}, function (data) {
+                                if (data.code === 200) {
+                                    layer.msg(data.message, {icon: 1});
+                                    $('#js-' + id).attr('class', 'fa fa-circle ' + (available ? 'text-success' : 'text-danger'));
+                                } else {
+                                    layer.msg(data.message, {icon: 2});
+                                }
+                            }, 'json');
+                        }, function () {
+                            layer.msg('取消' + (available ? '开启' : '关闭'));
+                        });
+                    }
+                }
+            };
+
+            // 系统参数配置表格
+            const table = {
+                $obj: $('#js-table'),
+                dataTableObject: null,
+                getSelectedRow: function () {
+                    return this.dataTableObject.rows('.selected').data();
+                },
+                init: function () {
+                    // 初始化
+                    this.dataTableObject = this.$obj.DataTable({
+                        dom: '<"toolbar">frtip',
+                        ordering: true,
+                        searching: false,
+                        select: true,
+                        autoWidth: true,
+                        processing: false,
+                        serverSide: true,
+                        deferRender: true,
+                        language: DATA_TABLE_CONFIG.language,
+                        preDrawCallback: DATA_TABLE_CONFIG.preDrawCallback,
+                        order: [[3, "desc"]],
+                        ajax: {
+                            url: '/admin/content/comment/data',
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: function (params) {
+                                // 携带参数
+                                return JSON.stringify(params);
+                            }
+                        },
+                        columns: [
+                            {data: 'oid', bSortable: true},
+                            {data: 'type', bSortable: true},
+                            {data: 'content.message', bSortable: true,
+                                defaultContent: '<span class="text-danger">暂无</span>'},
+                            {data: 'createAt', bSortable: true},
+                            {data: 'available', bSortable: true},
+                            {}
+                        ],
+                        columnDefs: [
+
+                            {
+                                render: function (data, type, row) {
+                                    return new Date(row.createAt).toLocaleString();
+                                },
+                                targets: 3
+                            }, {
+                                render: function (data, type, row) { // 状态
+                                    if (!!data) {
+                                        return '<i id="js-' + row.id + '" class="fa fa-circle text-success"></i>';
+                                    } else {
+                                        return '<i id="js-' + row.id + '" class="fa fa-circle text-danger"></i>';
+                                    }
+                                },
+                                targets: 4
+                            }, { // 操作
+                                render: function (data, type, row) {
+                                    return '<div class="btn-group">' +
+                                        '         <button type="button" class="btn btn-default btn-flat">操作</button>' +
+                                        '         <button type="button" class="btn btn-default btn-flat dropdown-toggle" data-toggle="dropdown">' +
+                                        '               <span class="caret"></span>' +
+                                        '               <span class="sr-only">Toggle Dropdown</span>' +
+                                        '         </button>' +
+                                        '         <ul class="dropdown-menu" role="menu">' +
+                                        '             <li><a target="_blank" href="/admin/content/comment/browser/' + row.id + '">预览</a></li>' +
+                                        '             <li><a class="js-modal" href="/admin/content/comment/detail/' + row.id + '" data-target="#js-detail-modal" data-toggle="modal">查看详情</a></li>' +
+                                        '             <li class="divider"></li>' +
+                                        '             <li><a href="/admin/content/comment/update-view/' + row.id + '" pjax-data>修改</a></li>' +
+                                        '             <li class="divider"></li>' +
+                                        '             <li><a href="javascript:;;" onclick="allRequest.deleteById(\'' + row.id + '\')">删除</a></li>' +
+                                        '             <li class="divider"></li>' +
+                                        '             <li><a href="javascript:;;" onclick="allRequest.available(\'' + row.id + '\', 1)">启用</a></li>' +
+                                        '             <li><a href="javascript:;;" onclick="allRequest.available(\'' + row.id + '\', 0)">禁用</a></li>' +
+                                        '         </ul>' +
+                                        '   </div>';
+                                },
+                                targets: 5
+                            }]
+                    });
+                    // 绑定多选
+                    this.$obj.children('tbody').on('click', 'tr', function () {
+                        $(this).toggleClass('selected');
+                    });
+
+                    var that = this;
+                    // ==========================自定义=============================
+                    // + 删除选中事件
+                    $('#js-trash').on('click', function () {
+                        var selectedRow = that.getSelectedRow();
+                        var ids = [];
+                        if (!!selectedRow.length) {
+                            $.each(selectedRow, function (i, obj) {
+                                ids.push(obj.id);
+                            });
+                        }
+                        allRequest.deletes(ids);
+                    });
+                    // + 查询事件
+                    $("#js-query").on('click', function () {
+                        $('#js-query-model').modal('hide')
+                        layer.msg('正在进行条件查询, 请稍后..');
+                        that.$obj.ajax.reload();
+                    });
+                },
+                reloadPage: function () {
+                    this.dataTableObject.ajax.reload(null, false);
+                },
+                reloadAll: function () {
+                    this.dataTableObject.ajax.reload();
+                }
+            };
+            table.init();
+
+
+            $('#js-detail-modal').on("hidden.bs.modal", function () {
+                $(this).removeData("bs.modal");
+            });
+        });
+    </script>
+</div>
+</body>
+</html>

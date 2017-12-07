@@ -12,6 +12,7 @@ import java.util.Map;
  * email: hocgin@gmail.com
  */
 @Data
+@Deprecated
 public class LeftMenu implements Serializable {
     private List<SysMenu> root;
     private Map<String, List<SysMenu>> children;

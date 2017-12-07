@@ -21,14 +21,17 @@ public class IMember implements UserDetails {
     private final String username;
     private final String nickname;
     private final String password;
+    private final Member member;
     private final Collection<? extends GrantedAuthority> authorities;
     private final Date lastPasswordResetAt;
     
-    private IMember(String username,
+    private IMember(Member member,
+                    String username,
                     String nickname,
                     String password,
                     Collection<? extends GrantedAuthority> authorities,
                     Date lastPasswordResetAt) {
+        this.member = member;
         this.username = username;
         this.nickname = nickname;
         this.password = password;
@@ -82,7 +85,7 @@ public class IMember implements UserDetails {
     }
     
     public static IMember toIMember(Member member) {
-        return new IMember(member.getEmail(),
+        return new IMember(member, member.getEmail(),
                 member.getNickname(),
                 member.getPassword(),
                 getGrantedAuthority(member.getRole()),

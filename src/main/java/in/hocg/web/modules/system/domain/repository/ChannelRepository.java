@@ -14,8 +14,6 @@ import java.util.List;
 public interface ChannelRepository extends MongoRepository<Channel, String>,
         DataTablesRepository<Channel, String>,
         ChannelRepositoryCustom {
-//    @Query("{$orderby: {$and: {location: 1, path: 1}}")
-    List<Channel> findAllByParentIn(String... parent);
     
     void deleteAllByIdIn(String[] id);
     

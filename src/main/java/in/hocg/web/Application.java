@@ -55,10 +55,8 @@ public class Application {
     @Bean
     CommandLineRunner preLoadMongo() throws Exception {
         return args -> {
-            if (mongoInit) {
-                logger.info("正在初始化 MongoDB 数据");
-                builtInSeeder.drop().init();
-            }
+            logger.info("正在初始化 MongoDB 数据");
+            builtInSeeder.drop(mongoInit).init();
             sysTaskService.init();
         };
     }

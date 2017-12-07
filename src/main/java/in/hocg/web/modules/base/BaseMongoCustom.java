@@ -116,7 +116,7 @@ public abstract class BaseMongoCustom<T, ID extends Serializable> {
      * @param size  每页数量
      * @return
      */
-    public Page pageX(Query query, int page, int size) {
+    public Page<T> pageX(Query query, int page, int size) {
         return Page.New(size, count(query), page + 1, page(query, page, size));
     }
     

@@ -148,4 +148,23 @@ public class DocumentFactory {
         sysTask.createdAt();
         return sysTask;
     }
+    
+    /**
+     * 会员
+     */
+    public static Member member(String nickname,
+                                Collection<Role> roles,
+                                String email,
+                                String password) {
+    
+        Member member = new Member();
+        member.setCreatedAt(new Date());
+        member.setAvailable(true);
+        member.setNickname(nickname);
+        member.setRole(roles);
+        member.setIsVerifyEmail(true);
+        member.setEmail(email);
+        member.setPassword(password);
+        return member;
+    }
 }

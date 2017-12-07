@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <!-- default header name is X-CSRF-TOKEN -->
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <title layout:title-pattern="$DECORATOR_TITLE - $CONTENT_TITLE">爱天气</title>
+    <link rel="stylesheet" th:href="@{/admin-lte/bower_components/bootstrap/dist/css/bootstrap.min.css}">
+
+    <script type="text/javascript" th:src="@{/dist/jquery-3.2.1.min.js}"></script>
+    <script type="text/javascript" th:src="@{/dist/jquery.form.js}"></script>
+    <script type="text/javascript" th:src="@{/admin-lte/bower_components/bootstrap/dist/js/bootstrap.min.js}"></script>
+    <script type="text/javascript" th:src="@{/dist/layer/layer.js}"></script>
+    <script type="text/javascript" th:src="@{/dist/moment/moment.js}"></script>
+    <script type="text/javascript">
+        $(function () {
+            // 添加 CSRF 头
+            var token = $("meta[name='_csrf']").attr("content");
+            var header = $("meta[name='_csrf_header']").attr("content");
+            $.ajaxSetup({
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader(header, token);
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+<div layout:fragment="content"></div>
+</body>
+</html>
