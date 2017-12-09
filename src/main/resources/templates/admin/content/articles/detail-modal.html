@@ -34,6 +34,11 @@
                     <!--/*@thymesVar id="articles" type="in.hocg.web.modules.system.domain.Articles"*/-->
                     <span th:utext="${@iText.available(articles.available)}"></span>
                 </a>
+                <a href="javascript:;" class="list-group-item" title="允许评论">
+                    <span class="i-mr10 i-bold">允许评论</span>
+                    <!--/*@thymesVar id="articles" type="in.hocg.web.modules.system.domain.Articles"*/-->
+                    <span th:utext="${@iText.available(articles.allowComments)}"></span>
+                </a>
                 <a href="javascript:;" class="list-group-item" title="发布时间">
                     <span class="i-mr10 i-bold">发布时间</span>
                     <!--/*@thymesVar id="articles" type="in.hocg.web.modules.system.domain.Articles"*/-->
