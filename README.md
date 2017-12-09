@@ -5,8 +5,6 @@
 
 1.编辑`application-dev.yml`做如下修改:
 ```yaml
-i:
-  mongo:
-    init: true
+initDatabase: true
 ```
 2.启动后, 修改为false
