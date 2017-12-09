@@ -118,6 +118,25 @@
                             layer.msg('取消' + (available ? '开启' : '关闭'));
                         });
                     }
+                },
+                allowComments: function (id, isAllowComments) { // isAvailable 1:0
+                    var allowComments = !!isAllowComments;
+                    if (!!id
+                        && isAllowComments !== undefined) {
+                        layer.confirm('确定要' + (allowComments ? '开启' : '关闭') + '评论功能？', {
+                            btn: ['确定', '取消'] //按钮
+                        }, function () {
+                            $.post('/admin/content/articles/allow-comments/' + id.toString(), {allowComments: allowComments}, function (data) {
+                                if (data.code === 200) {
+                                    layer.msg(data.message, {icon: 1});
+                                } else {
+                                    layer.msg(data.message, {icon: 2});
+                                }
+                            }, 'json');
+                        }, function () {
+                            layer.msg('取消' + (available ? '开启' : '关闭'));
+                        });
+                    }
                 }
             };
 
@@ -194,6 +213,9 @@
                                         '             <li class="divider"></li>' +
                                         '             <li><a href="javascript:;;" onclick="allRequest.available(\'' + row.id + '\', 1)">启用</a></li>' +
                                         '             <li><a href="javascript:;;" onclick="allRequest.available(\'' + row.id + '\', 0)">禁用</a></li>' +
+                                        '             <li class="divider"></li>' +
+                                        '             <li><a href="javascript:;;" onclick="allRequest.allowComments(\'' + row.id + '\', 1)">启用评论</a></li>' +
+                                        '             <li><a href="javascript:;;" onclick="allRequest.allowComments(\'' + row.id + '\', 0)">禁用评论</a></li>' +
                                         '         </ul>' +
                                         '   </div>';
                                 },

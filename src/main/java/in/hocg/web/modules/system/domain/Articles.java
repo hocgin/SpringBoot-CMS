@@ -66,6 +66,7 @@ public class Articles extends BaseDomain {
      * 是否启用, 默认禁止。
      */
     private Boolean available = Boolean.FALSE;
+    private Boolean allowComments = Boolean.FALSE;
     
     
 }

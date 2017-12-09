@@ -43,9 +43,9 @@ public class ArticlesFilter extends BaseDomain {
      * 仅增加拥有
      */
     private boolean available = Boolean.FALSE;
-
-
-
+    private boolean allowComments = Boolean.FALSE;
+    
+    
     public Articles get() {
         Articles articles = new Articles();
         articles.setAvailable(available);
@@ -54,7 +54,8 @@ public class ArticlesFilter extends BaseDomain {
         articles.setSendAt(DateKit.format(sendAt));
         articles.setTitle(title);
         articles.setSynopsis(synopsis);
-    
+        articles.setAllowComments(allowComments);
+        
         articles.createdAt();
         return articles;
     }
@@ -65,7 +66,7 @@ public class ArticlesFilter extends BaseDomain {
         articles.setSendAt(DateKit.format(sendAt));
         articles.setTitle(title);
         articles.setSynopsis(synopsis);
-    
+        
         articles.updatedAt();
         return articles;
     }

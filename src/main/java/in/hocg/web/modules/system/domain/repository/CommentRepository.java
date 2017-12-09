@@ -12,5 +12,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 public interface CommentRepository extends MongoRepository<Comment, String>,
         DataTablesRepository<Comment, String>,
         CommentRepositoryCustom {
-    void deleteAllByRootOrParentAndOidAndType(String root, String parent, String oid, Integer type);
+    
+    void deleteAllByOidInAndType(String[] id, Integer type);
 }

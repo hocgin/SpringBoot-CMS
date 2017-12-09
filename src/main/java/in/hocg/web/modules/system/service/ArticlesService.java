@@ -24,4 +24,6 @@ public interface ArticlesService {
     void deletes(String[] id, CheckError checkError);
     
     void deletesByChannel(String... channelsId);
+    
+    void allowComments(String id, boolean allowComments);
 }

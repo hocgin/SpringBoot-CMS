@@ -2,7 +2,7 @@
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="/admin/_layouts/default">
+      layout:decorator="/web/_layouts/default">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
@@ -11,6 +11,25 @@
     <title>预览</title>
 </head>
 <!--/*@thymesVar id="articles" type="in.hocg.web.modules.system.domain.Articles"*/-->
-<body th:utext="${articles.content}">
+<body layout:fragment="content">
+<div class="container">
+    <div class="row">
+        <h3 th:text="${articles.title}"></h3>
+    </div>
+    <div class="row" th:utext="${articles.content}"></div>
+    <div class="row">
+        <div class="comment-holder"
+             th:attr="data-oid=${articles.id}"
+             data-type="1"
+             data-avatar="/public/images/default_avatar.gif"
+        ></div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        var comment = new Comment('.comment-holder');
+    });
+</script>
 </body>
 </html>

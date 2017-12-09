@@ -55,13 +55,6 @@ public class CommentController extends BaseController {
         return String.format(BASE_TEMPLATES_PATH, "detail-modal");
     }
     
-// 浏览目标，例如: 文章(ID:1212), 跳转到文章(ID:1212)页面
-//    @GetMapping("/browser/{id}")
-//    public String vBrowser(@PathVariable("id") String id, Model model) throws IOException {
-//        model.addAttribute("comment", commentService.findOne(id));
-//        return String.format(BASE_TEMPLATES_PATH, "browser-view");
-//    }
-    
     @PostMapping("/data")
     @ResponseBody
     public DataTablesOutput data(@RequestBody CommentDataTablesInputFilter input) {

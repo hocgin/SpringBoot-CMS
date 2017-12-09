@@ -4,11 +4,13 @@ import in.hocg.web.lang.CheckError;
 import in.hocg.web.modules.base.Base2Service;
 import in.hocg.web.modules.system.domain.Articles;
 import in.hocg.web.modules.system.domain.Channel;
+import in.hocg.web.modules.system.domain.Comment;
 import in.hocg.web.modules.system.domain.IFile;
 import in.hocg.web.modules.system.domain.repository.ArticlesRepository;
 import in.hocg.web.modules.system.filter.ArticlesFilter;
 import in.hocg.web.modules.system.service.ArticlesService;
 import in.hocg.web.modules.system.service.ChannelService;
+import in.hocg.web.modules.system.service.CommentService;
 import in.hocg.web.modules.system.service.IFileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -27,11 +29,15 @@ public class ArticlesServiceImpl
     
     private IFileService iFileService;
     private ChannelService channelService;
+    private CommentService commentService;
     
     @Autowired
-    public ArticlesServiceImpl(IFileService iFileService, @Lazy ChannelService channelService) {
+    public ArticlesServiceImpl(IFileService iFileService,
+                               @Lazy ChannelService channelService,
+                               @Lazy CommentService commentService) {
         this.iFileService = iFileService;
         this.channelService = channelService;
+        this.commentService = commentService;
     }
     
     @Override
@@ -94,11 +100,23 @@ public class ArticlesServiceImpl
     @Override
     public void deletes(String[] id, CheckError checkError) {
         repository.deleteAllByIdIn(id);
+        // 删除关联的评论
+        commentService.deleteAllByOidInAndType(id, Comment.Type.Article.getCode());
     }
     
     
     @Override
     public void deletesByChannel(String... channelsId) {
         repository.deleteAllByChannelIdIn(channelsId);
+    }
+    
+    @Override
+    public void allowComments(String id, boolean allowComments) {
+        Articles articles = repository.findOne(id);
+        if (!ObjectUtils.isEmpty(articles)) {
+            articles.setAllowComments(allowComments);
+            articles.updatedAt();
+            repository.save(articles);
+        }
     }
 }

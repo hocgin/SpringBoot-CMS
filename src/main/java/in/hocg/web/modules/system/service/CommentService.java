@@ -22,7 +22,7 @@ public interface CommentService {
     
     DataTablesOutput data(CommentDataTablesInputFilter input);
     
-    void delete(String id, CheckError checkError);
-    
     Comment findOne(String id);
+    
+    void deleteAllByOidInAndType(String[] id, Integer code);
 }

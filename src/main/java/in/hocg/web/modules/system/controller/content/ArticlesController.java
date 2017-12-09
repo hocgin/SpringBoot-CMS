@@ -130,6 +130,16 @@ public class ArticlesController extends BaseController {
     }
     
     
+    @PostMapping("/allow-comments/{id}")
+    @ResponseBody
+    @PreAuthorize("hasPermission(null, 'content.articles.edit')")
+    public Results allowComments(@PathVariable("id") String id, boolean allowComments) {
+        articlesService.allowComments(id, allowComments);
+        return Results.success()
+                .setMessage(String.format("%s成功", allowComments ? "开启" : "禁用"));
+    }
+    
+    
     /**
      * 删除
      *

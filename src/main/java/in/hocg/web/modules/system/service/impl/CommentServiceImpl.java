@@ -99,7 +99,7 @@ public class CommentServiceImpl
             comment.setRoot(filter.getRoot());
         }
         
-        // todo 评论信息 黑名单 ？
+        // -》 @。@ 评论关键字 黑名单 ？
         
         return repository.insert(comment);
     }
@@ -136,13 +136,8 @@ public class CommentServiceImpl
     }
     
     @Override
-    public void delete(String id, CheckError checkError) {
-        Comment comment = findOne(id);
-        if (!ObjectUtils.isEmpty(comment)) {
-            // todo 及联删除 子 评论？ 未完成
-//            repository.deleteAllByRootOrParentAndOidAndType();
-            repository.delete(id);
-        }
+    public void deleteAllByOidInAndType(String[] id, Integer type) {
+        repository.deleteAllByOidInAndType(id, type);
     }
     
     /**
@@ -161,7 +156,10 @@ public class CommentServiceImpl
                 checkError.putError("文章不存在或已被删除");
                 return false;
             }
-            // todo if 判断是否允许评论
+            if (!articles.getAllowComments()) {
+                checkError.putError("文章不允许评论");
+                return false;
+            }
             return true;
         } else {
             checkError.putError("评论异常");
