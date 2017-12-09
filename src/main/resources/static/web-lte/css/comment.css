@@ -98,7 +98,8 @@
     margin-top: 7px;
     font-size: 12px;
     box-shadow: none;
-    width: 24px;
+    /*width: 24px;*/
+    width: 45px;
     border-radius: 4px;
     border: 1px solid #ddd;
     outline: none;

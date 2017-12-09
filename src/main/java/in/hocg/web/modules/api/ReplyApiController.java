@@ -10,13 +10,13 @@ import in.hocg.web.modules.system.domain.Member;
 import in.hocg.web.modules.system.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.util.ObjectUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -67,11 +67,15 @@ public class ReplyApiController {
         }
         Page<Comment> pager = commentService.pagerReplyReply(filter);
         
-        pager.setResult(pager.getResult().stream().peek(comment -> {
-            Comment.Content content = comment.getContent();
-            Member member = comment.getMember();
-            content.setMessage(String.format("回复 @%s:%s", member.getNickname(), content.getMessage()));
-        }).collect(Collectors.toList()));
+        pager.setResult(pager.getResult().stream()
+                .peek(comment -> {
+                    Comment.Content content = comment.getContent();
+                    if (!Objects.equals(comment.getParent(), comment.getRoot())
+                            && !content.getMembers().isEmpty()) {
+                        Member member = comment.getMember();
+                        content.setMessage(String.format("回复 @%s:%s", member.getNickname(), content.getMessage()));
+                    }
+                }).collect(Collectors.toList()));
         return Results.success(pager)
                 .setMessage("获取评论成功");
     }
@@ -92,8 +96,9 @@ public class ReplyApiController {
         CheckError checkError = CheckError.get();
         Comment comment = Optional.ofNullable(commentService.insert(filter, checkError))
                 .map(cmt -> {
-                    if (!ObjectUtils.isEmpty(cmt.getRoot())) {
-                        Comment.Content content = cmt.getContent();
+                    Comment.Content content = cmt.getContent();
+                    if (!Objects.equals(cmt.getParent(), cmt.getRoot())
+                            && !content.getMembers().isEmpty()) {
                         Member member = cmt.getMember();
                         content.setMessage(String.format("回复 @%s:%s", member.getNickname(), content.getMessage()));
                     }

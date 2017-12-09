@@ -20,7 +20,11 @@
     </form>
 
     <div class="container">
-        <div class="comment-holder" data-oid="5a2672f0205f04b3392ab89b" data-type="1"></div>
+        <div class="comment-holder"
+             data-oid="5a2672f0205f04b3392ab89b"
+             data-type="1"
+             data-img=""
+        ></div>
     </div>
 
     <script>
@@ -44,11 +48,13 @@
                 el: undefined,
                 oid: undefined,
                 type: undefined,
+                img: undefined,
                 init: function (el) {
                     var that = this;
                     this.el = el;
                     this.oid = $(el).data('oid');
                     this.type = $(el).data('type');
+                    this.img = $(el).data('img');
                     var $commentBox = $('<div class="comment-box"></div>');
                     $(this.el).append($commentBox);
                     $commentBox.append('<div class="reply-notice"></div>');
@@ -69,7 +75,7 @@
                     var $commentSend = $('<div class="comment-send"></div>');
                     $commentSend.append('<div class="user-face">\n' +
                         '                <img class="user-head"\n' +
-                        '                     src="http://i0.hdslb.com/bfs/face/b8266c50d9a3bbd45bf5ebba8164bc057816d29f.jpg@72w_72h.webp">\n' +
+                        '                     src="' + that.img + '">\n' +
                         '            </div>\n' +
                         '            <div class="textarea-container">\n' +
                         '                <i class="ipt-arrow"></i>\n' +
@@ -99,14 +105,33 @@
                             .text();
 
                         var $con = $target.parents('.con');
-                        that.showSendBoxHTML($con, rid, pid, name)
+                        // that.showSendBoxHTML($con, rid, pid, name)
+                        that.appendReplyReplyCommentSend($con, rid, pid, name);
                     }).on('click', '.comment-submit', function (e) {
                         var $target = $(e.target);
                         var $textarea = $target.prevAll('textarea.ipt-txt');
                         var message = $textarea.val();
                         that.addReply($target, that.oid, that.type, $target.data('rid'), $target.data('pid'), message);
+                    }).on('click', '.header-page .tcd-number, .header-page .prev, .header-page .next, .bottom-page .tcd-number, .bottom-page .prev, .bottom-page .next', function (e) {
+                        var $target = $(e.target);
+                        that.requestReply($commentList, that.oid, that.type, $target.data('page'), 10);
+                    }).on('keyup', '.bottom-page .page-jump input', function (e) {
+                        if (e.keyCode === 13) {
+                            var $target = $(e.target);
+                            var val = $target.val();
+                            if (!!val) {
+                                that.requestReply($commentList, that.oid, that.type, val, 10);
+                            }
+                        }
+                    }).on('click', '.con .paging-box', function (e) {
+                        var $target = $(e.target);
+                        var $replyBox = $target.parents('.con').children('.reply-box');
+                        var root = $target.parents('.list-item').data('id');
+                        console.log($replyBox);
+                        that.requestReplyReply($replyBox, that.oid, that.type, root, $target.data('page'), 10);
                     });
                 },
+                // 评论的HTML
                 getReplyHTML: function (reply) {
                     return '<div class="list-item reply-wrap " data-id="' + reply.id + '">\n' +
                         '                <div class="user-face">\n' +
@@ -133,14 +158,16 @@
                         '                </div>\n' +
                         '            </div>';
                 },
+                // 查看更多的HTML
                 getMoreHTML: function (reply) {
                     if (!!reply.rcount && reply.rcount > 0) {
                         return '<div class="view-more">共<b>' + reply.rcount + '</b>条回复, <a class="btn-more" data-pid="' + reply.id + '">点击查看</a></div>';
                     }
                     return '';
                 },
+                // 评论的回复HTML
                 getReplyReplyHTML: function (reply) {
-                    return '<div class="reply-item reply-wrap" data-id="' + reply.id + '">\n' +
+                    var html = '<div class="reply-item reply-wrap" data-id="' + reply.id + '">\n' +
                         '                            <a href="#" target="_blank" class="reply-face">\n' +
                         '                                <img src="http://i0.hdslb.com/bfs/face/b8266c50d9a3bbd45bf5ebba8164bc057816d29f.jpg@52w_52h.webp"\n' +
                         '                                     alt=""></a>\n' +
@@ -156,25 +183,112 @@
                         '                                </div>\n' +
                         '                            </div>\n' +
                         '                        </div>';
+                    html += '<div class="paging-box"></div>';
+                    return html;
                 },
-                showSendBoxHTML: function ($con, rid, pid, name) {
-                    var placeholder = !!name ? '回复 ' + name + ' :' : '请自觉遵守互联网相关的政策法规，严禁发布色情、暴力、反动的言论。';
-                    $con.children('.comment-send').remove();
-                    $con.append($('<div class="comment-send ">\n' +
-                        '                        <div class="user-face">\n' +
-                        '                            <img class="user-head"\n' +
-                        '                                 src="http://i0.hdslb.com/bfs/face/b8266c50d9a3bbd45bf5ebba8164bc057816d29f.jpg@52w_52h.webp">\n' +
-                        '                        </div>\n' +
-                        '                        <div class="textarea-container">\n' +
-                        '                            <i class="ipt-arrow"></i>\n' +
-                        '                            <textarea cols="80" name="msg" rows="5" placeholder="' + placeholder + '" class="ipt-txt"\n' +
-                        '                                      style="z-index: auto; position: relative; line-height: normal; font-size: 12px; transition: none; background: transparent !important;"></textarea>\n' +
-                        '                            <button type="submit" class="comment-submit" data-rid="' + rid + '" data-pid="' + pid + '">\n' +
-                        '                                发表评论\n' +
-                        '                            </button>\n' +
-                        '                        </div>\n' +
-                        '                    </div>'));
+                getBottomReplyPageHTML: function (current, currentSize, size, total) {
+                    var page = this.page(current, currentSize, size, total);
+                    var html = '';
+                    if (page.gt1Page()) {
+                        html += '<div class="bottom-page paging-box-big">';
+                        if (!page.isHomePage()) {
+                            html += '<a href="javascript:;" class="prev" data-page="' + (current - 1) + '">上一页</a>';
+                        }
+                        if (page.getStart() !== 1) {
+                            html += '<a href="javascript:;" class="tcd-number" data-page="1">1</a>';
+                            html += '<span class="dian">...</span>';
+                        }
+                        for (var i = page.getStart(); i <= page.getEnd(); i++) {
+                            if (i === current) {
+                                html += '<span class="current">' + i + '</span>';
+                                continue;
+                            }
+                            html += '<a href="javascript:;" class="tcd-number" data-page="' + i + '">' + i + '</a>';
+                        }
+                        if (page.getEnd() !== page.getTotalPage()) {
+                            html += '<span class="dian">...</span>';
+                            html += '<a href="javascript:;" class="tcd-number" data-page="' + i + '">' + page.getEnd() + '</a>';
+                        }
+                        if (!page.isLastPage()) {
+                            html += '<a href="javascript:;" class="next"  data-page="' + (current + 1) + '">下一页</a>';
+                        }
+                        html += '<div class="page-jump">共<span>' + page.getTotalPage() + '</span>页，跳至<input type="text">页</div>';
+                        html += '</div>';
+                    }
 
+                    return html;
+                },
+                getHeaderReplyPageHTML: function (current, currentSize, size, total) {
+                    var page = this.page(current, currentSize, size, total);
+                    var html = '';
+                    if (page.gt1Page()) {
+                        html += '<div class="header-page paging-box">';
+                        html += '<span class="result">共' + page.getTotalPage() + '页</span>';
+                        if (!page.isHomePage()) {
+                            html += '<a href="javascript:;" class="prev" data-page="' + (current - 1) + '">上一页</a>';
+                        }
+                        if (page.getStart() !== 1) {
+                            html += '<a href="javascript:;" class="tcd-number" data-page="1">1</a>';
+                            html += '<span class="dian">...</span>';
+                        }
+                        for (var i = page.getStart(); i <= page.getEnd(); i++) {
+                            if (i === current) {
+                                html += '<span class="current">' + i + '</span>';
+                                continue;
+                            }
+                            html += '<a href="javascript:;" class="tcd-number" data-page="' + i + '">' + i + '</a>';
+                        }
+                        if (page.getEnd() !== page.getTotalPage()) {
+                            html += '<span class="dian">...</span>';
+                            html += '<a href="javascript:;" class="tcd-number" data-page="' + i + '">' + page.getEnd() + '</a>';
+                        }
+                        if (!page.isLastPage()) {
+                            html += '<a href="javascript:;" class="next"  data-page="' + (current + 1) + '">下一页</a>';
+                        }
+                        html += '</div>';
+                    }
+                    return html;
+                },
+                getReplyReplyPageHTML: function (current, currentSize, size, total) {
+                    var page = this.page(current, currentSize, size, total);
+                    var html = '';
+                    if (page.gt1Page()) {
+                        html += '<div class="paging-box">';
+                        html += '<span class="result">共' + page.getTotalPage() + '页</span>';
+                        if (!page.isHomePage()) {
+                            html += '<a href="javascript:;" class="prev" data-page="' + (current - 1) + '">上一页</a>';
+                        }
+                        if (page.getStart() !== 1) {
+                            html += '<a href="javascript:;" class="tcd-number" data-page="1">1</a>';
+                            html += '<span class="dian">...</span>';
+                        }
+                        for (var i = page.getStart(); i <= page.getEnd(); i++) {
+                            if (i === current) {
+                                html += '<span class="current">' + i + '</span>';
+                                continue;
+                            }
+                            html += '<a href="javascript:;" class="tcd-number" data-page="' + i + '">' + i + '</a>';
+                        }
+                        if (page.getEnd() !== page.getTotalPage()) {
+                            html += '<span class="dian">...</span>';
+                            html += '<a href="javascript:;" class="tcd-number" data-page="' + i + '">' + page.getEnd() + '</a>';
+                        }
+                        if (!page.isLastPage()) {
+                            html += '<a href="javascript:;" class="next"  data-page="' + (current + 1) + '">下一页</a>';
+                        }
+                        html += '</div>';
+                    }
+                    return html;
+                },
+                appendReplyReplyCommentSend: function ($target, rid, pid, name) {
+                    var placeholder = !!name ? '回复 ' + name + ' :' : '请自觉遵守互联网相关的政策法规，严禁发布色情、暴力、反动的言论。';
+                    $target.parents('.comment-list').find('.con .comment-send').remove();
+                    var $boxComment = $target.parents('.comment-box');
+                    var $commentSend = $boxComment.find('.comment-send').first().clone(true);
+                    $commentSend.find('textarea.ipt-txt').attr('placeholder', placeholder);
+                    $commentSend.find('button.comment-submit[type="submit"]')
+                        .data('rid', rid).data('pid', pid);
+                    $target.append($commentSend);
                 },
                 requestReply: function ($commentList, oid, type, page, size) { // 根级分页
                     var that = this;
@@ -190,7 +304,18 @@
                             $.each(rs.data.result, function (i, reply) {
                                 $commentList.append($(that.getReplyHTML(reply)));
                             });
-                            // TODO 刷新分页
+                            // 顶部分页
+                            var $commentBox = $commentList.parent('.comment-box');
+                            var $commentHeader = $commentBox.children('.comment-header');
+                            $commentHeader.children('.header-page').remove();
+                            $commentHeader.append(that.getHeaderReplyPageHTML(rs.data.current, rs.data.result.length, rs.data.size, rs.data.total));
+
+                            // 底部分页
+                            $commentList.children('.bottom-page').remove();
+                            $commentList.append(that.getBottomReplyPageHTML(rs.data.current, rs.data.result.length, rs.data.size, rs.data.total));
+                            if (Math.ceil(rs.data.total / rs.data.size) > 1) {
+                                $commentList.append($commentList.prev().clone(true))
+                            }
                         } else {
                             layer.msg(rs.message, {icon: 2});
                         }
@@ -211,7 +336,13 @@
                             $.each(rs.data.result, function (i, reply) {
                                 $replyBox.append(that.getReplyReplyHTML(reply));
                             });
-                            // TODO 刷新子分页
+                            // 分页
+                            var $con = $replyBox.parent('.con');
+                            $con.children('.paging-box').replaceWith($(that.getReplyReplyPageHTML(rs.data.current,
+                                rs.data.result.length,
+                                rs.data.size,
+                                rs.data.total)));
+
                         } else {
                             layer.msg(rs.message, {icon: 2});
                         }
@@ -233,7 +364,7 @@
                             if (!rs.data.root) {// 根评论 添加到最前面
                                 $commentSubmit.parents('.comment-box').children('.comment-list')
                                     .prepend(that.getReplyHTML(rs.data));
-                            }else { // 评论的评论 添加到后面
+                            } else { // 评论的评论 添加到后面
                                 $commentSubmit.parents('.con').children('.reply-box')
                                     .append(that.getReplyReplyHTML(rs.data));
                             }
@@ -244,6 +375,36 @@
                 },
                 format: function (timestamp) {
                     return moment.unix(timestamp / 1000).format('YYYY-MM-DD hh:mm');
+                },
+                page: function (current, currentSize, size, total) {
+                    return {
+                        getTotalPage: function () {
+                            return Math.ceil(total / size);
+                        },
+                        gt5Page: function () {
+                            return this.getTotalPage() > 5;
+                        },
+                        gt1Page: function () {
+                            return this.getTotalPage() > 1;
+                        },
+                        isHomePage: function () {
+                            return current === 1;
+                        },
+                        isLastPage: function () {
+                            return current === this.getTotalPage();
+                        },
+                        getCurrentSize: function () {
+                            return currentSize;
+                        },
+                        getStart: function () {
+                            var number = current - 2;
+                            return number > 0 ? number : 1;
+                        },
+                        getEnd: function () {
+                            var number = current + 2;
+                            return number > this.getTotalPage() ? this.getTotalPage() : number;
+                        }
+                    };
                 }
             };
             CommentWidget.init('.comment-holder');
