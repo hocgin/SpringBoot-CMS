@@ -22,6 +22,8 @@ public class BuiltInSeeder {
     private SysMenuRepository sysMenuRepository;
     private VariableRepository variableRepository;
     private SysTaskRepository sysTaskRepository;
+    private CommentRepository commentRepository;
+    
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     
     public BuiltInSeeder(
@@ -30,6 +32,7 @@ public class BuiltInSeeder {
             RoleRepository roleRepository,
             DepartmentRepository departmentRepository,
             UserRepository userRepository,
+            CommentRepository commentRepository,
             SysMenuRepository sysMenuRepository,
             MemberRepository memberRepository,
             BCryptPasswordEncoder bCryptPasswordEncoder) {
@@ -41,18 +44,17 @@ public class BuiltInSeeder {
         this.sysTaskRepository = sysTaskRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.memberRepository = memberRepository;
+        this.commentRepository = commentRepository;
     }
     
-    public BuiltInSeeder drop(boolean drop) {
-        if (drop) {
-            roleRepository.deleteAll();
-            departmentRepository.deleteAll();
-            userRepository.deleteAll();
-            sysMenuRepository.deleteAll();
-            variableRepository.deleteAll();
-            sysTaskRepository.deleteAll();
-            memberRepository.deleteAll();
-        }
+    public BuiltInSeeder drop() {
+        roleRepository.deleteAll();
+        departmentRepository.deleteAll();
+        userRepository.deleteAll();
+        sysMenuRepository.deleteAll();
+        variableRepository.deleteAll();
+        sysTaskRepository.deleteAll();
+        memberRepository.deleteAll();
         return this;
     }
     
@@ -233,7 +235,7 @@ public class BuiltInSeeder {
         menu412 = sysMenuRepository.insert(menu412);
         SysMenu menu413 = DocumentFactory.data("修改城市", "000400010003", "weather.city.edit", menu41.getId());
         menu413 = sysMenuRepository.insert(menu413);
-    
+        
         // 消息系统
         SysMenu menu5 = DocumentFactory.menu("消息系统", "0005", "message", "");
         menu5.setLocation(4);
@@ -278,6 +280,17 @@ public class BuiltInSeeder {
         menu712 = sysMenuRepository.insert(menu712);
         SysMenu menu713 = DocumentFactory.data("修改文章", "000600020003", "content.articles.edit", menu71.getId());
         menu713 = sysMenuRepository.insert(menu713);
+        // - 文章管理
+        SysMenu menu81 = DocumentFactory.menu("评论管理", "00070002",
+                "content.articles", "/admin/content/comment/index.html");
+        menu81.setParent(menu6.getId());
+        menu81 = sysMenuRepository.insert(menu81);
+//        SysMenu menu811 = DocumentFactory.data("添加文章", "000700020001", "content.comment.add", menu81.getId());
+//        menu811 = sysMenuRepository.insert(menu811);
+//        SysMenu menu812 = DocumentFactory.data("删除文章", "000700020002", "content.comment.delete", menu81.getId());
+//        menu812 = sysMenuRepository.insert(menu812);
+//        SysMenu menu813 = DocumentFactory.data("修改文章", "000700020003", "content.comment.edit", menu81.getId());
+//        menu813 = sysMenuRepository.insert(menu813);
         
         SysMenu[] role_admin = new SysMenu[]{
                 menu1,
@@ -302,13 +315,14 @@ public class BuiltInSeeder {
                 
                 menu5,
                 menu51, menu511, menu512, menu513, menu514,
-        
+                
                 
                 menu6,
                 // - 栏目管理
                 menu61, menu611, menu612, menu613,
                 // - 文章管理
-                menu71, menu711, menu712, menu713
+                menu71, menu711, menu712, menu713,
+                menu81
         };
         
         SysMenu[] role_admin_old = new SysMenu[]{
@@ -323,7 +337,7 @@ public class BuiltInSeeder {
                 menu5,
                 menu51,
                 menu6,
-                menu61, menu71
+                menu61, menu71, menu81
         };
         
         /**
@@ -374,6 +388,8 @@ public class BuiltInSeeder {
         variableRepository.insert(variable);
         Variable variable2 = DocumentFactory.variable(Variable.HOST, "http://127.0.0.1:8080", "域名");
         variableRepository.insert(variable2);
+        Variable variable3 = DocumentFactory.variable(Variable.IMAGES_DIR, "/Users/hocgin/Desktop/images", "公共图片目录");
+        variableRepository.insert(variable3);
         
         
         /**
@@ -383,7 +399,7 @@ public class BuiltInSeeder {
                 "0 0 0 1 * ? *",
                 "in.hocg.web.job.ResumeMemberTokenJob", new HashMap<>());
         sysTaskRepository.insert(task);
-    
+        
         /**
          * 会员
          */

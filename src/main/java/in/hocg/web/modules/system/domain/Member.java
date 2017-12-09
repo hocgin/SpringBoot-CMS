@@ -42,6 +42,8 @@ public class Member extends BaseDomain {
     
     private Token token;  // 邮箱被认证后分配 Token
     
+    private String avatar = "/public/images/default_avatar.gif";
+    
     private Boolean available = Boolean.FALSE; // 是否可用, 默认不可用。
     private Boolean isVerifyEmail = Boolean.FALSE; // Email是否校验
     private Date verifyEmailAt; // 校验截止日期, 为 null 或 过期 为失效

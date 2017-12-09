@@ -24,7 +24,7 @@ public class Application {
     final Logger logger = LoggerFactory.getLogger(getClass());
     
     
-    @Value("${i.mongo.init}")
+    @Value("${initDatabase}")
     private Boolean mongoInit = false;
     
     public static void main(String[] args) {
@@ -56,7 +56,9 @@ public class Application {
     CommandLineRunner preLoadMongo() throws Exception {
         return args -> {
             logger.info("正在初始化 MongoDB 数据");
-            builtInSeeder.drop(mongoInit).init();
+            if (mongoInit) {
+                builtInSeeder.drop().init();
+            }
             sysTaskService.init();
         };
     }

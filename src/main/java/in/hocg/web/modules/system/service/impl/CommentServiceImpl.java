@@ -10,13 +10,17 @@ import in.hocg.web.modules.system.domain.Articles;
 import in.hocg.web.modules.system.domain.Comment;
 import in.hocg.web.modules.system.domain.Member;
 import in.hocg.web.modules.system.domain.repository.CommentRepository;
+import in.hocg.web.modules.system.filter.CommentDataTablesInputFilter;
 import in.hocg.web.modules.system.service.ArticlesService;
 import in.hocg.web.modules.system.service.CommentService;
+import in.hocg.web.modules.system.service.MemberService;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.datatables.mapping.DataTablesInput;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.Objects;
 
@@ -29,10 +33,13 @@ public class CommentServiceImpl
         extends Base2Service<Comment, String, CommentRepository>
         implements CommentService {
     private ArticlesService articlesService;
+    private MemberService memberService;
     
     @Autowired
-    public CommentServiceImpl(ArticlesService articlesService) {
+    public CommentServiceImpl(ArticlesService articlesService,
+                              MemberService memberService) {
         this.articlesService = articlesService;
+        this.memberService = memberService;
     }
     
     @Override
@@ -108,8 +115,24 @@ public class CommentServiceImpl
     }
     
     @Override
-    public DataTablesOutput data(DataTablesInput input) {
-        return repository.findAll(input);
+    public DataTablesOutput data(CommentDataTablesInputFilter filter) {
+        Criteria criteria = new Criteria();
+        if (!StringUtils.isEmpty(filter.getOid())) {
+            criteria.and("oid").is(filter.getOid());
+        }
+        if (!StringUtils.isEmpty(filter.getRegexMessage())) {
+            criteria.and("content.message").regex(String.format("%s.*", filter.getRegexMessage()));
+        }
+        if (!StringUtils.isEmpty(filter.getType())) {
+            criteria.and("type").is(filter.getType());
+        }
+        if (!StringUtils.isEmpty(filter.getEmail())) {
+            Member member = memberService.findByEmail(filter.getEmail());
+            if (!ObjectUtils.isEmpty(member)) {
+                criteria.and("member.$id").is(new ObjectId(member.getId()));
+            }
+        }
+        return repository.findAll(filter, criteria);
     }
     
     @Override

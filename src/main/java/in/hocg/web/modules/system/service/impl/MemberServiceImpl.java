@@ -5,12 +5,10 @@ import in.hocg.web.lang.CheckError;
 import in.hocg.web.lang.utils.RequestKit;
 import in.hocg.web.modules.system.domain.Member;
 import in.hocg.web.modules.system.domain.Role;
-import in.hocg.web.modules.system.domain.SysMenu;
 import in.hocg.web.modules.system.domain.Variable;
 import in.hocg.web.modules.system.domain.repository.MemberRepository;
 import in.hocg.web.modules.system.filter.MemberDataTablesInputFilter;
 import in.hocg.web.modules.system.filter.MemberFilter;
-import in.hocg.web.modules.system.service.DepartmentService;
 import in.hocg.web.modules.system.service.MemberService;
 import in.hocg.web.modules.system.service.RoleService;
 import in.hocg.web.modules.system.service.VariableService;
@@ -18,9 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.encrypt.Encryptors;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
@@ -28,7 +24,6 @@ import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Created by hocgin on 2017/10/25.
@@ -135,6 +130,11 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public List<Member> findAllByRoles(String... roleIds) {
         return memberRepository.findAllByRole(roleIds);
+    }
+    
+    @Override
+    public Member findByEmail(String email) {
+        return memberRepository.findByEmail(email);
     }
     
     

@@ -5,7 +5,7 @@ import in.hocg.web.modules.api.filter.CommentAddFilter;
 import in.hocg.web.modules.api.filter.CommentQueryFilter;
 import in.hocg.web.modules.base.body.Page;
 import in.hocg.web.modules.system.domain.Comment;
-import org.springframework.data.mongodb.datatables.mapping.DataTablesInput;
+import in.hocg.web.modules.system.filter.CommentDataTablesInputFilter;
 import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
 
 /**
@@ -20,7 +20,9 @@ public interface CommentService {
     
     void available(String id, boolean available);
     
-    DataTablesOutput data(DataTablesInput input);
+    DataTablesOutput data(CommentDataTablesInputFilter input);
     
     void delete(String id, CheckError checkError);
+    
+    Comment findOne(String id);
 }

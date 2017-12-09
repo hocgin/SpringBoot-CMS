@@ -88,7 +88,6 @@ jwt:
   secret: mySecret
   expiration: 604800
 
-i:
-  mongo:
-#    init: true
-    init: false
+
+initDatabase: false
+#initDatabase: true

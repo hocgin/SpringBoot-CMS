@@ -51,3 +51,4 @@ var Google = {
         return '/web-lte/img/' + main + '.png';
     }
 };
+

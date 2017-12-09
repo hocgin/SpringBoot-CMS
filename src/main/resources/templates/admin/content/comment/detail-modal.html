@@ -1,0 +1,35 @@
+<div class="modal-header"
+     xmlns:th="http://www.thymeleaf.org">
+    <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+        <span aria-hidden="true">×</span></button>
+    <h4 class="modal-title">文章详情</h4>
+</div>
+<div class="modal-body"
+     xmlns:th="http://www.thymeleaf.org">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="list-group">
+                <a href="javascript:;" class="list-group-item" title="评论人">
+                    <span class="i-mr10 i-bold">评论人</span>
+                    <!--/*@thymesVar id="comment" type="in.hocg.web.modules.system.domain.Comment"*/-->
+                    <span th:text="${comment.member.nickname}"></span>
+                </a>
+                <a href="javascript:;" class="list-group-item" title="评论内容">
+                    <span class="i-mr10 i-bold">评论内容</span>
+                    <!--/*@thymesVar id="comment" type="in.hocg.web.modules.system.domain.Comment"*/-->
+                    <span th:text="${comment.content.message}"></span>
+                </a>
+                <a href="javascript:;" class="list-group-item" title="状态">
+                    <span class="i-mr10 i-bold">状态</span>
+                    <!--/*@thymesVar id="comment" type="in.hocg.web.modules.system.domain.Comment"*/-->
+                    <span th:utext="${@iText.available(comment.available)}"></span>
+                </a>
+                <a href="javascript:;" class="list-group-item" title="创建时间">
+                    <span class="i-mr10 i-bold">创建时间</span>
+                    <!--/*@thymesVar id="comment" type="in.hocg.web.modules.system.domain.Comment"*/-->
+                    <span th:utext="${@iText.format(comment.createdAt)}"></span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -4,6 +4,7 @@ import in.hocg.web.modules.base.BaseMongoCustom;
 import in.hocg.web.modules.base.body.Page;
 import in.hocg.web.modules.system.domain.Comment;
 import in.hocg.web.modules.system.domain.repository.custom.CommentRepositoryCustom;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
@@ -69,7 +70,10 @@ public class CommentRepositoryImpl
                 .and("type").is(type)
                 .and("root").is(null)
                 .and("available").is(true);
-        return super.pageX(Query.query(criteria), (page - 1) < 0 ? 0 : (page - 1), size);
+    
+        Query query = Query.query(criteria);
+        query.with(new Sort(new Sort.Order(Sort.Direction.DESC, "createdAt")));
+        return super.pageX(query, (page - 1) < 0 ? 0 : (page - 1), size);
     }
     
     @Override
@@ -78,6 +82,8 @@ public class CommentRepositoryImpl
                 .and("type").is(type)
                 .and("root").is(root)
                 .and("available").is(true);
-        return super.pageX(Query.query(criteria), (page - 1) < 0 ? 0 : (page - 1), size);
+        Query query = Query.query(criteria);
+        query.with(new Sort(new Sort.Order(Sort.Direction.DESC, "createdAt")));
+        return super.pageX(query, (page - 1) < 0 ? 0 : (page - 1), size);
     }
 }

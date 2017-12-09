@@ -42,4 +42,6 @@ public interface MemberService {
     void resumeToken();
     
     List<Member> findAllByRoles(String... role);
+    
+    Member findByEmail(String email);
 }
