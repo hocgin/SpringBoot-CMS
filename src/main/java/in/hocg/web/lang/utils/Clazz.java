@@ -62,4 +62,15 @@ public class Clazz {
         ParameterizedType superclass = (ParameterizedType) clazz.getGenericSuperclass();
         return (Class)(superclass.getActualTypeArguments()[index]);
     }
+    
+    public static boolean exitsClass(String clazzName) {
+        Class<?> aClass;
+        try {
+            aClass = Class.forName(clazzName);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return aClass != null;
+    }
 }

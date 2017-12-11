@@ -220,7 +220,7 @@ public class MailTemplateServiceImpl extends BaseService implements MailTemplate
         HashMap<String, File> fileMap = new HashMap<>();
         iFileService.findByIdIn(filter.getFilesId()).forEach(file -> {
             if (file.exists()) {
-                fileMap.put(file.getUploadName(), file.getFile());
+                fileMap.put(file.getUploadName().substring(0, 10), file.getFile());
             }
         });
         
@@ -266,7 +266,7 @@ public class MailTemplateServiceImpl extends BaseService implements MailTemplate
         HashMap<String, File> fileMap = new HashMap<>();
         iFileService.findByIdIn(filter.getFilesId()).forEach(file -> {
             if (file.exists()) {
-                fileMap.put(file.getUploadName(), file.getFile());
+                fileMap.put(file.getUploadName().substring(0, 10), file.getFile());
             }
         });
         
