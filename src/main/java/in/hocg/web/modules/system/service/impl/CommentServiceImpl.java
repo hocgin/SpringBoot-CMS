@@ -8,7 +8,7 @@ import in.hocg.web.modules.base.Base2Service;
 import in.hocg.web.modules.base.body.Page;
 import in.hocg.web.modules.system.domain.Articles;
 import in.hocg.web.modules.system.domain.Comment;
-import in.hocg.web.modules.system.domain.Member;
+import in.hocg.web.modules.system.domain.user.User;
 import in.hocg.web.modules.system.domain.repository.CommentRepository;
 import in.hocg.web.modules.system.filter.CommentDataTablesInputFilter;
 import in.hocg.web.modules.system.service.ArticlesService;
@@ -58,7 +58,7 @@ public class CommentServiceImpl
     
     @Override
     public Comment insert(CommentAddFilter filter, CheckError checkError) {
-        Member member = SecurityKit.iMember().getMember();
+        User member = SecurityKit.iUser().getUser();
         if (ObjectUtils.isEmpty(member)) {
             checkError.putError("请先登陆");
             return null;
@@ -127,7 +127,7 @@ public class CommentServiceImpl
             criteria.and("type").is(filter.getType());
         }
         if (!StringUtils.isEmpty(filter.getEmail())) {
-            Member member = memberService.findByEmail(filter.getEmail());
+            User member = memberService.findByEmail(filter.getEmail());
             if (!ObjectUtils.isEmpty(member)) {
                 criteria.and("member.$id").is(new ObjectId(member.getId()));
             }

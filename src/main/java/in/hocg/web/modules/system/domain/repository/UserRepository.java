@@ -1,6 +1,6 @@
 package in.hocg.web.modules.system.domain.repository;
 
-import in.hocg.web.modules.system.domain.User;
+import in.hocg.web.modules.system.domain.user.User;
 import in.hocg.web.modules.system.domain.repository.custom.UserRepositoryCustom;
 import org.springframework.data.mongodb.datatables.repository.DataTablesRepository;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -18,9 +18,10 @@ public interface UserRepository
         UserRepositoryCustom,
         DataTablesRepository<User, String> {
     
-    User findByUsername(String username);
+    User findByUsernameAndTypeIs(String username, Integer type);
+    void deleteAllByIdInAndTypeIs(String[] id, Integer type);
     
-    void deleteAllByIdIn(String... id);
+    List<User> findAllByIdInAndTypeIs(String[] ids, Integer type);
     
-    List<User> findAllByIdIn(String... ids);
+    
 }

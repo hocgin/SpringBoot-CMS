@@ -6,7 +6,7 @@ import in.hocg.web.modules.api.filter.CommentQueryFilter;
 import in.hocg.web.modules.base.body.Page;
 import in.hocg.web.modules.base.body.Results;
 import in.hocg.web.modules.system.domain.Comment;
-import in.hocg.web.modules.system.domain.Member;
+import in.hocg.web.modules.system.domain.user.User;
 import in.hocg.web.modules.system.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -72,7 +72,7 @@ public class ReplyApiController {
                     Comment.Content content = comment.getContent();
                     if (!Objects.equals(comment.getParent(), comment.getRoot())
                             && !content.getMembers().isEmpty()) {
-                        Member member = comment.getMember();
+                        User member = comment.getMember();
                         content.setMessage(String.format("回复 @%s:%s", member.getNickname(), content.getMessage()));
                     }
                 }).collect(Collectors.toList()));
@@ -99,7 +99,7 @@ public class ReplyApiController {
                     Comment.Content content = cmt.getContent();
                     if (!Objects.equals(cmt.getParent(), cmt.getRoot())
                             && !content.getMembers().isEmpty()) {
-                        Member member = cmt.getMember();
+                        User member = cmt.getMember();
                         content.setMessage(String.format("回复 @%s:%s", member.getNickname(), content.getMessage()));
                     }
                     return cmt;

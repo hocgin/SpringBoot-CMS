@@ -1,47 +1,46 @@
-package in.hocg.web.modules.security.details.member;
+package in.hocg.web.modules.security.details;
 
 import in.hocg.web.modules.security.IGrantedAuthority;
-import in.hocg.web.modules.system.domain.Member;
 import in.hocg.web.modules.system.domain.Role;
+import in.hocg.web.modules.system.domain.user.User;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
  * Created by hocgin on 2017/10/25.
  * email: hocgin@gmail.com
- * 会员细节信息
+ * 用户细节信息
  */
 @Data
-public class IMember implements UserDetails {
-    private final String username;
-    private final String nickname;
-    private final String password;
-    private final Member member;
+public class IUser implements UserDetails {
     private final Collection<? extends GrantedAuthority> authorities;
-    private final Date lastPasswordResetAt;
+    private final User user;
     
-    private IMember(Member member,
-                    String username,
-                    String nickname,
-                    String password,
-                    Collection<? extends GrantedAuthority> authorities,
-                    Date lastPasswordResetAt) {
-        this.member = member;
-        this.username = username;
-        this.nickname = nickname;
-        this.password = password;
-        this.authorities = authorities;
-        this.lastPasswordResetAt = lastPasswordResetAt;
+    public IUser(User user) {
+        this.user = user;
+        this.authorities = getGrantedAuthority(user.getRole());
     }
     
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
+    }
+    
+    @Override
+    public String getPassword() {
+        return user.getPassword();
+    }
+    
+    @Override
+    public String getUsername() {
+        return user.getUsername();
     }
     
     @Override
@@ -64,19 +63,15 @@ public class IMember implements UserDetails {
         return true;
     }
     
-    public Date getLastPasswordResetAt() {
-        return lastPasswordResetAt;
-    }
-    
     
     @Override
     public String toString() {
-        return username;
+        return user.getId();
     }
     
     @Override
     public int hashCode() {
-        return username.hashCode();
+        return user.getId().hashCode();
     }
     
     @Override
@@ -84,13 +79,6 @@ public class IMember implements UserDetails {
         return this.toString().equals(obj.toString());
     }
     
-    public static IMember toIMember(Member member) {
-        return new IMember(member, member.getEmail(),
-                member.getNickname(),
-                member.getPassword(),
-                getGrantedAuthority(member.getRole()),
-                member.getLastPasswordResetAt());
-    }
     
     private static List<? extends GrantedAuthority> getGrantedAuthority(Collection<Role> roles) {
         return CollectionUtils.isEmpty(roles) ? Collections.emptyList() : roles.stream()

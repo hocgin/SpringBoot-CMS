@@ -6,6 +6,7 @@ import in.hocg.web.lang.utils.FileKit;
 import in.hocg.web.modules.base.BaseService;
 import in.hocg.web.modules.system.domain.*;
 import in.hocg.web.modules.system.domain.repository.MailTemplateRepository;
+import in.hocg.web.modules.system.domain.user.User;
 import in.hocg.web.modules.system.filter.MailTemplateDataTablesInputFilter;
 import in.hocg.web.modules.system.filter.MailTemplateFilter;
 import in.hocg.web.modules.system.filter.SendGroupMailFilter;
@@ -192,7 +193,7 @@ public class MailTemplateServiceImpl extends BaseService implements MailTemplate
         if (filter.isWeb()) {
             emailAll = memberService.findAllByRoles(roles)
                     .stream()
-                    .map(Member::getEmail)
+                    .map(User::getEmail)
                     .collect(Collectors.toList());
             
         } else if (filter.isAdmin()) {

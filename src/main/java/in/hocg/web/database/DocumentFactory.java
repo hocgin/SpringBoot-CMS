@@ -1,6 +1,7 @@
 package in.hocg.web.database;
 
 import in.hocg.web.modules.system.domain.*;
+import in.hocg.web.modules.system.domain.user.User;
 
 import java.util.Collection;
 import java.util.Date;
@@ -100,10 +101,10 @@ public class DocumentFactory {
      * @param password
      * @return
      */
-    public static User user(String username,
-                            Collection<Role> roles,
-                            String email,
-                            String password) {
+    public static User manager(String username,
+                               Collection<Role> roles,
+                               String email,
+                               String password) {
         User user = new User();
         user.setCreatedAt(new Date());
         user.setAvailable(true);
@@ -112,6 +113,7 @@ public class DocumentFactory {
         user.setRole(roles);
         user.setEmail(email);
         user.setPassword(password);
+        user.setType(User.Type.Manager.getCode());
         return user;
     }
     
@@ -152,12 +154,12 @@ public class DocumentFactory {
     /**
      * 会员
      */
-    public static Member member(String nickname,
+    public static User member(String nickname,
                                 Collection<Role> roles,
                                 String email,
                                 String password) {
     
-        Member member = new Member();
+        User member = new User();
         member.setCreatedAt(new Date());
         member.setAvailable(true);
         member.setNickname(nickname);
@@ -165,6 +167,7 @@ public class DocumentFactory {
         member.setIsVerifyEmail(true);
         member.setEmail(email);
         member.setPassword(password);
+        member.setType(User.Type.Member.getCode());
         return member;
     }
 }

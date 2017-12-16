@@ -4,8 +4,7 @@ import lombok.Data;
 import org.springframework.data.annotation.Transient;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by hocgin on 2017/10/28.

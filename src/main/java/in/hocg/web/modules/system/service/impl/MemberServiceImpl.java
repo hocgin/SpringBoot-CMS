@@ -3,10 +3,11 @@ package in.hocg.web.modules.system.service.impl;
 import in.hocg.web.global.component.MailService;
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.lang.utils.RequestKit;
-import in.hocg.web.modules.system.domain.Member;
+import in.hocg.web.modules.system.domain.user.Member;
 import in.hocg.web.modules.system.domain.Role;
+import in.hocg.web.modules.system.domain.user.User;
 import in.hocg.web.modules.system.domain.Variable;
-import in.hocg.web.modules.system.domain.repository.MemberRepository;
+import in.hocg.web.modules.system.domain.repository.UserRepository;
 import in.hocg.web.modules.system.filter.MemberDataTablesInputFilter;
 import in.hocg.web.modules.system.filter.MemberFilter;
 import in.hocg.web.modules.system.service.MemberService;
@@ -31,7 +32,7 @@ import java.util.*;
  */
 @Service
 public class MemberServiceImpl implements MemberService {
-    private MemberRepository memberRepository;
+    private UserRepository memberRepository;
     private RoleService roleService;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     private HttpServletRequest request;
@@ -39,7 +40,7 @@ public class MemberServiceImpl implements MemberService {
     private VariableService variableService;
     
     @Autowired
-    MemberServiceImpl(MemberRepository memberRepository,
+    MemberServiceImpl(UserRepository memberRepository,
                       RoleService roleService,
                       MailService mailService,
                       VariableService variableService,
@@ -54,7 +55,7 @@ public class MemberServiceImpl implements MemberService {
     }
     
     @Override
-    public List<Member> findAll() {
+    public List<User> findAll() {
         return memberRepository.findAll();
     }
     
@@ -66,7 +67,7 @@ public class MemberServiceImpl implements MemberService {
      */
     @Override
     public void verifyEmail(String id, CheckError checkError) {
-        Member member = memberRepository.findOne(id);
+        User member = memberRepository.findOne(id);
         if (ObjectUtils.isEmpty(member)
                 ||ObjectUtils.isEmpty(member.getVerifyEmailAt())) {
             checkError.putError("异常认证");
@@ -89,7 +90,7 @@ public class MemberServiceImpl implements MemberService {
     
     @Override
     public void sendVerifyEmail(String id, CheckError checkError) {
-        Member member = memberRepository.findOne(id);
+        User member = memberRepository.findOne(id);
         if (ObjectUtils.isEmpty(member)) {
             checkError.putError("会员异常");
             return;
@@ -102,13 +103,13 @@ public class MemberServiceImpl implements MemberService {
     }
     
     @Override
-    public Member findOneByToken(String token) {
-        return memberRepository.findOneByToken(token);
+    public User findOneByToken(String token) {
+        return memberRepository.findOneByTokenForMember(token);
     }
     
     @Override
     public void updateTokenAvailable(String id, boolean available) {
-        Member member = memberRepository.findOne(id);
+        User member = memberRepository.findOne(id);
         if (!ObjectUtils.isEmpty(member)) {
             Member.Token token = member.getToken();
             if (!ObjectUtils.isEmpty(token)) {
@@ -120,7 +121,7 @@ public class MemberServiceImpl implements MemberService {
     
     @Override
     public void resumeToken() {
-        memberRepository.resumeToken();
+        memberRepository.resumeTokenForMember();
     }
     
     /**
@@ -128,18 +129,18 @@ public class MemberServiceImpl implements MemberService {
      * @return
      */
     @Override
-    public List<Member> findAllByRoles(String... roleIds) {
+    public List<User> findAllByRoles(String... roleIds) {
         return memberRepository.findAllByRole(roleIds);
     }
     
     @Override
-    public Member findByEmail(String email) {
-        return memberRepository.findByEmail(email);
+    public User findByEmail(String email) {
+        return memberRepository.findByEmailForMember(email);
     }
     
     
     @Override
-    public DataTablesOutput<Member> data(MemberDataTablesInputFilter input) {
+    public DataTablesOutput<User> data(MemberDataTablesInputFilter input) {
         Criteria criteria = new Criteria();
         if (!StringUtils.isEmpty(input.getRegexEmail())) {
             criteria.andOperator(Criteria.where("email").regex(String.format(".*%s.*", input.getRegexEmail())));
@@ -153,22 +154,23 @@ public class MemberServiceImpl implements MemberService {
         if (!ObjectUtils.isEmpty(input.getNoIds())) {
             criteria.andOperator(Criteria.where("_id").nin(input.getNoIds()));
         }
-        DataTablesOutput<Member> all = memberRepository.findAll(input, criteria);
+        criteria.andOperator(Criteria.where("type").is(User.Type.Member.getCode()));
+        DataTablesOutput<User> all = memberRepository.findAll(input, criteria);
         all.setDraw(0);
         return all;
     }
     
     @Override
     public void delete(CheckError checkError, String... id) {
-        memberRepository.deleteAllByIdIn(id);
+        memberRepository.deleteAllByIdInAndTypeIs(id, User.Type.Member.getCode());
     }
     
     @Override
     public void insert(MemberFilter filter, CheckError checkError) {
-        Member member = filter.get();
+        User member = filter.get();
         
         // 检测用户名是否已被使用
-        if (!ObjectUtils.isEmpty(memberRepository.findByEmail(filter.getEmail()))) {
+        if (!ObjectUtils.isEmpty(memberRepository.findByEmailForMember(filter.getEmail()))) {
             checkError.putError("邮箱已被注册");
             return;
         }
@@ -186,7 +188,7 @@ public class MemberServiceImpl implements MemberService {
     
     @Override
     public void updateAvailable(String id, boolean b) {
-        Member member = memberRepository.findOne(id);
+        User member = memberRepository.findOne(id);
         if (!ObjectUtils.isEmpty(member)) {
             member.setAvailable(b);
             memberRepository.save(member);
@@ -194,19 +196,19 @@ public class MemberServiceImpl implements MemberService {
     }
     
     @Override
-    public Member find(String id) {
+    public User find(String id) {
         return memberRepository.findOne(id);
     }
     
     @Override
-    public List<Member> findAllById(String... ids) {
-        return memberRepository.findAllByIdIn(ids);
+    public List<User> findAllById(String... ids) {
+        return memberRepository.findAllByIdInAndTypeIs(ids, User.Type.Member.getCode());
     }
     
     @Override
     public void update(MemberFilter filter, CheckError checkError) {
     
-        Member member = memberRepository.findOne(filter.getId());
+        User member = memberRepository.findOne(filter.getId());
         if (ObjectUtils.isEmpty(member)) {
             checkError.putError("会员不存在");
             return;
@@ -216,7 +218,7 @@ public class MemberServiceImpl implements MemberService {
     }
     
     @Override
-    public void update(Member member) {
+    public void update(User member) {
         memberRepository.save(member);
     }
     
@@ -225,7 +227,7 @@ public class MemberServiceImpl implements MemberService {
      * - _todo 后期迁移出内置邮箱模版
      * @param member
      */
-    private void sendVerifyEmail(Member member) {
+    private void sendVerifyEmail(User member) {
         // 邮箱认证
         Map<String, Object> params = new HashMap<>();
         params.put("verifyUrl",

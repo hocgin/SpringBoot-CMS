@@ -1,9 +1,9 @@
-package in.hocg.web.modules.security.details.member;
+package in.hocg.web.modules.security.details;
 
 import in.hocg.web.lang.utils.RequestKit;
 import in.hocg.web.modules.security.exception.IAuthenticationException;
-import in.hocg.web.modules.system.domain.Member;
-import in.hocg.web.modules.system.domain.repository.MemberRepository;
+import in.hocg.web.modules.system.domain.user.User;
+import in.hocg.web.modules.system.domain.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,11 +20,11 @@ import java.util.Date;
  */
 @Service("IMemberDetailsService")
 public class IMemberDetailsService implements UserDetailsService {
-    private MemberRepository memberRepository;
+    private UserRepository memberRepository;
     private HttpServletRequest request;
     
     @Autowired
-    public IMemberDetailsService(MemberRepository memberRepository,
+    public IMemberDetailsService(UserRepository memberRepository,
                                  HttpServletRequest request) {
         this.memberRepository = memberRepository;
         this.request = request;
@@ -32,7 +32,7 @@ public class IMemberDetailsService implements UserDetailsService {
     
     @Override
     public UserDetails loadUserByUsername(String username) throws AuthenticationException {
-        Member member = memberRepository.findByEmail(username);
+        User member = memberRepository.findByEmailForMember(username);
         if (ObjectUtils.isEmpty(member)) {
             // 未找到用户
             throw new IAuthenticationException("账号或密码错误");
@@ -47,6 +47,6 @@ public class IMemberDetailsService implements UserDetailsService {
         member.setUserAgent(RequestKit.getUserAgent(request));
         member.setLogInAt(new Date());
         memberRepository.save(member);
-        return IMember.toIMember(member);
+        return member.asIUser();
     }
 }

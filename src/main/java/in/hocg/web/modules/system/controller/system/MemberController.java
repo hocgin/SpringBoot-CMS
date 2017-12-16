@@ -7,7 +7,7 @@ import in.hocg.web.modules.base.filter.group.Insert;
 import in.hocg.web.modules.base.filter.group.Update;
 import in.hocg.web.modules.base.filter.lang.IdFilter;
 import in.hocg.web.modules.base.filter.lang.IdsFilter;
-import in.hocg.web.modules.system.domain.Member;
+import in.hocg.web.modules.system.domain.user.User;
 import in.hocg.web.modules.system.filter.MemberDataTablesInputFilter;
 import in.hocg.web.modules.system.filter.MemberFilter;
 import in.hocg.web.modules.system.service.MemberService;
@@ -49,7 +49,7 @@ public class MemberController extends BaseController {
     
     @PostMapping("/data")
     @ResponseBody
-    public DataTablesOutput<Member> data(@RequestBody MemberDataTablesInputFilter input) {
+    public DataTablesOutput<User> data(@RequestBody MemberDataTablesInputFilter input) {
         return memberService.data(input);
     }
     
@@ -60,7 +60,7 @@ public class MemberController extends BaseController {
     
     @GetMapping("/update-view/{id}")
     public String vUpdate(@PathVariable("id") String id, Model model) {
-        Member member = memberService.find(id);
+        User member = memberService.find(id);
         model.addAttribute("member", member);
         return String.format(BASE_TEMPLATES_PATH, "update-view");
     }
@@ -125,7 +125,7 @@ public class MemberController extends BaseController {
     
     @RequestMapping("/detail/{id}")
     public String vDetail(@PathVariable("id") String id, Model model) {
-        Member member = memberService.find(id);
+        User member = memberService.find(id);
         model.addAttribute("member", member);
         return String.format(BASE_TEMPLATES_PATH, "detail-modal");
     }

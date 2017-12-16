@@ -9,14 +9,69 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>预览</title>
+    <style>
+        body {
+            font-size: 16px;
+        }
+
+        .post-meta {
+            margin: 3px 0 60px 0;
+            color: #999;
+            font-family: 'Lato', "PingFang SC", "Microsoft YaHei", sans-serif;
+            font-size: 12px;
+        }
+        .post-meta-divider {
+            margin: 0 0.5em;
+        }
+        .post-body img {
+            box-sizing: border-box;
+            margin: auto;
+            padding: 3px;
+            border: 1px solid #ddd;
+            display: block;
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
 </head>
 <!--/*@thymesVar id="articles" type="in.hocg.web.modules.system.domain.Articles"*/-->
 <body layout:fragment="content">
 <div class="container">
-    <div class="row">
-        <h3 th:text="${articles.title}"></h3>
+    <div class="row text-center">
+        <h2 th:text="${articles.title}"></h2>
+        <div class="post-meta">
+            <span class="post-time">
+                <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+                <span class="post-meta-item-text">发表于</span>
+                <time title="创建于"
+                      th:text="${@iText.format(articles.createdAt)}">
+                </time>
+            </span>
+            <span class="post-category">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+                <span class="post-meta-item-text">分类于</span>
+                <span>
+                  <a href="#">
+                    <span th:text="${articles.channel.name}"></span>
+                  </a>
+                </span>
+            </span>
+            <span class="post-author">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-text">作者:</span>
+                <span th:text="${articles.author}"></span>
+            </span>
+        </div>
     </div>
-    <div class="row" th:utext="${articles.content}"></div>
+    <div class="row">
+        <div class="post-body"
+             th:utext="${articles.content}"></div>
+    </div>
     <div class="row">
         <div class="comment-holder"
              th:attr="data-oid=${articles.id}"

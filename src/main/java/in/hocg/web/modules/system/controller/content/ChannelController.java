@@ -12,6 +12,7 @@ import in.hocg.web.modules.base.filter.lang.IdFilter;
 import in.hocg.web.modules.base.filter.lang.IdsFilter;
 import in.hocg.web.modules.system.domain.Channel;
 import in.hocg.web.modules.system.filter.ChannelFilter;
+import in.hocg.web.modules.system.service.ArticlesService;
 import in.hocg.web.modules.system.service.ChannelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,6 +24,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -34,12 +36,15 @@ import java.util.*;
 public class ChannelController extends BaseController {
     public final String BASE_TEMPLATES_PATH = "/admin/content/channel/%s";
     private ChannelService channelService;
+    private ArticlesService articlesService;
     private iText htmlUtils;
     
     @Autowired
     public ChannelController(ChannelService channelService,
+                             ArticlesService articlesService,
                              iText htmlUtils) {
         this.channelService = channelService;
+        this.articlesService = articlesService;
         this.htmlUtils = htmlUtils;
     }
     
@@ -61,6 +66,12 @@ public class ChannelController extends BaseController {
             model.addAttribute("channel", channel);
         }
         return String.format(BASE_TEMPLATES_PATH, "add-view");
+    }
+    
+    @GetMapping("/browser/{id}")
+    public String vBrowser(@PathVariable("id") String id, Model model) throws IOException {
+        model.addAttribute("articles", articlesService.findByChannel(id));
+        return String.format(BASE_TEMPLATES_PATH, "browser-view");
     }
     
     @GetMapping("/{id}")
@@ -245,6 +256,7 @@ public class ChannelController extends BaseController {
                                 "                    <span class=\"sr-only\">Toggle Dropdown</span>\n" +
                                 "                  </button>\n" +
                                 "                  <ul class=\"dropdown-menu\" role=\"menu\">\n" +
+                                "                    <li><a target=\"_blank\" href=\"/admin/content/channel/browser/%s\">查看所有文章</a></li>" +
                                 "                    <li><a href=\"/admin/content/channel/%s\" pjax-data>修改</a></li>\n" +
                                 "                    <li><a href=\"javascript:;;\" onclick=\"allRequest.deleteById(%s)\">删除</a></li>\n" +
                                 "                    <li class=\"divider\"></li>\n" +
@@ -254,6 +266,7 @@ public class ChannelController extends BaseController {
                                 "                    <li><a href=\"javascript:;;\" onclick=\"allRequest.available('%s', 0)\">禁用</a></li>\n" +
                                 "                  </ul>\n" +
                                 "                </div>",
+                        channel.getId(),
                         channel.getId(),
                         String.format("['%s']", channel.getId()),
                         String.format("add-view.html?id=%s", channel.getId()),

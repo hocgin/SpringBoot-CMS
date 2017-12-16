@@ -1,7 +1,7 @@
 package in.hocg.web.modules.system.service;
 
 import in.hocg.web.lang.CheckError;
-import in.hocg.web.modules.system.domain.User;
+import in.hocg.web.modules.system.domain.user.User;
 
 /**
  * Created by hocgin on 2017/10/24.

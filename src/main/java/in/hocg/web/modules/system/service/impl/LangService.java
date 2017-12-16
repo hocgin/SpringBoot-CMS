@@ -2,7 +2,7 @@ package in.hocg.web.modules.system.service.impl;
 
 import in.hocg.web.lang.utils.SecurityKit;
 import in.hocg.web.lang.utils.tree.Node;
-import in.hocg.web.modules.security.details.user.IUser;
+import in.hocg.web.modules.security.details.IUser;
 import in.hocg.web.modules.system.domain.SysMenu;
 import in.hocg.web.modules.system.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +29,6 @@ public class LangService {
         if (ObjectUtils.isEmpty(iUser)) {
             return null;
         }
-        return userService.getLeftMenu(iUser.getId());
+        return userService.getLeftMenu(iUser.getUser().getId());
     }
 }

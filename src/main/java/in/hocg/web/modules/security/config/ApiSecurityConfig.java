@@ -1,7 +1,7 @@
 package in.hocg.web.modules.security.config;
 
 import in.hocg.web.modules.security.JwtAuthenticationTokenFilter;
-import in.hocg.web.modules.security.details.user.IUserDetailsService;
+import in.hocg.web.modules.security.details.IUserDetailsService;
 import in.hocg.web.modules.security.handler.IAuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

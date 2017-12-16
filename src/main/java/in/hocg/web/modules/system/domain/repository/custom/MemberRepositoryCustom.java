@@ -1,6 +1,6 @@
 package in.hocg.web.modules.system.domain.repository.custom;
 
-import in.hocg.web.modules.system.domain.Member;
+import in.hocg.web.modules.system.domain.user.User;
 
 import java.util.List;
 
@@ -10,12 +10,5 @@ import java.util.List;
  */
 public interface MemberRepositoryCustom {
     
-    Member findByEmailAvailableTrue(String email);
-    Member findByEmail(String email);
-    
-    Member findOneByToken(String token);
-    
-    void resumeToken();
-    
-    List<Member> findAllByRole(String... roleIds);
+    List<User> findAllByRoleForMember(String... roleIds);
 }

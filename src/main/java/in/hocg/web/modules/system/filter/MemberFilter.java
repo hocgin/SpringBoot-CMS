@@ -3,7 +3,7 @@ package in.hocg.web.modules.system.filter;
 import in.hocg.web.modules.base.filter.BaseFilter;
 import in.hocg.web.modules.base.filter.group.Insert;
 import in.hocg.web.modules.base.filter.group.Update;
-import in.hocg.web.modules.system.domain.Member;
+import in.hocg.web.modules.system.domain.user.User;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.validator.constraints.Email;
@@ -45,8 +45,8 @@ public class MemberFilter extends BaseFilter {
     private String password; // 密码
     
     
-    public Member get() {
-        Member member = new Member();
+    public User get() {
+        User member = new User();
         member.setNickname(nickname);
         member.setAvailable(available);
         member.setEmail(email);
@@ -60,7 +60,7 @@ public class MemberFilter extends BaseFilter {
         return member;
     }
     
-    public Member update(Member member) {
+    public User update(User member) {
         member.setNickname(nickname);
         member.setAvailable(available);
         member.updatedAt();

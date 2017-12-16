@@ -1,6 +1,6 @@
 package in.hocg.web.modules.security;
 
-import in.hocg.web.modules.security.details.user.IUser;
+import in.hocg.web.modules.security.details.IUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -147,7 +147,7 @@ public class JwtTokenUtil implements Serializable {
         return (
                 username.equals(user.getUsername())
                         && !isTokenExpired(token)
-                        && !isCreatedBeforeLastPasswordReset(created, user.getLastPasswordResetDate()));
+                        && !isCreatedBeforeLastPasswordReset(created, user.getUser().getLastPasswordResetAt()));
     }
 }
 

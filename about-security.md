@@ -41,3 +41,8 @@
 
 ### SessionRegistry
 
+
+### `in.hocg.web.modules.system.domain.User`
+> 用户
+
+

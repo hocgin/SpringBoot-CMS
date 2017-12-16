@@ -2,6 +2,7 @@ package in.hocg.web.database;
 
 import in.hocg.web.modules.system.domain.*;
 import in.hocg.web.modules.system.domain.repository.*;
+import in.hocg.web.modules.system.domain.user.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -18,11 +19,11 @@ public class BuiltInSeeder {
     private RoleRepository roleRepository;
     private DepartmentRepository departmentRepository;
     private UserRepository userRepository;
-    private MemberRepository memberRepository;
     private SysMenuRepository sysMenuRepository;
     private VariableRepository variableRepository;
     private SysTaskRepository sysTaskRepository;
     private CommentRepository commentRepository;
+    private ArticlesRepository articlesRepository;
     
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     
@@ -34,7 +35,7 @@ public class BuiltInSeeder {
             UserRepository userRepository,
             CommentRepository commentRepository,
             SysMenuRepository sysMenuRepository,
-            MemberRepository memberRepository,
+            ArticlesRepository articlesRepository,
             BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.roleRepository = roleRepository;
         this.departmentRepository = departmentRepository;
@@ -43,18 +44,27 @@ public class BuiltInSeeder {
         this.variableRepository = variableRepository;
         this.sysTaskRepository = sysTaskRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-        this.memberRepository = memberRepository;
         this.commentRepository = commentRepository;
+        this.articlesRepository = articlesRepository;
     }
     
     public BuiltInSeeder drop() {
+        // 角色
         roleRepository.deleteAll();
+        // 单位
         departmentRepository.deleteAll();
+        // 用户
         userRepository.deleteAll();
+        // 系统菜单
         sysMenuRepository.deleteAll();
+        // 变量
         variableRepository.deleteAll();
+        // 定时任务
         sysTaskRepository.deleteAll();
-        memberRepository.deleteAll();
+        // 评论
+        commentRepository.deleteAll();
+        // 文章
+        articlesRepository.deleteAll();
         return this;
     }
     
@@ -368,16 +378,18 @@ public class BuiltInSeeder {
          *   - 前台管理
          *      - 普通用户
          */
-        User user = DocumentFactory.user("admin",
+        User user = DocumentFactory.manager("admin",
                 Collections.singleton(r2),
                 "hocgin@gmail.com",
                 bCryptPasswordEncoder.encode("admin"));
+        user.setNickname("admin");
         user = userRepository.insert(user);
         
-        User user2 = DocumentFactory.user("adm1n",
+        User user2 = DocumentFactory.manager("adm1n",
                 Collections.singleton(r3),
                 "adm1n@gmail.com",
                 bCryptPasswordEncoder.encode("adm1n"));
+        user2.setNickname("adm1n");
         user2.setBuiltIn(false);
         user2 = userRepository.insert(user2);
         
@@ -403,10 +415,10 @@ public class BuiltInSeeder {
         /**
          * 会员
          */
-        Member hocgin = DocumentFactory.member("hocgin",
+        User hocgin = DocumentFactory.member("hocgin",
                 Collections.singleton(r1),
                 "578797748@qq.com",
                 bCryptPasswordEncoder.encode("123"));
-        memberRepository.insert(hocgin);
+        userRepository.insert(hocgin);
     }
 }

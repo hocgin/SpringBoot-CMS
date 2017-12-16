@@ -2,7 +2,7 @@ package in.hocg.web;
 
 import in.hocg.web.modules.system.domain.Role;
 import in.hocg.web.modules.system.domain.SysMenu;
-import in.hocg.web.modules.system.domain.User;
+import in.hocg.web.modules.system.domain.user.User;
 import in.hocg.web.modules.system.domain.repository.RoleRepository;
 import in.hocg.web.modules.system.domain.repository.SysMenuRepository;
 import in.hocg.web.modules.system.domain.repository.UserRepository;

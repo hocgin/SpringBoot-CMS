@@ -96,6 +96,7 @@ Comment.prototype = {
             '                </div>\n' +
             '                <div class="con">\n' +
             '                    <div class="user">\n' +
+            this.getPrizeHTML(reply.member) +
             '                        <a class="name">' + reply.member.nickname + '</a>\n' +
             '                    </div>\n' +
             '                    <p class="text">' + reply.content.message +
@@ -301,6 +302,18 @@ Comment.prototype = {
                 layer.msg(rs.message);
             }
         }, 'json');
+    },
+    getPrizeHTML: function (member) {
+        var prize;
+        switch (member.type) {
+            case 0:
+                prize = '管理员';
+                break;
+            case 1:
+            default:
+                return '';
+        }
+        return '<span class="stick assist">' + prize + '</span>';
     },
     addReply: function ($commentSubmit, oid, type, rid, pid, message) {
         var that = this;

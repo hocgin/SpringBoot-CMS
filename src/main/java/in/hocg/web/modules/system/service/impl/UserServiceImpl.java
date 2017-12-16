@@ -7,7 +7,7 @@ import in.hocg.web.lang.utils.tree.TreeKit;
 import in.hocg.web.modules.system.domain.Department;
 import in.hocg.web.modules.system.domain.Role;
 import in.hocg.web.modules.system.domain.SysMenu;
-import in.hocg.web.modules.system.domain.User;
+import in.hocg.web.modules.system.domain.user.User;
 import in.hocg.web.modules.system.domain.repository.UserRepository;
 import in.hocg.web.modules.system.filter.UserDataTablesInputFilter;
 import in.hocg.web.modules.system.filter.UserFilter;
@@ -121,26 +121,37 @@ public class UserServiceImpl implements UserService {
     @Override
     public DataTablesOutput<User> data(UserDataTablesInputFilter input) {
         Criteria criteria = new Criteria();
+        List<Criteria> andOperator = new ArrayList<>();
+        List<Criteria> orOperator = new ArrayList<>();
         if (!StringUtils.isEmpty(input.getDepartment())) {
-            criteria.andOperator(Criteria.where("department.$id").is(new ObjectId(input.getDepartment())));
+            andOperator.add(Criteria.where("department.$id").is(new ObjectId(input.getDepartment())));
         }
         if (!StringUtils.isEmpty(input.getRole())) {
-            criteria.andOperator(Criteria.where("role.$id").is(new ObjectId(input.getRole())));
+            andOperator.add(Criteria.where("role.$id").is(new ObjectId(input.getRole())));
         }
         if (!StringUtils.isEmpty(input.getNotRole())) {
-            criteria.andOperator(Criteria.where("role.$id").ne(new ObjectId(input.getNotRole())));
+            andOperator.add(Criteria.where("role.$id").ne(new ObjectId(input.getNotRole())));
         }
         if (!StringUtils.isEmpty(input.getRegexNicknameOrUsername())) {
-            criteria.orOperator(
-                    Criteria.where("username").regex(String.format("%s.*", input.getRegexNicknameOrUsername())),
-                    Criteria.where("nickname").regex(String.format("%s.*", input.getRegexNicknameOrUsername()))
-            );
+            orOperator.add(Criteria.where("username").regex(String.format("%s.*", input.getRegexNicknameOrUsername())));
+            orOperator.add(Criteria.where("nickname").regex(String.format("%s.*", input.getRegexNicknameOrUsername())));
         }
         if (!ObjectUtils.isEmpty(input.getIds())) {
-            criteria.andOperator(Criteria.where("_id").in(input.getIds()));
+            andOperator.add(Criteria.where("_id").in(input.getIds()));
         }
         if (!ObjectUtils.isEmpty(input.getNoIds())) {
-            criteria.andOperator(Criteria.where("_id").nin(input.getNoIds()));
+            andOperator.add(Criteria.where("_id").nin(input.getNoIds()));
+        }
+        andOperator.add(Criteria.where("type").is(User.Type.Manager.getCode()));
+    
+    
+        
+        
+        if (!andOperator.isEmpty()) {
+            criteria.andOperator(andOperator.toArray(new Criteria[]{}));
+        }
+        if (!orOperator.isEmpty()) {
+            criteria.orOperator(orOperator.toArray(new Criteria[]{}));
         }
         DataTablesOutput<User> all = userRepository.findAll(input, criteria);
         all.setDraw(0);
@@ -149,13 +160,13 @@ public class UserServiceImpl implements UserService {
     
     @Override
     public void delete(CheckError checkError, String... id) {
-        for (User user : userRepository.findAllByIdIn(id)) {
+        for (User user : userRepository.findAllByIdInAndTypeIs(id, User.Type.Manager.getCode())) {
             if (user.getBuiltIn()) {
                 checkError.putError("删除失败, 含有内置对象");
                 return;
             }
         }
-        userRepository.deleteAllByIdIn(id);
+        userRepository.deleteAllByIdInAndTypeIs(id, User.Type.Manager.getCode());
     }
     
     @Override
@@ -171,7 +182,7 @@ public class UserServiceImpl implements UserService {
         user.setDepartment(department);
         
         // 检测用户名是否已被使用
-        if (!ObjectUtils.isEmpty(userRepository.findByUsername(filter.getUsername()))) {
+        if (!ObjectUtils.isEmpty(userRepository.findByUsernameAndTypeIs(filter.getUsername(), User.Type.Manager.getCode()))) {
             checkError.putError("用户名已被使用, 请更换");
             return;
         }
@@ -198,7 +209,7 @@ public class UserServiceImpl implements UserService {
     
     @Override
     public List<User> findAllById(String... ids) {
-        return userRepository.findAllByIdIn(ids);
+        return userRepository.findAllByIdInAndTypeIs(ids, User.Type.Manager.getCode());
     }
     
     @Override
@@ -230,7 +241,7 @@ public class UserServiceImpl implements UserService {
     public void addRoleToUser(String roleId, String... userIds) {
         Role role = roleService.find(roleId);
         if (!ObjectUtils.isEmpty(role)) {
-            userRepository.findAllByIdIn(userIds)
+            userRepository.findAllByIdInAndTypeIs(userIds, User.Type.Manager.getCode())
                     .forEach(user -> {
                         Collection<Role> roles = user.getRole();
                         if (CollectionUtils.isEmpty(roles)) {
@@ -249,7 +260,7 @@ public class UserServiceImpl implements UserService {
     public void removeRoleFormUser(String roleId, String... userIds) {
         Role role = roleService.find(roleId);
         if (!ObjectUtils.isEmpty(role)) {
-            userRepository.findAllByIdIn(userIds)
+            userRepository.findAllByIdInAndTypeIs(userIds, User.Type.Manager.getCode())
                     .forEach(user -> {
                         Collection<Role> roles = user.getRole();
                         if (CollectionUtils.isEmpty(roles)) {

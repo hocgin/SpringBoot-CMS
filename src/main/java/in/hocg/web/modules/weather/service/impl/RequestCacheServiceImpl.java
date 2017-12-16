@@ -3,7 +3,8 @@ package in.hocg.web.modules.weather.service.impl;
 import com.google.gson.Gson;
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.lang.utils.RequestKit;
-import in.hocg.web.modules.system.domain.Member;
+import in.hocg.web.modules.system.domain.user.Member;
+import in.hocg.web.modules.system.domain.user.User;
 import in.hocg.web.modules.system.service.MemberService;
 import in.hocg.web.modules.weather.body.Forecast;
 import in.hocg.web.modules.weather.body.Location;
@@ -140,7 +141,7 @@ public class RequestCacheServiceImpl implements RequestCacheService {
     private static final int MAX_COUNT = 2000;
     
     private boolean _checkToken(WeatherQueryFilter filter, CheckError checkError) {
-        Member member = memberService.findOneByToken(filter.getToken());
+        User member = memberService.findOneByToken(filter.getToken());
         if (!ObjectUtils.isEmpty(member)) {
             Member.Token token = member.getToken();
             if (member.getAvailable()

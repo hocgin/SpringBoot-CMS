@@ -4,7 +4,7 @@ import in.hocg.web.lang.CheckError;
 import in.hocg.web.lang.utils.tree.Node;
 import in.hocg.web.modules.system.domain.Role;
 import in.hocg.web.modules.system.domain.SysMenu;
-import in.hocg.web.modules.system.domain.User;
+import in.hocg.web.modules.system.domain.user.User;
 import in.hocg.web.modules.system.filter.UserDataTablesInputFilter;
 import in.hocg.web.modules.system.filter.UserFilter;
 import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;

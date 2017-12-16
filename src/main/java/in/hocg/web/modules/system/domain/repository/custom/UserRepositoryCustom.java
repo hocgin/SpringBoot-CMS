@@ -1,6 +1,6 @@
 package in.hocg.web.modules.system.domain.repository.custom;
 
-import in.hocg.web.modules.system.domain.User;
+import in.hocg.web.modules.system.domain.user.User;
 
 import java.util.List;
 
@@ -9,10 +9,25 @@ import java.util.List;
  * email: hocgin@gmail.com
  */
 public interface UserRepositoryCustom {
-    User findByUserNameAvailableTrue(String username);
     
+    /**
+     * Public
+     * @param departmentId
+     */
     void removeDepartmentField(String... departmentId);
     
     
     List<User> findAllByRole(String... rolesId);
+    
+    User findByUserName(String username, User.Type type);
+    
+    
+    
+    
+    
+    User findByEmailForMember(String email);
+    
+    User findOneByTokenForMember(String token);
+    
+    void resumeTokenForMember();
 }

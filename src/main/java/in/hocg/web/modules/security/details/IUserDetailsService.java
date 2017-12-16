@@ -1,7 +1,7 @@
-package in.hocg.web.modules.security.details.user;
+package in.hocg.web.modules.security.details;
 
 import in.hocg.web.lang.utils.RequestKit;
-import in.hocg.web.modules.system.domain.User;
+import in.hocg.web.modules.system.domain.user.User;
 import in.hocg.web.modules.system.domain.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -32,7 +32,7 @@ public class IUserDetailsService implements UserDetailsService{
     
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUserNameAvailableTrue(username);
+        User user = userRepository.findByUserName(username, User.Type.Manager);
         if (ObjectUtils.isEmpty(user)) {
             throw new UsernameNotFoundException(String.format("No user found with username '%s'.", username));
         } else {
@@ -40,7 +40,7 @@ public class IUserDetailsService implements UserDetailsService{
             user.setUserAgent(RequestKit.getUserAgent(request));
             user.setLogInAt(new Date());
             userRepository.save(user);
-            return IUser.toIUser(user);
+            return user.asIUser();
         }
     }
 }

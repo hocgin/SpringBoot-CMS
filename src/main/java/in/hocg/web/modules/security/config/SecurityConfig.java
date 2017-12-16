@@ -1,7 +1,7 @@
 package in.hocg.web.modules.security.config;
 
-import in.hocg.web.modules.security.details.member.IMemberDetailsService;
-import in.hocg.web.modules.security.details.user.IUserDetailsService;
+import in.hocg.web.modules.security.details.IMemberDetailsService;
+import in.hocg.web.modules.security.details.IUserDetailsService;
 import in.hocg.web.modules.security.handler.IAccessDeniedHandler;
 import in.hocg.web.modules.security.handler.IWebUnauthorizedEntryPoint;
 import in.hocg.web.modules.security.handler.reception.FailureHandler;

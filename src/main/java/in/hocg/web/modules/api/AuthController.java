@@ -4,7 +4,7 @@ import in.hocg.web.lang.CheckError;
 import in.hocg.web.modules.base.body.Results;
 import in.hocg.web.modules.security.JwtAuthenticationRequest;
 import in.hocg.web.modules.security.JwtAuthenticationResponse;
-import in.hocg.web.modules.system.domain.User;
+import in.hocg.web.modules.system.domain.user.User;
 import in.hocg.web.modules.system.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

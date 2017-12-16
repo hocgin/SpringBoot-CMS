@@ -2,9 +2,9 @@ package in.hocg.web.modules.system.service.impl;
 
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.modules.security.JwtTokenUtil;
-import in.hocg.web.modules.security.details.user.IUser;
-import in.hocg.web.modules.security.details.user.IUserDetailsService;
-import in.hocg.web.modules.system.domain.User;
+import in.hocg.web.modules.security.details.IUser;
+import in.hocg.web.modules.security.details.IUserDetailsService;
+import in.hocg.web.modules.system.domain.user.User;
 import in.hocg.web.modules.system.domain.repository.RoleRepository;
 import in.hocg.web.modules.system.domain.repository.UserRepository;
 import in.hocg.web.modules.system.service.AuthService;
@@ -47,7 +47,7 @@ public class AuthServiceImpl implements AuthService {
     
     @Override
     public User register(User user, CheckError checkError) {
-        if (userRepository.findByUsername(user.getUsername()) != null) {
+        if (userRepository.findByUsernameAndTypeIs(user.getUsername(), User.Type.Manager.getCode()) != null) {
             checkError.put("error", "用户已存在");
             return null;
         }
@@ -76,7 +76,7 @@ public class AuthServiceImpl implements AuthService {
         String username = tokenUtil.getUsernameFromToken(token);
         IUser user = (IUser) userDetailsService.loadUserByUsername(username);
         if (tokenUtil.canTokenBeRefreshed(token,
-                user.getLastPasswordResetDate())){
+                user.getUser().getLastPasswordResetAt())){
             return tokenUtil.refreshToken(token);
         }
         return oldToken;

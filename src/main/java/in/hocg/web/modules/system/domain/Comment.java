@@ -1,6 +1,7 @@
 package in.hocg.web.modules.system.domain;
 
 import in.hocg.web.modules.base.BaseDomain;
+import in.hocg.web.modules.system.domain.user.User;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -21,7 +22,7 @@ public class Comment extends BaseDomain{
     private String id;
     
     @DBRef
-    private Member member; // 评论人
+    private User member; // 评论人
     
     private String parent; // 父级评论ID
     private String root;   // 顶级评论ID
@@ -62,11 +63,11 @@ public class Comment extends BaseDomain{
     public static class Content {
     
         @DBRef
-        private List<Member> members = new ArrayList(); // 评论内容关联的用户
+        private List<User> members = new ArrayList(); // 评论内容关联的用户
         private String message; // 评论信息
     
-        public Content addMember(Member member) {
-            members.add(member);
+        public Content addMember(User user) {
+            members.add(user);
             return this;
         }
     }

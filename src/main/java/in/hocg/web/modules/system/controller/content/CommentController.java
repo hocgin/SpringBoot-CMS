@@ -3,7 +3,7 @@ package in.hocg.web.modules.system.controller.content;
 import in.hocg.web.modules.base.BaseController;
 import in.hocg.web.modules.base.body.Results;
 import in.hocg.web.modules.system.domain.Comment;
-import in.hocg.web.modules.system.domain.Member;
+import in.hocg.web.modules.system.domain.user.User;
 import in.hocg.web.modules.system.filter.CommentDataTablesInputFilter;
 import in.hocg.web.modules.system.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +48,7 @@ public class CommentController extends BaseController {
         Comment comment = commentService.findOne(id);
         Comment.Content content = comment.getContent();
         if (!content.getMembers().isEmpty()) {
-            Member member = comment.getMember();
+            User member = comment.getMember();
             content.setMessage(String.format("回复 @%s:%s", member.getNickname(), content.getMessage()));
         }
         model.addAttribute("comment", comment);

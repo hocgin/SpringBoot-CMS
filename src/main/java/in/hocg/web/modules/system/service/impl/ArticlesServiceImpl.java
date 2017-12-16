@@ -19,6 +19,8 @@ import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import java.util.List;
+
 /**
  * Created by hocgin on 2017/12/4.
  * email: hocgin@gmail.com
@@ -62,6 +64,11 @@ public class ArticlesServiceImpl
         }
         articles.setImage(image);
         repository.insert(articles);
+    }
+    
+    @Override
+    public List<Articles> findByChannel(String channelID) {
+        return repository.findAllByChannel(channelID);
     }
     
     @Override

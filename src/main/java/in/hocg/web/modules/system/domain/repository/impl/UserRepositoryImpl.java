@@ -1,7 +1,7 @@
 package in.hocg.web.modules.system.domain.repository.impl;
 
 import in.hocg.web.modules.base.BaseMongoCustom;
-import in.hocg.web.modules.system.domain.User;
+import in.hocg.web.modules.system.domain.user.User;
 import in.hocg.web.modules.system.domain.repository.custom.UserRepositoryCustom;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -16,13 +16,6 @@ import java.util.List;
 public class UserRepositoryImpl
         extends BaseMongoCustom<User, String>
         implements UserRepositoryCustom {
-    
-    @Override
-    public User findByUserNameAvailableTrue(String username) {
-        Query query = Query.query(Criteria.where("username").is(username)
-                .and("available").is(true));
-        return findOne(query);
-    }
     
     /**
      * 移除部门
@@ -39,5 +32,34 @@ public class UserRepositoryImpl
     @Override
     public List<User> findAllByRole(String... rolesId) {
         return find(Query.query(Criteria.where("role").in(rolesId)));
+    }
+    
+    @Override
+    public User findByUserName(String username, User.Type type) {
+        Query query = Query.query(Criteria.where("username").is(username)
+                .and("type").is(type.getCode()));
+        return findOne(query);
+    }
+    
+    
+    @Override
+    public User findByEmailForMember(String email) {
+        Query query = Query.query(Criteria.where("email").is(email)
+                .and("type").is(User.Type.Member.getCode()));
+        return findOne(query);
+    }
+    
+    @Override
+    public User findOneByTokenForMember(String token) {
+        Query query = Query.query(Criteria.where("token.token").is(token)
+                .and("type").is(User.Type.Member.getCode()));
+        return findOne(query);
+    }
+    
+    @Override
+    public void resumeTokenForMember() {
+        Query query = Query.query(Criteria.where("token").ne(null)
+                .and("type").is(User.Type.Member.getCode()));
+        updateMulti(query, Update.update("token.$.count", 0));
     }
 }

@@ -3,7 +3,7 @@ package in.hocg.web.modules.system.filter;
 import in.hocg.web.modules.base.filter.BaseFilter;
 import in.hocg.web.modules.base.filter.group.Insert;
 import in.hocg.web.modules.base.filter.group.Update;
-import in.hocg.web.modules.system.domain.User;
+import in.hocg.web.modules.system.domain.user.User;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.validator.constraints.Email;
@@ -12,6 +12,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Date;
+import java.util.Optional;
 
 /**
  * Created by hocgin on 2017/11/9.
@@ -53,7 +54,7 @@ public class UserFilter  extends BaseFilter {
     
     public User get() {
         User user = new User();
-        user.setNickname(nickname);
+        user.setNickname(Optional.ofNullable(nickname).orElse(username));
         user.setAvailable(available);
         user.setEmail(email);
         
@@ -62,7 +63,7 @@ public class UserFilter  extends BaseFilter {
     }
     
     public User update(User user) {
-        user.setNickname(nickname);
+        user.setNickname(Optional.ofNullable(nickname).orElse(username));
         user.setEmail(email);
         user.setAvailable(available);
         

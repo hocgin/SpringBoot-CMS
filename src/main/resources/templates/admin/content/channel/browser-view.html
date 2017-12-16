@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="/web/_layouts/default">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>栏目预览</title>
+    <style>
+        body {
+            font-size: 16px;
+        }
+        .post-title-link {
+            display: inline-block;
+            position: relative;
+            color: #555;
+            border-bottom: none;
+            line-height: 1.2;
+            vertical-align: top;
+
+            text-decoration: none;
+        }
+        .post-title-link:hover {
+            color: #555;
+            background: transparent;
+            text-decoration: none;
+        }
+        .post-title-link:hover::before {
+            visibility: visible;
+            -webkit-transform: scaleX(1);
+            -moz-transform: scaleX(1);
+            -ms-transform: scaleX(1);
+            -o-transform: scaleX(1);
+            transform: scaleX(1);
+        }
+        .post-title-link::before {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: #000;
+            visibility: hidden;
+            -webkit-transform: scaleX(0);
+            -moz-transform: scaleX(0);
+            -ms-transform: scaleX(0);
+            -o-transform: scaleX(0);
+            transform: scaleX(0);
+            transition-duration: 0.2s;
+            transition-timing-function: ease-in-out;
+            transition-delay: 0s;
+        }
+        .post-meta {
+            margin-top: 5px;
+            margin-bottom: 20px;
+            color: #999;
+            font-family: 'Lato', "PingFang SC", "Microsoft YaHei", sans-serif;
+            font-size: 12px;
+        }
+        .post-meta-divider {
+            margin: 0 0.5em;
+        }
+        p {
+            margin: 0 0 25px 0;
+        }
+        .post-button .more-btn {
+            color: #555;
+            font-size: 14px;
+            background: transparent;
+            border-radius: 0;
+            line-height: 2;
+            border: none;
+            border-bottom: 2px solid #666;
+            transition-property: border;
+            text-decoration: none;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body layout:fragment="content">
+<div class="container">
+    <!--/*@thymesVar id="articles" type="java.util.List<in.hocg.web.modules.system.domain.Articles>"*/-->
+    <!--/*@thymesVar id="article" type="in.hocg.web.modules.system.domain.Articles"*/-->
+    <div class="row" th:each="article, i:${articles}">
+        <h2>
+            <a th:href="@{/admin/content/articles/browser/__${article.id}__}"
+               class="post-title-link"
+               th:text="${article.title}"></a>
+        </h2>
+        <div class="post-meta">
+            <span class="post-time">
+                <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+                <span class="post-meta-item-text">发表于</span>
+                <time title="创建于"
+                      th:text="${@iText.format(article.createdAt)}">
+                </time>
+            </span>
+            <span class="post-category">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+                <span class="post-meta-item-text">分类于</span>
+                <span>
+                  <a href="#">
+                    <span th:text="${article.channel.name}"></span>
+                  </a>
+                </span>
+            </span>
+            <span class="post-author">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-text">作者:</span>
+                <span th:text="${article.author}"></span>
+            </span>
+        </div>
+        <div class="post-body">
+            <p th:utext="${article.synopsis}"></p>
+            <div class="post-button">
+                <a class="more-btn" th:href="@{/admin/content/articles/browser/__${article.id}__}">
+                    阅读全文 »
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

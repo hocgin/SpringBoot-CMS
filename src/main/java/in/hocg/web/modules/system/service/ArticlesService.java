@@ -6,6 +6,8 @@ import in.hocg.web.modules.system.filter.ArticlesFilter;
 import org.springframework.data.mongodb.datatables.mapping.DataTablesInput;
 import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
 
+import java.util.List;
+
 /**
  * Created by hocgin on 2017/12/4.
  * email: hocgin@gmail.com
@@ -16,6 +18,8 @@ public interface ArticlesService {
     void insert(ArticlesFilter filter, CheckError checkError);
     
     Articles findOne(String id);
+    
+    List<Articles> findByChannel(String channelID);
     
     void update(ArticlesFilter filter, CheckError checkError);
     
