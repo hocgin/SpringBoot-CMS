@@ -8,7 +8,7 @@ import in.hocg.web.modules.base.filter.lang.IdsFilter;
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.modules.base.body.Results;
 import in.hocg.web.modules.system.domain.user.User;
-import in.hocg.web.modules.system.service.UserService;
+import in.hocg.web.modules.system.service.ManagerService;
 import in.hocg.web.modules.base.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
@@ -24,14 +24,14 @@ import org.springframework.web.bind.annotation.*;
  * email: hocgin@gmail.com
  */
 @Controller
-@RequestMapping("/admin/system/user")
-@PreAuthorize("hasPermission(null, 'sys.user')")
-public class UserController extends BaseController {
-    public final String BASE_TEMPLATES_PATH = "/admin/system/user/%s";
+@RequestMapping("/admin/system/manager")
+@PreAuthorize("hasPermission(null, 'sys.manager')")
+public class ManagerController extends BaseController {
+    public final String BASE_TEMPLATES_PATH = "/admin/system/manager/%s";
     
-    private UserService userService;
+    private ManagerService userService;
     @Autowired
-    public UserController(UserService userService) {
+    public ManagerController(ManagerService userService) {
         this.userService = userService;
     }
     
@@ -73,7 +73,7 @@ public class UserController extends BaseController {
      */
     @RequestMapping("/delete")
     @ResponseBody
-    @PreAuthorize("hasPermission(null, 'sys.user.delete')")
+    @PreAuthorize("hasPermission(null, 'sys.manager.delete')")
     public Results delete(@Validated IdsFilter filter,
                           BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -92,7 +92,7 @@ public class UserController extends BaseController {
      */
     @RequestMapping("/insert")
     @ResponseBody
-    @PreAuthorize("hasPermission(null, 'sys.user.add')")
+    @PreAuthorize("hasPermission(null, 'sys.manager.add')")
     public Results insert(@Validated({Insert.class}) UserFilter filter,
                           BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -105,7 +105,7 @@ public class UserController extends BaseController {
     
     @PostMapping("/available/{id}")
     @ResponseBody
-    @PreAuthorize("hasPermission(null, 'sys.user.edit')")
+    @PreAuthorize("hasPermission(null, 'sys.manager.edit')")
     public Results available(@PathVariable("id") String id, boolean available) {
         userService.updateAvailable(id, available);
         return Results.success()
@@ -123,7 +123,7 @@ public class UserController extends BaseController {
     
     @RequestMapping("/update")
     @ResponseBody
-    @PreAuthorize("hasPermission(null, 'sys.user.edit')")
+    @PreAuthorize("hasPermission(null, 'sys.manager.edit')")
     public Results update(@Validated({Update.class}) UserFilter filter,
                           BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {

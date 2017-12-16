@@ -18,7 +18,7 @@ import in.hocg.web.modules.system.filter.RoleFilter;
 import in.hocg.web.modules.system.filter.UserToRoleFilter;
 import in.hocg.web.modules.system.service.RoleService;
 import in.hocg.web.modules.system.service.SysMenuService;
-import in.hocg.web.modules.system.service.UserService;
+import in.hocg.web.modules.system.service.ManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/admin/system/role")
 @PreAuthorize("hasPermission(null, 'sys.role')")
 public class RoleController extends BaseController {
-    private UserService userService;
+    private ManagerService userService;
     private RoleService roleService;
     private SysMenuService sysMenuService;
     public final String BASE_TEMPLATES_PATH = "/admin/system/role/%s";
@@ -49,7 +49,7 @@ public class RoleController extends BaseController {
     @Autowired
     public RoleController(RoleService roleService,
                           SysMenuService sysMenuService,
-                          UserService userService) {
+                          ManagerService userService) {
         this.roleService = roleService;
         this.userService = userService;
         this.sysMenuService = sysMenuService;

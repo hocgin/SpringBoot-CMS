@@ -44,5 +44,8 @@
 
 ### `in.hocg.web.modules.system.domain.User`
 > 用户
+- 用户(User)
+    - 管理员 (Manager)
+    - 会员 (Member)
 
 

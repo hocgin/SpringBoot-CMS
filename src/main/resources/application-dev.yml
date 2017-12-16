@@ -1,3 +1,4 @@
+
 spring:
   http:
     multipart:
@@ -88,6 +89,16 @@ jwt:
   secret: mySecret
   expiration: 604800
 
+# Actuator
+endpoints:
+  actuator:
+    enabled: true
+  shutdown:
+    enabled: true
+management:
+  context-path: /admin/actuator
+  security:
+    enabled: true
 
 initDatabase: false
 #initDatabase: true

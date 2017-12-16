@@ -1,7 +1,7 @@
 package in.hocg.web.modules.security.config;
 
 import in.hocg.web.modules.security.details.IMemberDetailsService;
-import in.hocg.web.modules.security.details.IUserDetailsService;
+import in.hocg.web.modules.security.details.IManagerDetailsService;
 import in.hocg.web.modules.security.handler.IAccessDeniedHandler;
 import in.hocg.web.modules.security.handler.IWebUnauthorizedEntryPoint;
 import in.hocg.web.modules.security.handler.reception.FailureHandler;
@@ -35,24 +35,24 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableWebSecurity
 public class SecurityConfig {
     
-    private IUserDetailsService iUserDetailsService;
+    private IManagerDetailsService iManagerDetailsService;
     private IMemberDetailsService iMemberDetailsService;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     
     @Autowired
-    public SecurityConfig(IUserDetailsService iUserDetailsService,
+    public SecurityConfig(IManagerDetailsService iManagerDetailsService,
                           IMemberDetailsService iMemberDetailsService,
                           BCryptPasswordEncoder bCryptPasswordEncoder) {
-        this.iUserDetailsService = iUserDetailsService;
+        this.iManagerDetailsService = iManagerDetailsService;
         this.iMemberDetailsService = iMemberDetailsService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
     
-    @Bean("iUserAuthenticationProvider")
-    DaoAuthenticationProvider iUserAuthenticationProvider() {
+    @Bean("iManagerAuthenticationProvider")
+    DaoAuthenticationProvider iManagerAuthenticationProvider() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setPasswordEncoder(bCryptPasswordEncoder);
-        daoAuthenticationProvider.setUserDetailsService(iUserDetailsService);
+        daoAuthenticationProvider.setUserDetailsService(iManagerDetailsService);
         return daoAuthenticationProvider;
     }
     
@@ -83,7 +83,7 @@ public class SecurityConfig {
         @Autowired
         public BackstageSecurityConfig(IAccessDeniedHandler accessDeniedHandler,
                                        SessionRegistry sessionRegistry,
-                                       @Qualifier("iUserAuthenticationProvider") DaoAuthenticationProvider iUserAuthenticationProvider) {
+                                       @Qualifier("iManagerAuthenticationProvider") DaoAuthenticationProvider iUserAuthenticationProvider) {
             this.accessDeniedHandler = accessDeniedHandler;
             this.iUserAuthenticationProvider = iUserAuthenticationProvider;
             this.sessionRegistry = sessionRegistry;
@@ -91,7 +91,6 @@ public class SecurityConfig {
         
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            System.out.println(String.format("http 安全2: %s", http.toString()));
             http.antMatcher("/admin/**")
                     .authenticationProvider(iUserAuthenticationProvider)
                     
@@ -145,7 +144,6 @@ public class SecurityConfig {
         
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            System.out.println(String.format("http 安全3: %s", http.toString()));
             http.antMatcher("/public/**")
                     .csrf().disable();
         }
@@ -171,7 +169,6 @@ public class SecurityConfig {
         
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            System.out.println(String.format("http 安全: %s", http.toString()));
             http.antMatcher("/**")
                     .authenticationProvider(iMemberAuthenticationProvider)
                     .exceptionHandling()

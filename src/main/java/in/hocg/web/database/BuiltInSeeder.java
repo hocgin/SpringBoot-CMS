@@ -148,16 +148,16 @@ public class BuiltInSeeder {
         menu142 = sysMenuRepository.insert(menu142);
         SysMenu menu143 = DocumentFactory.data("修改角色", "000100040003", "sys.role.edit", menu14.getId());
         menu143 = sysMenuRepository.insert(menu143);
-        // 系统管理 - 用户管理
-        SysMenu menu15 = DocumentFactory.menu("用户管理", "00010005",
-                "sys.user", "/admin/system/user/index.html");
+        // 系统管理 - 管理员列表
+        SysMenu menu15 = DocumentFactory.menu("管理员列表", "00010005",
+                "sys.manager", "/admin/system/manager/index.html");
         menu15.setParent(menu1.getId());
         menu15 = sysMenuRepository.insert(menu15);
-        SysMenu menu151 = DocumentFactory.data("添加用户", "000100050001", "sys.user.add", menu15.getId());
+        SysMenu menu151 = DocumentFactory.data("添加管理员", "000100050001", "sys.manager.add", menu15.getId());
         menu151 = sysMenuRepository.insert(menu151);
-        SysMenu menu152 = DocumentFactory.data("删除用户", "000100050002", "sys.user.delete", menu15.getId());
+        SysMenu menu152 = DocumentFactory.data("删除管理员", "000100050002", "sys.manager.delete", menu15.getId());
         menu152 = sysMenuRepository.insert(menu152);
-        SysMenu menu153 = DocumentFactory.data("修改用户", "000100050003", "sys.user.edit", menu15.getId());
+        SysMenu menu153 = DocumentFactory.data("修改管理员", "000100050003", "sys.manager.edit", menu15.getId());
         menu153 = sysMenuRepository.insert(menu153);
         // 系统管理 - 文件管理
         SysMenu menu16 = DocumentFactory.menu("文件管理", "00010006", "sys.file", "/admin/system/file/index.html");
@@ -368,6 +368,8 @@ public class BuiltInSeeder {
         r3.setPermissions(Arrays.asList(role_admin_old));
         r3.setBuiltIn(false);
         r3 = roleRepository.insert(r3);
+        Role r4 = DocumentFactory.role(Role.ROLE_ACTUATOR, "监控人员", d11);
+        r4 = roleRepository.insert(r4);
         
         /**
          * 初始化用户
@@ -379,7 +381,7 @@ public class BuiltInSeeder {
          *      - 普通用户
          */
         User user = DocumentFactory.manager("admin",
-                Collections.singleton(r2),
+                Arrays.asList(r2, r4),
                 "hocgin@gmail.com",
                 bCryptPasswordEncoder.encode("admin"));
         user.setNickname("admin");

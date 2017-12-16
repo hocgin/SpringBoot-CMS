@@ -34,7 +34,7 @@ public class MailTemplateServiceImpl extends BaseService implements MailTemplate
     
     private MailTemplateRepository mailTemplateRepository;
     private IFileService iFileService;
-    private UserService userService;
+    private ManagerService managerService;
     private MemberService memberService;
     private MailService mailService;
     private SysLogService sysLogService;
@@ -43,7 +43,7 @@ public class MailTemplateServiceImpl extends BaseService implements MailTemplate
     
     @Autowired
     public MailTemplateServiceImpl(MailTemplateRepository mailTemplateRepository,
-                                   UserService userService,
+                                   ManagerService managerService,
                                    MailService mailService,
                                    RoleService roleService,
                                    DepartmentService departmentService,
@@ -51,7 +51,7 @@ public class MailTemplateServiceImpl extends BaseService implements MailTemplate
                                    MemberService memberService,
                                    IFileService iFileService) {
         this.mailTemplateRepository = mailTemplateRepository;
-        this.userService = userService;
+        this.managerService = managerService;
         this.mailService = mailService;
         this.departmentService = departmentService;
         this.memberService = memberService;
@@ -197,7 +197,7 @@ public class MailTemplateServiceImpl extends BaseService implements MailTemplate
                     .collect(Collectors.toList());
             
         } else if (filter.isAdmin()) {
-            emailAll = userService.findAllByRoles(roles)
+            emailAll = managerService.findAllByRoles(roles)
                     .stream()
                     .map(User::getEmail)
                     .collect(Collectors.toList());
@@ -252,7 +252,7 @@ public class MailTemplateServiceImpl extends BaseService implements MailTemplate
             memberService.findAllById(filter.getIds())
                     .forEach(member -> emailAll.add(member.getEmail()));
         } else if (filter.isAdmin()) {
-            userService.findAllById(filter.getIds())
+            managerService.findAllById(filter.getIds())
                     .forEach(user -> emailAll.add(user.getEmail()));
         }
         // 处理图片及UID

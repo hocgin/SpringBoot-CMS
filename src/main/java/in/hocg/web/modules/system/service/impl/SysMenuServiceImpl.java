@@ -6,7 +6,7 @@ import in.hocg.web.modules.system.domain.SysMenu;
 import in.hocg.web.modules.system.domain.repository.SysMenuRepository;
 import in.hocg.web.modules.system.service.SysMenuService;
 import in.hocg.web.modules.system.service.RoleService;
-import in.hocg.web.modules.system.service.UserService;
+import in.hocg.web.modules.system.service.ManagerService;
 import in.hocg.web.modules.base.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -21,12 +21,12 @@ import java.util.Objects;
 public class SysMenuServiceImpl extends BaseService implements SysMenuService {
     private SysMenuRepository sysMenuRepository;
     private RoleService roleService;
-    private UserService userService;
+    private ManagerService userService;
     
     @Autowired
     @Lazy
     public SysMenuServiceImpl(SysMenuRepository sysMenuRepository,
-                              UserService userService,
+                              ManagerService userService,
                               RoleService roleService) {
         this.sysMenuRepository = sysMenuRepository;
         this.roleService = roleService;

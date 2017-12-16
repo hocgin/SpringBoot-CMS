@@ -11,19 +11,19 @@ import java.util.List;
 public interface UserRepositoryCustom {
     
     /**
-     * Public
-     * @param departmentId
+     * 公有方法
      */
     void removeDepartmentField(String... departmentId);
-    
     
     List<User> findAllByRole(String... rolesId);
     
     User findByUserName(String username, User.Type type);
     
     
-    
-    
+    /**
+     * 会员用户
+     * @return
+     */
     
     User findByEmailForMember(String email);
     

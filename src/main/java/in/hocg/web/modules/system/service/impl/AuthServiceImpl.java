@@ -3,7 +3,7 @@ package in.hocg.web.modules.system.service.impl;
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.modules.security.JwtTokenUtil;
 import in.hocg.web.modules.security.details.IUser;
-import in.hocg.web.modules.security.details.IUserDetailsService;
+import in.hocg.web.modules.security.details.IManagerDetailsService;
 import in.hocg.web.modules.system.domain.user.User;
 import in.hocg.web.modules.system.domain.repository.RoleRepository;
 import in.hocg.web.modules.system.domain.repository.UserRepository;
@@ -28,14 +28,14 @@ import java.util.Date;
 public class AuthServiceImpl implements AuthService {
     private UserRepository userRepository;
     private RoleRepository roleRepository;
-    private IUserDetailsService userDetailsService;
+    private IManagerDetailsService userDetailsService;
     private AuthenticationManager authenticationManager;
     private JwtTokenUtil tokenUtil;
     
     @Autowired
     public AuthServiceImpl(UserRepository userRepository,
                            AuthenticationManager authenticationManager,
-                           IUserDetailsService userDetailsService,
+                           IManagerDetailsService userDetailsService,
                            RoleRepository roleRepository,
                            JwtTokenUtil tokenUtil) {
         this.userRepository = userRepository;

@@ -46,4 +46,7 @@ public class Role extends BaseDomain {
     // 管理员
     @Transient
     public static final String ROLE_ADMIN = "ROLE_ADMIN";
+    // 监控端点
+    @Transient
+    public static final String ROLE_ACTUATOR = "ROLE_ACTUATOR";
 }

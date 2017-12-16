@@ -4,7 +4,7 @@ import in.hocg.web.lang.utils.SecurityKit;
 import in.hocg.web.lang.utils.tree.Node;
 import in.hocg.web.modules.security.details.IUser;
 import in.hocg.web.modules.system.domain.SysMenu;
-import in.hocg.web.modules.system.service.UserService;
+import in.hocg.web.modules.system.service.ManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -17,10 +17,10 @@ import java.util.List;
  */
 @Service("langService")
 public class LangService {
-    UserService userService;
+    ManagerService userService;
     
     @Autowired
-    public LangService(UserService userService) {
+    public LangService(ManagerService userService) {
         this.userService = userService;
     }
     

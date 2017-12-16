@@ -7,7 +7,7 @@ import in.hocg.web.modules.system.domain.repository.DepartmentRepository;
 import in.hocg.web.modules.system.filter.DepartmentFilter;
 import in.hocg.web.modules.system.service.DepartmentService;
 import in.hocg.web.modules.system.service.RoleService;
-import in.hocg.web.modules.system.service.UserService;
+import in.hocg.web.modules.system.service.ManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -24,13 +24,13 @@ import java.util.List;
 @Service
 public class DepartmentServiceImpl extends BaseService implements DepartmentService {
     private DepartmentRepository departmentRepository;
-    private UserService userService;
+    private ManagerService userService;
     private RoleService roleService;
     
     @Autowired
     @Lazy
     public DepartmentServiceImpl(DepartmentRepository departmentRepository,
-                                 UserService userService,
+                                 ManagerService userService,
                                  RoleService roleService) {
         this.departmentRepository = departmentRepository;
         this.userService = userService;

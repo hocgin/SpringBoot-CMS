@@ -1,7 +1,7 @@
 package in.hocg.web.modules.security.config;
 
 import in.hocg.web.modules.security.JwtAuthenticationTokenFilter;
-import in.hocg.web.modules.security.details.IUserDetailsService;
+import in.hocg.web.modules.security.details.IManagerDetailsService;
 import in.hocg.web.modules.security.handler.IAuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -26,7 +26,7 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
     private IAuthenticationEntryPoint unauthorizedHandler;
     
     @Autowired
-    private IUserDetailsService userDetailsService;
+    private IManagerDetailsService userDetailsService;
     
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;

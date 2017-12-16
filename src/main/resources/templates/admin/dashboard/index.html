@@ -8,26 +8,89 @@
 </head>
 <body>
 <div layout:fragment="content">
-        <!-- 位置提示 -->
-        <section class="content-header">
-            <h1>
-                Dashboard
-                <small>Control panel</small>
-            </h1>
-            <ol class="breadcrumb">
-                <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                <li class="active">Dashboard</li>
-            </ol>
-        </section>
+    <!-- 位置提示 -->
+    <section class="content-header">
+        <h1>
+            控制面板
+            <small>控制面板</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">控制面板</li>
+        </ol>
+    </section>
 
-        <!-- 内容区域 -->
-        <section class="content">
-            <!-- Small boxes (Stat box) -->
-            <div class="row">
+    <!-- 内容区域 -->
+    <section class="content">
+        <!-- Small boxes (Stat box) -->
+        <div class="row">
+            <div class="col-lg-3 col-xs-6">
+                <!-- small box -->
+                <div class="small-box bg-aqua">
+                    <div class="inner">
+                        <h3>空闲硬盘</h3>
+
+                        <p id="disk-space">计算中</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fa fa-space-shuttle"></i>
+                    </div>
+                </div>
             </div>
-            <!-- /.row -->
-        </section>
-        <!-- /内容区域 -->
-    </div>
+            <div class="col-lg-3 col-xs-6">
+                <!-- small box -->
+                <div class="small-box bg-yellow">
+                    <div class="inner">
+                        <h3>邮件系统</h3>
+
+                        <p id="email-info">计算中</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fa fa-envelope"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-xs-6">
+                <!-- small box -->
+                <div class="small-box bg-green">
+                    <div class="inner">
+                        <h3>数据库</h3>
+
+                        <p id="db-info">计算中</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fa fa-database"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-xs-6">
+                <!-- small box -->
+                <div class="small-box bg-red">
+                    <div class="inner">
+                        <h3>会员数量</h3>
+
+                        <p>100</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-bag"></i>
+                    </div>
+                    <!--<a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>-->
+                </div>
+            </div>
+        </div>
+        <!-- /.row -->
+    </section>
+    <!-- /内容区域 -->
+
+    <script>
+        $(function () {
+            $.get('/admin/actuator/health', function (data) {
+                $('#disk-space').text(LangUtils.bytesToSize(data.diskSpace.free) + '/' + LangUtils.bytesToSize(data.diskSpace.total));
+                $('#email-info').text(data.mail.location);
+                $('#db-info').text('mongo (v' + data.mongo.version + ')');
+            });
+        });
+    </script>
+</div>
 </body>
 </html>

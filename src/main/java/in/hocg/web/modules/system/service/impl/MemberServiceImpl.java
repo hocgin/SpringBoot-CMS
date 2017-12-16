@@ -29,6 +29,7 @@ import java.util.*;
 /**
  * Created by hocgin on 2017/10/25.
  * email: hocgin@gmail.com
+ * 会员
  */
 @Service
 public class MemberServiceImpl implements MemberService {

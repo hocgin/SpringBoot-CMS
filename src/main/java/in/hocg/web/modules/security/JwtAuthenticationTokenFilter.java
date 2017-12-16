@@ -1,6 +1,6 @@
 package in.hocg.web.modules.security;
 
-import in.hocg.web.modules.security.details.IUserDetailsService;
+import in.hocg.web.modules.security.details.IManagerDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,7 +23,7 @@ import java.io.IOException;
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     
     @Autowired
-    private IUserDetailsService userDetailsService;
+    private IManagerDetailsService userDetailsService;
     
     @Autowired
     private JwtTokenUtil tokenUtil;

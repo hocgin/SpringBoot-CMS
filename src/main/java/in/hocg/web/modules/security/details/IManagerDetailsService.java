@@ -18,14 +18,14 @@ import java.util.Date;
  * email: hocgin@gmail.com
  * 获取 后台用户 详细信息
  */
-@Service("IUserDetailsService")
-public class IUserDetailsService implements UserDetailsService{
+@Service("IManagerDetailsService")
+public class IManagerDetailsService implements UserDetailsService{
     private UserRepository userRepository;
     private HttpServletRequest request;
     
     @Autowired
-    public IUserDetailsService(UserRepository userRepository,
-                               HttpServletRequest request) {
+    public IManagerDetailsService(UserRepository userRepository,
+                                  HttpServletRequest request) {
         this.userRepository = userRepository;
         this.request = request;
     }
