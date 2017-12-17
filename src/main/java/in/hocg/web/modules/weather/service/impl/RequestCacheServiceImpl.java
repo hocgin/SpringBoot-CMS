@@ -65,10 +65,10 @@ public class RequestCacheServiceImpl implements RequestCacheService {
         Weather result = null;
         // 1. 查看缓存是否有
         // todo 把创建时间改成dt范围内
-        RequestCache todayWeather = requestCacheRepository.findByParamOnToday(param, RequestCache.Type.Current.name());
+        RequestCache requestCache = requestCacheRepository.findByParamOnToday(param, RequestCache.Type.Current.name());
         
         // 2. 若无, 去请求并缓存
-        if (ObjectUtils.isEmpty(todayWeather)) {
+        if (ObjectUtils.isEmpty(requestCache)) {
             ResponseEntity<String> currentWeatherStr = httpService.getCurrentWeather(param);
             Weather currentWeather = gson.fromJson(currentWeatherStr.getBody(), Weather.class);
             if (!ObjectUtils.isEmpty(currentWeather)) {
@@ -78,7 +78,9 @@ public class RequestCacheServiceImpl implements RequestCacheService {
                 checkError.putError("请求服务器异常");
             }
         } else {
-            result = (Weather) todayWeather.getResponse();
+            requestCache.setCount(requestCache.getCount() + 1);
+            requestCacheRepository.save(requestCache);
+            result = (Weather) requestCache.getResponse();
         }
         return result;
     }
@@ -185,9 +187,9 @@ public class RequestCacheServiceImpl implements RequestCacheService {
         String param = getParam(units, lang, lon, lat);
         Forecast result = null;
         // 1. 查看缓存是否有
-        RequestCache todayWeather = requestCacheRepository.findByParamOnToday(param, RequestCache.Type.Forecast.name());
+        RequestCache requestCache = requestCacheRepository.findByParamOnToday(param, RequestCache.Type.Forecast.name());
         // 2. 若无, 去请求并缓存
-        if (ObjectUtils.isEmpty(todayWeather)) {
+        if (ObjectUtils.isEmpty(requestCache)) {
             ResponseEntity<String> forecastWeatherString = httpService.getForecastWeather(param);
             Forecast forecastWeather = gson.fromJson(forecastWeatherString.getBody(), Forecast.class);
             if (!ObjectUtils.isEmpty(forecastWeather)) {
@@ -197,7 +199,9 @@ public class RequestCacheServiceImpl implements RequestCacheService {
                 checkError.putError("请求服务器异常");
             }
         } else {
-            result = (Forecast) todayWeather.getResponse();
+            requestCache.setCount(requestCache.getCount() + 1);
+            requestCacheRepository.save(requestCache);
+            result = (Forecast) requestCache.getResponse();
         }
         return result;
     }

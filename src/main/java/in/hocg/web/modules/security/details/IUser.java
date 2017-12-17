@@ -21,9 +21,11 @@ import java.util.stream.Collectors;
 @Data
 public class IUser implements UserDetails {
     private final Collection<? extends GrantedAuthority> authorities;
+    private final String id;
     private final User user;
     
     public IUser(User user) {
+        this.id = user.getId();
         this.user = user;
         this.authorities = getGrantedAuthority(user.getRole());
     }
@@ -66,12 +68,12 @@ public class IUser implements UserDetails {
     
     @Override
     public String toString() {
-        return user.getId();
+        return id;
     }
     
     @Override
     public int hashCode() {
-        return user.getId().hashCode();
+        return id.hashCode();
     }
     
     @Override

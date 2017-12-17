@@ -5,26 +5,185 @@
       layout:decorator="/web/_layouts/default">
 <head>
     <meta charset="UTF-8">
-    <title>重置密码</title>
+    <title>个人中心</title>
 </head>
-<body layout:fragment="content">
-<div class="reset-password-view">
-    <div class="form-header">
-        <h1 class="title">重置密码</h1>
-    </div>
-    <div class="form-body">
-        <div class="panel email-panel">
-            <div class="content">
-                <div class="input-group">
-                    <input spellcheck="false"
-                           placeholder="请输入邮箱"
-                           maxlength="128"
-                           class="input email-input full-width"></div>
-                <button class="btn submit-btn">发送邮件</button>
-            </div>
+<body>
+<div id="pjax-web-container" layout:fragment="content">
+    <style>
+        body {
+            background-color: #f4f5f5;
+            overflow: hidden;
+        }
+
+        .self-view .self-form {
+            padding: 4rem 3rem;
+            font-size: 1.16rem;
+            background-color: #fff;
+            border-radius: 2px;
+            box-sizing: border-box;
+            margin: 6rem auto;
+            max-width: 100%;
+            width: 100%;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .05);
+        }
+
+        ul.setting-list {
+            padding: 0;
+            margin: 0;
+        }
+
+        ul li.item {
+            list-style: none;
+            align-items: center;
+            padding: 2rem 0;
+            border-top: 1px solid #f1f1f1;
+            display: flex;
+        }
+        ul li.item:last-child {
+            border-bottom: 1px solid #f1f1f1;
+        }
+
+        .self-view .input-boxs {
+            flex: 1;
+            justify-content: flex-end;
+            display: flex;
+        }
+
+        .self-view .input-boxs .input {
+            flex: 1;
+            display: inline-block;
+            border: none;
+            outline: none;
+            color: #909090;
+            font-size: 1.3rem;
+        }
+
+        .self-view .item .title {
+            font-size: 1.2rem;
+            color: #333;
+            width: 10rem;
+        }
+
+        .self-view .setting-list .action-box {
+            margin-left: 1rem;
+        }
+
+        .self-view .setting-list .btn {
+            background-color: transparent;
+            color: #878FD6;
+            font-size: 1.2rem;
+            padding: 0;
+            white-space: nowrap;
+        }
+
+        .self-view .index-link {
+            display: inline-block;
+            margin: 1.5rem auto 0;
+            color: #878FD6;
+            text-decoration: none;
+        }
+    </style>
+    <div class="container">
+        <div class="col-md-offset-2 col-md-8 self-view">
+            <form class="self-form"
+                  method="post">
+                <h1>个人资料</h1>
+                <ul class="setting-list">
+                    <li class="item">
+                        <span class="title">用户名</span>
+                        <div class="input-group input-boxs">
+                            <input spellcheck="false"
+                                   th:value="${user.nickname}"
+                                   disabled="disabled"
+                                   class="input">
+                            <div class="action-box">
+                                <!--<button class="btn edit-btn">-->
+                                    <!--<i class="fa fa-random"></i>-->
+                                    <!--<span>切换</span>-->
+                                <!--</button>-->
+                            </div>
+                        </div>
+                    </li>
+                    <li class="item">
+                        <span class="title">邮箱</span>
+                        <div class="input-group input-boxs">
+                            <input spellcheck="false"
+                                   th:value="${user.email}"
+                                   disabled="disabled"
+                                   class="input">
+                            <div class="action-box">
+                                <!--<button class="btn edit-btn">-->
+                                    <!--<i class="fa fa-random"></i>-->
+                                    <!--<span>切换</span>-->
+                                <!--</button>-->
+                            </div>
+                        </div>
+                    </li>
+                    <li class="item">
+                        <span class="title">Token</span>
+                        <div class="input-group input-boxs">
+                            <input spellcheck="false"
+                                   id="token"
+                                   th:value="${user.token?.token}"
+                                   disabled="disabled"
+                                   class="input">
+                            <div class="action-box">
+                                <button type="button" class="btn toggle-btn">
+                                    <i class="fa fa-random"></i>
+                                    <span>切换</span>
+                                </button>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="item">
+                        <span class="title">已使用次数</span>
+                        <div class="input-group input-boxs">
+                            <input spellcheck="false"
+                                   th:value="${user.token?.count}"
+                                   disabled="disabled"
+                                   class="input">
+                            <div class="action-box">
+                                <!--<button class="btn edit-btn">-->
+                                <!--<i class="fa fa-random"></i>-->
+                                <!--<span>切换</span>-->
+                                <!--</button>-->
+                            </div>
+                        </div>
+                    </li>
+                    <li class="item">
+                        <span class="title">状态</span>
+                        <div class="input-group input-boxs">
+                            <input spellcheck="false"
+                                   th:value="${user.token?.available?'开启':'关闭'}"
+                                   disabled="disabled"
+                                   class="input">
+                            <div class="action-box">
+                                <!--<button class="btn edit-btn">-->
+                                <!--<i class="fa fa-random"></i>-->
+                                <!--<span>切换</span>-->
+                                <!--</button>-->
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+                <a th:href="@{/}" class="index-link">返回首页</a>
+            </form>
         </div>
-        <a href="/" class="index-link">返回首页</a>
     </div>
+    <script>
+        $(function () {
+            $('button.toggle-btn').on('click', function () {
+                $.post('/u/toggle-token', function (rs) {
+                    if (rs.code === 200) {
+                        $('input#token').val(rs.data);
+                        layer.msg(rs.message, {icon: 1});
+                    } else {
+                        layer.msg(rs.message, {icon: 2});
+                    }
+                });
+            });
+        });
+    </script>
 </div>
 </body>
 </html>

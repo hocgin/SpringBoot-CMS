@@ -48,4 +48,6 @@ public interface MemberService {
     void resetPassword(String mail, CheckError checkError);
     
     void setNewPassword(String id, String newPassword, CheckError checkError);
+    
+    String toggleToken(CheckError checkError);
 }

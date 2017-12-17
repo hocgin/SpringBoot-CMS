@@ -3,6 +3,8 @@ package in.hocg.web.modules.system.service.impl;
 import in.hocg.web.global.component.MailService;
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.lang.utils.RequestKit;
+import in.hocg.web.lang.utils.SecurityKit;
+import in.hocg.web.modules.security.details.IUser;
 import in.hocg.web.modules.system.domain.MailVerify;
 import in.hocg.web.modules.system.domain.user.Member;
 import in.hocg.web.modules.system.domain.Role;
@@ -181,6 +183,22 @@ public class MemberServiceImpl implements MemberService {
             mailVerify.setVerified(true);
             
         }
+    }
+    
+    @Override
+    public String toggleToken(CheckError checkError) {
+        IUser iUser = SecurityKit.iUser();
+        User member = iUser.getUser();
+        Member.Token token = member.getToken();
+        if (ObjectUtils.isEmpty(member) || ObjectUtils.isEmpty(token)) {
+            checkError.putError("异常");
+            return null;
+        }
+        token.setToken(Member.Token.genToken(member.getId()));
+        member.setToken(token);
+        member.updatedAt();
+        memberRepository.save(member);
+        return token.getToken();
     }
     
     

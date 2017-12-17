@@ -44,6 +44,13 @@ public class Member extends Universal {
             token.setToken(DigestUtils.md5DigestAsHex(bytes));
             return token;
         }
+    
+        public static String genToken(String memberId) {
+            byte[] bytes = SerializationUtils.serialize(String.format("%s::%d",
+                    memberId,
+                    System.currentTimeMillis()));
+            return DigestUtils.md5DigestAsHex(bytes);
+        }
     }
     
 }
