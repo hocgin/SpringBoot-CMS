@@ -29,7 +29,7 @@ Comment.prototype = {
         var $commentSend = $('<div class="comment-send"></div>');
         $commentSend.append('<div class="user-face">\n' +
             '                <img class="user-head"\n' +
-            '                     src="' + that.avatar + '/72/72">\n' +
+            '                     src="' + that.avatar + '?w=72&h=72">\n' +
             '            </div>\n' +
             '            <div class="textarea-container">\n' +
             '                <i class="ipt-arrow"></i>\n' +
@@ -90,7 +90,7 @@ Comment.prototype = {
         return '<div class="list-item reply-wrap " data-id="' + reply.id + '">\n' +
             '                <div class="user-face">\n' +
             '                    <a href="#" target="_blank">\n' +
-            '                        <img src="' + (reply.member.avatar || '') + '/72/72"\n' +
+            '                        <img src="' + (reply.member.avatar || '') + '?w=72&h=72"\n' +
             '                             data-src="holder.js/72x72" alt="">\n' +
             '                    </a>\n' +
             '                </div>\n' +
@@ -124,7 +124,7 @@ Comment.prototype = {
     getReplyReplyHTML: function (reply) {
         var html = '<div class="reply-item reply-wrap" data-id="' + reply.id + '">\n' +
             '                            <a href="#" target="_blank" class="reply-face">\n' +
-            '                                <img src="' + (reply.member.avatar || '') + '/52/52"\n' +
+            '                                <img src="' + (reply.member.avatar || '') + '?w=52&h=52"\n' +
             '                                     data-src="holder.js/52x52"></a>\n' +
             '                            <div class="reply-con">\n' +
             '                                <div class="user">\n' +

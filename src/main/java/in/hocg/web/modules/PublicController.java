@@ -159,7 +159,7 @@ public class PublicController extends BaseController {
     }
     
     
-    @GetMapping("/images/{fname}/{w}/{h}")
+    @GetMapping("/images/{fname:.*}")
     public ResponseEntity images(@PathVariable String fname,
                                 @PathVariable(value = "w", required = false) Integer width,
                                 @PathVariable(value = "h", required = false) Integer height,
@@ -183,7 +183,7 @@ public class PublicController extends BaseController {
             height = Optional.ofNullable(height).orElse(bufferedImage.getHeight());
             builder.size(width, height);
         }
-        
+        response.setContentType(MediaType.IMAGE_JPEG_VALUE);
         builder.toOutputStream(response.getOutputStream());
         return ResponseEntity.ok().build();
     }

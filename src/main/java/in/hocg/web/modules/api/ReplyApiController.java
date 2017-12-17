@@ -8,6 +8,7 @@ import in.hocg.web.modules.base.body.Results;
 import in.hocg.web.modules.system.domain.Comment;
 import in.hocg.web.modules.system.domain.user.User;
 import in.hocg.web.modules.system.service.CommentService;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.validation.BindingResult;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/api/v1/reply")
+@Api(value = "评论 API", description = "评论 API")
 public class ReplyApiController {
     private CommentService commentService;
     
@@ -41,7 +43,7 @@ public class ReplyApiController {
      * @param bindingResult
      * @return
      */
-    @PostMapping(value = {"", "/"}, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = {""}, produces = MediaType.APPLICATION_JSON_VALUE)
     public Results pager(@Validated({CommentQueryFilter.Reply.class}) CommentQueryFilter filter,
                          BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {

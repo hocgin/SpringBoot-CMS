@@ -31,8 +31,8 @@ public class SwaggerConfig {
     
     private ApiInfo _apiInfo() {
         return new ApiInfoBuilder()
-                .title("天气服务文档")
-                .description("一份天气服务文档")
+                .title("服务文档")
+                .description("服务文档")
                 .termsOfServiceUrl("http://hocg.in/")
                 .contact(new Contact("hocgin", "http://hocg.in", "hocgin@gmail.com"))
                 .version("1.0")

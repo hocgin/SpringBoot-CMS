@@ -225,15 +225,16 @@
                     </ul>
                 </li>
                 <!-- User Account: style can be found in dropdown.less -->
-                <li class="dropdown user user-menu">
+                <li class="dropdown user user-menu" th:with="user=${#authentication.getPrincipal().user}">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        <img th:src="@{/admin-lte/dist/img/user2-160x160.jpg}" class="user-image" alt="User Image">
+                        <!--160x160-->
+                        <img th:src="@{__${user.avatar}__(w=160, h=160)}" class="user-image" alt="User Image">
                         <span class="hidden-xs" sec:authentication="name">用户名</span>
                     </a>
                     <ul class="dropdown-menu">
                         <!-- User image -->
                         <li class="user-header">
-                            <img th:src="@{/admin-lte/dist/img/user2-160x160.jpg}" class="img-circle" alt="User Image">
+                            <img th:src="@{__${user.avatar}__(w=160, h=160)}" class="img-circle" alt="User Image">
 
                             <p>
                                 <!--<span sec:authentication="principal.authorities[0].role.name"></span>-->
