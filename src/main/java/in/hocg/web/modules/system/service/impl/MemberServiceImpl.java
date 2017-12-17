@@ -3,6 +3,7 @@ package in.hocg.web.modules.system.service.impl;
 import in.hocg.web.global.component.MailService;
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.lang.utils.RequestKit;
+import in.hocg.web.modules.system.domain.MailVerify;
 import in.hocg.web.modules.system.domain.user.Member;
 import in.hocg.web.modules.system.domain.Role;
 import in.hocg.web.modules.system.domain.user.User;
@@ -10,6 +11,7 @@ import in.hocg.web.modules.system.domain.Variable;
 import in.hocg.web.modules.system.domain.repository.UserRepository;
 import in.hocg.web.modules.system.filter.MemberDataTablesInputFilter;
 import in.hocg.web.modules.system.filter.MemberFilter;
+import in.hocg.web.modules.system.service.MailVerifyService;
 import in.hocg.web.modules.system.service.MemberService;
 import in.hocg.web.modules.system.service.RoleService;
 import in.hocg.web.modules.system.service.VariableService;
@@ -39,11 +41,13 @@ public class MemberServiceImpl implements MemberService {
     private HttpServletRequest request;
     private MailService mailService;
     private VariableService variableService;
+    private MailVerifyService mailVerifyService;
     
     @Autowired
     MemberServiceImpl(UserRepository memberRepository,
                       RoleService roleService,
                       MailService mailService,
+                      MailVerifyService mailVerifyService,
                       VariableService variableService,
                       BCryptPasswordEncoder bCryptPasswordEncoder,
                       HttpServletRequest request) {
@@ -52,6 +56,7 @@ public class MemberServiceImpl implements MemberService {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.request = request;
         this.mailService = mailService;
+        this.mailVerifyService = mailVerifyService;
         this.variableService = variableService;
     }
     
@@ -63,29 +68,23 @@ public class MemberServiceImpl implements MemberService {
     
     /**
      * 1. 三天内点击有效
+     *
      * @param id
      * @param checkError
      */
     @Override
-    public void verifyEmail(String id, CheckError checkError) {
-        User member = memberRepository.findOne(id);
-        if (ObjectUtils.isEmpty(member)
-                ||ObjectUtils.isEmpty(member.getVerifyEmailAt())) {
-            checkError.putError("异常认证");
+    public void verifyMail(String id, CheckError checkError) {
+        MailVerify mailVerify = mailVerifyService.findOne(id);
+        if (ObjectUtils.isEmpty(mailVerify)) {
+            checkError.putError("校验异常");
             return;
         }
-        if (member.getIsVerifyEmail()) {
-            checkError.putError("已经校验过了");
-            return;
-        }
-        if (new Date().before(member.getVerifyEmailAt())) {
+        if (mailVerifyService.verify(mailVerify, checkError)) {
+            User member = mailVerify.getUser();
             member.setVerifyEmailAt(new Date());
             member.setIsVerifyEmail(true);
             member.setToken(Member.Token.gen(member.getId())); // 分配 Token
             memberRepository.save(member);
-        } else {
-            checkError.putError("认证邮件已过期");
-            return;
         }
     }
     
@@ -139,23 +138,71 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.findByEmailForMember(email);
     }
     
+    @Override
+    public void resetPassword(String mail, CheckError checkError) {
+        User member = memberRepository.findByEmailForMember(mail);
+        if (ObjectUtils.isEmpty(member)) {
+            checkError.putError("邮箱未被注册");
+            return;
+        }
+        if (!member.getIsVerifyEmail()) {
+            checkError.putError("邮箱未验证");
+            return;
+        }
+        MailVerify mailVerify = mailVerifyService.create(member);
+        // 邮箱认证
+        Map<String, Object> params = new HashMap<>();
+        params.put("nickname", member.getNickname());
+        params.put("restPasswordUrl", String.format("%s/set-new-password.html?id=%s",
+                variableService.getValue(Variable.HOST, "http://127.0.0.1:8080"),
+                mailVerify.getId()));
+        try {
+            mailService.sendUseTemplate(member.getEmail(), String.format("重置密码 (%s)",
+                    member.getNickname()),
+                    "reset-password",
+                    params, null, null);
+        } catch (UnsupportedEncodingException | MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    @Override
+    public void setNewPassword(String id, String newPassword, CheckError checkError) {
+        MailVerify mailVerify = mailVerifyService.findOne(id);
+        if (ObjectUtils.isEmpty(mailVerify)) {
+            checkError.putError("校验异常");
+            return;
+        }
+        if (mailVerifyService.verify(mailVerify, checkError)) {
+            User member = mailVerify.getUser();
+            member.setPassword(bCryptPasswordEncoder.encode(newPassword));
+            member.updatedAt();
+            memberRepository.save(member);
+            mailVerify.setVerified(true);
+            
+        }
+    }
+    
     
     @Override
     public DataTablesOutput<User> data(MemberDataTablesInputFilter input) {
         Criteria criteria = new Criteria();
+        List<Criteria> andOperators = new ArrayList<>();
         if (!StringUtils.isEmpty(input.getRegexEmail())) {
-            criteria.andOperator(Criteria.where("email").regex(String.format(".*%s.*", input.getRegexEmail())));
+            andOperators.add(Criteria.where("email").regex(String.format(".*%s.*", input.getRegexEmail())));
         }
         if (!StringUtils.isEmpty(input.getRegexNickname())) {
-            criteria.andOperator(Criteria.where("nickname").regex(String.format(".*%s.*", input.getRegexNickname())));
+            andOperators.add(Criteria.where("nickname").regex(String.format(".*%s.*", input.getRegexNickname())));
         }
         if (!ObjectUtils.isEmpty(input.getIds())) {
-            criteria.andOperator(Criteria.where("_id").in(input.getIds()));
+            andOperators.add(Criteria.where("_id").in(input.getIds()));
         }
         if (!ObjectUtils.isEmpty(input.getNoIds())) {
-            criteria.andOperator(Criteria.where("_id").nin(input.getNoIds()));
+            andOperators.add(Criteria.where("_id").nin(input.getNoIds()));
         }
-        criteria.andOperator(Criteria.where("type").is(User.Type.Member.getCode()));
+        andOperators.add(Criteria.where("type").is(User.Type.Member.getCode()));
+    
+        criteria.andOperator(andOperators.toArray(new Criteria[]{}));
         DataTablesOutput<User> all = memberRepository.findAll(input, criteria);
         all.setDraw(0);
         return all;
@@ -184,7 +231,7 @@ public class MemberServiceImpl implements MemberService {
         member = memberRepository.insert(member);
         // 验证邮箱
         sendVerifyEmail(member);
-    
+        
     }
     
     @Override
@@ -208,7 +255,7 @@ public class MemberServiceImpl implements MemberService {
     
     @Override
     public void update(MemberFilter filter, CheckError checkError) {
-    
+        
         User member = memberRepository.findOne(filter.getId());
         if (ObjectUtils.isEmpty(member)) {
             checkError.putError("会员不存在");
@@ -226,17 +273,18 @@ public class MemberServiceImpl implements MemberService {
     /**
      * 发送校验邮件
      * - _todo 后期迁移出内置邮箱模版
+     *
      * @param member
      */
     private void sendVerifyEmail(User member) {
+        MailVerify mailVerify = mailVerifyService.create(member);
         // 邮箱认证
         Map<String, Object> params = new HashMap<>();
-        params.put("verifyUrl",
-                String.format("%s/public/verify-email.html?id=%s",
-                        variableService.getValue(Variable.HOST, "http://127.0.0.1:8080"),
-                        member.getId()));
+        params.put("verifyUrl", String.format("%s/public/verify-mail.html?id=%s",
+                variableService.getValue(Variable.HOST, "http://127.0.0.1:8080"),
+                mailVerify.getId()));
         try {
-            mailService.sendUseTemplate(member.getEmail(), String.format("邮箱验证 (%s)", member.getNickname()),"verify-email",
+            mailService.sendUseTemplate(member.getEmail(), String.format("邮箱验证 (%s)", member.getNickname()), "verify-email",
                     params, null, null);
         } catch (UnsupportedEncodingException | MessagingException e) {
             e.printStackTrace();

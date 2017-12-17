@@ -47,8 +47,47 @@ var StringKit = {
 };
 
 var Google = {
-    getIconSrc: function (main) {
-        return '/web-lte/img/' + main + '.png';
+    getIconSrc: function (icon) {
+        var src = '';
+        switch (icon) {
+            case '01d':
+            case '01n':
+                src = '01';
+                break;
+            case '02d':
+            case '02n':
+                src = '02';
+                break;
+            case '03d':
+            case '03n':
+                src = '03';
+                break;
+            case '04d':
+            case '04n':
+                src = '04';
+                break;
+            case '09d':
+            case '09n':
+                src = '09';
+                break;
+            case '10d':
+            case '10n':
+                src = '10';
+                break;
+            case '11d':
+            case '11n':
+                src = '11';
+                break;
+            case '13d':
+            case '13n':
+                src = '13';
+                break;
+            case '50d':
+            case '50n':
+                src = '50';
+                break;
+        }
+        return '/web-lte/img/' + src + '.png';
     }
 };
 

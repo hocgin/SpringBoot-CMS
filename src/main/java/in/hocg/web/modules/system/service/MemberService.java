@@ -31,7 +31,7 @@ public interface MemberService {
     
     void update(User member);
     
-    void verifyEmail(String id, CheckError checkError);
+    void verifyMail(String id, CheckError checkError);
     
     void sendVerifyEmail(String id, CheckError checkError);
     
@@ -44,4 +44,8 @@ public interface MemberService {
     List<User> findAllByRoles(String... role);
     
     User findByEmail(String email);
+    
+    void resetPassword(String mail, CheckError checkError);
+    
+    void setNewPassword(String id, String newPassword, CheckError checkError);
 }

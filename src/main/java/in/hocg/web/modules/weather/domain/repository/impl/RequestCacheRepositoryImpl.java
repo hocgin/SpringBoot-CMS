@@ -20,7 +20,8 @@ public class RequestCacheRepositoryImpl
         Query query = Query.query(
                 Criteria.where("param").is(param)
                         .and("type").is(type)
-                        .and("createdAt").gte(DateKit.getTodayStart()).lt(DateKit.getTodayEnd())
+                        .and("createdAt").gte(DateKit.getTodayStart()).lte(DateKit.getTodayEnd())
+//                        .and("createdAt").lte(DateKit.get2HoursStart())
         );
         return findOne(query);
     }

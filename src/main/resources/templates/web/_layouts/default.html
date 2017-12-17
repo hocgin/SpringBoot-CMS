@@ -12,6 +12,10 @@
     <title layout:title-pattern="$DECORATOR_TITLE - $CONTENT_TITLE">爱天气</title>
     <link rel="stylesheet" th:href="@{/admin-lte/bower_components/bootstrap/dist/css/bootstrap.min.css}">
     <link rel="stylesheet" th:href="@{/web-lte/css/comment.css}">
+    <link rel="stylesheet" th:href="@{/web-lte/css/loading.css}">
+    <link rel="stylesheet" th:href="@{/web-lte/css/search.css}">
+    <link rel="stylesheet" th:href="@{/web-lte/css/login-register.css}">
+    <link rel="stylesheet" th:href="@{/web-lte/css/weather-app.css}">
 
     <script type="text/javascript" th:src="@{/dist/jquery-3.2.1.min.js}"></script>
     <script type="text/javascript" th:src="@{/dist/jquery.form.js}"></script>
@@ -19,7 +23,9 @@
     <script type="text/javascript" th:src="@{/dist/layer/layer.js}"></script>
     <script type="text/javascript" th:src="@{/dist/moment/moment.js}"></script>
     <script type="text/javascript" th:src="@{/dist/holder/holder.js}"></script>
-    <script th:src="@{/web-lte/js/comment.widget.js}"></script>
+    <script type="text/javascript" th:src="@{/web-lte/js/comment.widget.js}"></script>
+    <script type="text/javascript" th:src="@{/dist/echarts/echarts.min.js}"></script>
+    <script type="text/javascript" th:src="@{/web-lte/js/kit.js}"></script>
     <script type="text/javascript">
         $(function () {
             // 添加 CSRF 头
@@ -34,9 +40,9 @@
     </script>
 </head>
 <body>
-
-<header th:replace="/web/fragments/top-menu :: top-menu"></header>
+<header th:replace="/web/_fragments/top-menu :: top-menu"></header>
+<div th:replace="/web/_fragments/login-register:: login-register"></div>
 <div layout:fragment="content"></div>
-<div th:replace="/web/fragments/main-footer::main-footer"></div>
+<div th:replace="/web/_fragments/main-footer::main-footer"></div>
 </body>
 </html>

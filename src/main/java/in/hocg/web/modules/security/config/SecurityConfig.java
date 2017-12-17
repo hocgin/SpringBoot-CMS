@@ -198,7 +198,11 @@ public class SecurityConfig {
                     .antMatchers(
                             "/",
                             "/index.html",
-                            "/register"
+                            "/register",
+                            "/send-reset-password",
+                            "/reset-password.html",
+                            "/set-new-password.html",
+                            "/set-new-password"
                     ).permitAll()
                     
                     // 除以上连接, 其余都要认证

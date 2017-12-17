@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="/web/_layouts/default">
+<head>
+    <meta charset="UTF-8">
+    <title>重置密码</title>
+</head>
+<body layout:fragment="content">
+<div class="reset-password-view">
+    <div class="form-header">
+        <h1 class="title">重置密码</h1>
+    </div>
+    <div class="form-body">
+        <div class="panel email-panel">
+            <div class="content">
+                <div class="input-group">
+                    <input spellcheck="false"
+                           placeholder="请输入邮箱"
+                           maxlength="128"
+                           class="input email-input full-width"></div>
+                <button class="btn submit-btn">发送邮件</button>
+            </div>
+        </div>
+        <a href="/" class="index-link">返回首页</a>
+    </div>
+</div>
+</body>
+</html>

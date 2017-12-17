@@ -40,7 +40,7 @@ public class MemberFilter extends BaseFilter {
      */
     @Email(message = "邮箱格式不正确", groups = {Insert.class})
     private String email;    // 邮箱 [必须, 用于重置密码]
-    @Size(max = 16, message = "密码长度不能超过16个字符", groups = {Insert.class})
+    @Size(min = 3, max = 16, message = "密码长度3~16", groups = {Insert.class})
     @NotBlank(message = "密码不能为空", groups = {Insert.class})
     private String password; // 密码
     
@@ -56,6 +56,7 @@ public class MemberFilter extends BaseFilter {
         calendar.setTime(new Date());
         calendar.add(Calendar.DAY_OF_MONTH, 3);
         member.setVerifyEmailAt(calendar.getTime());
+        member.setType(User.Type.Member.getCode());
         member.createdAt();
         return member;
     }

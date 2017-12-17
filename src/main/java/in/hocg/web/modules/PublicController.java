@@ -153,7 +153,8 @@ public class PublicController extends BaseController {
             height = Optional.ofNullable(height).orElse(bufferedImage.getHeight());
             builder.size(width, height);
         }
-        
+    
+        response.setContentType(MediaType.IMAGE_JPEG_VALUE);
         builder.toOutputStream(response.getOutputStream());
         return ResponseEntity.ok().build();
     }
@@ -195,12 +196,13 @@ public class PublicController extends BaseController {
      */
     @GetMapping("/verify-email.html")
     @ResponseBody
-    public Object vVerifyEmail(@RequestParam("id") String id) {
+    public Object vVerifyMail(@RequestParam("id") String id) {
         // 认证成功
         CheckError checkError = CheckError.get();
-        memberService.verifyEmail(id, checkError);
+        memberService.verifyMail(id, checkError);
         return vRedirect("/");
     }
+    
     
     /**
      * 城市搜索

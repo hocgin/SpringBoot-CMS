@@ -50,6 +50,7 @@
     color: rgba(0, 0, 0, 0.58) !important;
 }
 .g-navbar {
+    background-color: #fff;
     box-shadow: 0 2px 2px 0 rgba(0,0,0,0.16), 0 0 0 1px rgba(0,0,0,0.08);
 }
 .g-main {
@@ -299,4 +300,49 @@
 
 .g-footer-links li {
     display: inline-block;
+}
+
+/*重置密码*/
+.reset-password-view .reset-password-form {
+    padding: 4rem 3rem;
+    font-size: 1.16rem;
+    background-color: #fff;
+    border-radius: 2px;
+    box-sizing: border-box;
+    margin: 6rem auto;
+    width: 40rem;
+    max-width: 100%;
+    box-shadow: 0 1px 2px 0 rgba(0,0,0,.05);
+}
+.reset-password-view .title {
+    margin: 0;
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 3rem;
+}
+.reset-password-view .input {
+    margin: 0;
+    width: 100%;
+    padding: .5rem 0;
+    font-size: 1.1em;
+    border: none;
+    border-bottom: 1px solid #eee;
+    outline: none;
+}
+.reset-password-view .submit-btn {
+    padding: .8rem 1.6rem;
+    color: #fff;
+    background-color: #878FD6;
+    border-radius: 2px;
+    border: none;
+    outline: none;
+    margin-top: 3rem;
+    width: 100%;
+}
+
+.reset-password-view .index-link{
+    display: inline-block;
+    margin: 1.5rem auto 0;
+    color: #878FD6;
+    text-decoration: none;
 }

@@ -19,6 +19,18 @@ public class DateKit {
         return date;
     }
     
+    /**
+     * 两小时内
+     *
+     * @return
+     */
+    public static Date get2HoursStart() {
+        Date date = new Date();
+        int hours = date.getHours() - 2;
+        date.setHours(hours < 0 ? 0 : hours);
+        return date;
+    }
+    
     public static Date getTodayEnd() {
         Date date = new Date();
         date.setHours(23);
@@ -27,7 +39,7 @@ public class DateKit {
         return date;
     }
     
-    public static Date format(String dateStr)  {
+    public static Date format(String dateStr) {
         if (StringUtils.isEmpty(dateStr)) {
             return null;
         }

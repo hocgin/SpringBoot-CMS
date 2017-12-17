@@ -5,6 +5,7 @@ import in.hocg.web.lang.utils.RequestKit;
 import in.hocg.web.modules.base.BaseController;
 import in.hocg.web.modules.base.body.Results;
 import in.hocg.web.modules.system.filter.MemberFilter;
+import in.hocg.web.modules.system.filter.SetNewPasswordFilter;
 import in.hocg.web.modules.system.service.MemberService;
 import in.hocg.web.modules.weather.body.Location;
 import in.hocg.web.modules.weather.domain.City;
@@ -17,7 +18,10 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -68,7 +72,7 @@ public class WebController extends BaseController {
     @PostMapping("/register")
     @ResponseBody
     public Results register(@Validated MemberFilter filter,
-                           BindingResult bindingResult) {
+                            BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return Results.check(bindingResult);
         }
@@ -78,9 +82,34 @@ public class WebController extends BaseController {
                 .setMessage("注册成功, 请检查邮箱");
     }
     
+    @RequestMapping("/reset-password.html")
+    public String vResetPassword() {
+        return String.format(BASE_TEMPLATES_PATH, "reset-password");
+    }
     
-    @GetMapping("comment-test")
-    public String comment() {
-        return String.format(BASE_TEMPLATES_PATH, "comment-test");
+    @RequestMapping("/send-reset-password")
+    @ResponseBody
+    public Results sendResetPassword(@RequestParam("mail") String mail) {
+        CheckError checkError = CheckError.get();
+        memberService.resetPassword(mail, checkError);
+        return Results.check(checkError, "发送成功, 请检查邮箱");
+    }
+    
+    @RequestMapping("/set-new-password.html")
+    public String vSetNewPassword(String id, Model model) {
+        // MailVerify ID
+        model.addAttribute("id", id);
+        return String.format(BASE_TEMPLATES_PATH, "set-new-password");
+    }
+    
+    @RequestMapping("/set-new-password")
+    @ResponseBody
+    public Results setNewPassword(@Validated SetNewPasswordFilter filter, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return Results.check(bindingResult);
+        }
+        CheckError checkError = CheckError.get();
+        memberService.setNewPassword(filter.getId(), filter.getNewPassword(), checkError);
+        return Results.check(checkError, "设置成功");
     }
 }
