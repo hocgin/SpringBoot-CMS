@@ -22,6 +22,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -111,6 +113,18 @@ public class RequestCacheServiceImpl implements RequestCacheService {
             }
         }
         return ((Location) requestCache.getResponse());
+    }
+    
+    @Override
+    public List<RequestCache> findWeatherRequestData(Date createdDateBetween, Date createdDateAnd) {
+        String[] inType = {
+                RequestCache.Type.Current.name(),
+                RequestCache.Type.Forecast.name()
+        };
+        if (ObjectUtils.isEmpty(createdDateBetween) || ObjectUtils.isEmpty(createdDateAnd)) {
+            return requestCacheRepository.findAllByTypeIn(inType);
+        }
+        return requestCacheRepository.findAllByTypeInAndCreatedAtBetween(inType, createdDateBetween, createdDateAnd);
     }
     
     @Override
@@ -222,7 +236,7 @@ public class RequestCacheServiceImpl implements RequestCacheService {
                                 Weather weather,
                                 String param) {
         RequestCache requestCache = new RequestCache()
-                .asCurrent(weather);
+                .asRequestCache(weather);
         requestCache.setPoint(point);
         requestCache.setParam(param);
         requestCache.setDt(weather.getDt());
@@ -233,7 +247,7 @@ public class RequestCacheServiceImpl implements RequestCacheService {
                                  Forecast forecast,
                                  String param) {
         RequestCache requestCache = new RequestCache()
-                .asForecast(forecast);
+                .asRequestCache(forecast);
         requestCache.setPoint(point);
         requestCache.setParam(param);
         requestCacheRepository.insert(requestCache);
@@ -242,7 +256,7 @@ public class RequestCacheServiceImpl implements RequestCacheService {
     private void _insertLocation(Location location,
                                  String param) {
         RequestCache requestCache = new RequestCache()
-                .asLocation(location);
+                .asRequestCache(location);
         requestCache.setParam(param);
         requestCacheRepository.insert(requestCache);
     }

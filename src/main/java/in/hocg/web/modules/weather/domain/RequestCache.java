@@ -53,21 +53,21 @@ public class RequestCache extends BaseDomain {
     private Integer count = 1;
     
     
-    public RequestCache asCurrent(Weather weather) {
+    public RequestCache asRequestCache(Weather weather) {
         setType(Type.Current.name());
         setResponse(weather);
         createdAt();
         return this;
     }
     
-    public RequestCache asForecast(Forecast forecast) {
+    public RequestCache asRequestCache(Forecast forecast) {
         setType(Type.Forecast.name());
         setResponse(forecast);
         createdAt();
         return this;
     }
     
-    public RequestCache asLocation(Location location) {
+    public RequestCache asRequestCache(Location location) {
         setType(Type.Location.name());
         setResponse(location);
         createdAt();

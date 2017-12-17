@@ -41,12 +41,12 @@
                 <!-- small box -->
                 <div class="small-box bg-yellow">
                     <div class="inner">
-                        <h3>邮件系统</h3>
+                        <h3>空闲内存</h3>
 
-                        <p id="email-info">计算中</p>
+                        <p id="mem-info">计算中</p>
                     </div>
                     <div class="icon">
-                        <i class="fa fa-envelope"></i>
+                        <i class="fa fa-puzzle-piece"></i>
                     </div>
                 </div>
             </div>
@@ -54,12 +54,12 @@
                 <!-- small box -->
                 <div class="small-box bg-green">
                     <div class="inner">
-                        <h3>数据库</h3>
+                        <h3>系统已运行</h3>
 
-                        <p id="db-info">计算中</p>
+                        <p id="uptime">计算中</p>
                     </div>
                     <div class="icon">
-                        <i class="fa fa-database"></i>
+                        <i class="fa fa-clock-o"></i>
                     </div>
                 </div>
             </div>
@@ -67,14 +67,54 @@
                 <!-- small box -->
                 <div class="small-box bg-red">
                     <div class="inner">
-                        <h3>会员数量</h3>
+                        <h3>活跃连接</h3>
 
-                        <p>100</p>
+                        <p id="httpsession">计算中</p>
                     </div>
                     <div class="icon">
-                        <i class="ion ion-bag"></i>
+                        <i class="fa fa-users"></i>
                     </div>
                     <!--<a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>-->
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">天气请求地点分析</h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                            <button type="button" class="btn btn-box-tool" data-widget="remove">
+                                <i class="fa fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <div class="col-md-10" id="chart-map" style="height: 500px;"></div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>选取时间范围:</label>
+                                <div class="input-group">
+                                    <div class="input-group-addon">
+                                        <i class="fa fa-clock-o"></i>
+                                    </div>
+                                    <input type="text" class="form-control pull-right"
+                                           id="daterangepicker">
+                                </div>
+                                <!-- /.input group -->
+                            </div>
+                            <div class="text-center">
+                                <strong>Top 10 城市</strong>
+                            </div>
+                            <ul class="nav nav-pills nav-stacked" id="rank10">
+                                <li class="text-center">计算中</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="box-footer"></div>
                 </div>
             </div>
         </div>
@@ -84,11 +124,146 @@
 
     <script>
         $(function () {
-            $.get('/admin/actuator/health', function (data) {
-                $('#disk-space').text(LangUtils.bytesToSize(data.diskSpace.free) + '/' + LangUtils.bytesToSize(data.diskSpace.total));
-                $('#email-info').text(data.mail.location);
-                $('#db-info').text('mongo (v' + data.mongo.version + ')');
+            allRequest = {
+                analysisWeatherRequestData: function (start, end) {
+                    $.post('/admin/dashboard/weatherRequestData', {
+                        from: start,
+                        to: end
+                    }, function (rs) {
+                        if (rs.code === 200) {
+                            // 使用刚指定的配置项和数据显示图表。
+                            myChart.setOption({
+                                series: [
+                                    {
+                                        name: '请求地点',
+                                        type: 'scatter',
+                                        coordinateSystem: 'geo',
+                                        data: rs.data,
+                                        symbolSize: 12,
+                                        label: {
+                                            normal: {
+                                                show: false
+                                            },
+                                            emphasis: {
+                                                show: false
+                                            }
+                                        },
+                                        itemStyle: {
+                                            emphasis: {
+                                                borderColor: '#fff',
+                                                borderWidth: 1
+                                            }
+                                        }
+                                    }
+                                ]
+                            });
+                            $('#rank10').empty();
+                            $.each(rs.data, function (i, data) {
+                                if ($('#rank10 li').length < 10) {
+                                    $('#rank10').append('<li><a href="#">' + data.name + ' (' + data.value[0] + ',' + data.value[1] + ')' + '<span class="pull-right text-yellow"> ' + data.value[2] + '</span></a></li>');
+                                }
+                            });
+                        } else {
+                            layer.msg(rs.message);
+                        }
+                    });
+                },
+                actuatorHealth: function () {
+                    $.get('/admin/actuator/health', function (data) {
+                        $('#disk-space').text(LangUtils.bytesToSize(data.diskSpace.free) + '/' + LangUtils.bytesToSize(data.diskSpace.total));
+                    });
+                },
+                actuatorMetrics: function () {
+                    $.get('/admin/actuator/metrics', function (data) {
+                        $('#mem-info').text(LangUtils.kbToSize(data['mem.free']) + '/' + LangUtils.kbToSize(data.mem));
+                        $('#uptime').text(LangUtils.millisecondToDate(data.uptime));
+                        $('#httpsession').text(data['httpsessions.active'] + ' 个');
+                    });
+                },
+                init: function () {
+                    this.analysisWeatherRequestData();
+                    this.actuatorHealth();
+                    this.actuatorMetrics();
+
+                }
+            };
+
+
+            var myChart = echarts.init(document.getElementById('chart-map'));
+            myChart.setOption({
+                backgroundColor: '#404a59',
+                title: {
+                    text: '天气请求地点分析',
+                    subtext: '数据来自于 爱天气',
+                    sublink: '/',
+                    x: 'center',
+                    textStyle: {
+                        color: '#fff'
+                    }
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: function (params) {
+                        return params.name + ' : ' + params.value[2];
+                    }
+                },
+                visualMap: {
+                    min: 0,
+                    max: 200,
+                    calculable: true,
+                    inRange: {
+                        color: ['#50a3ba', '#eac736', '#d94e5d']
+                    },
+                    textStyle: {
+                        color: '#fff'
+                    }
+                },
+                geo: {
+                    map: 'china',
+                    label: {
+                        emphasis: {
+                            show: false
+                        }
+                    },
+                    itemStyle: {
+                        normal: {
+                            areaColor: '#323c48',
+                            borderColor: '#111'
+                        },
+                        emphasis: {
+                            areaColor: '#2a333d'
+                        }
+                    }
+                }
             });
+
+            $('#daterangepicker').daterangepicker({
+                locale: {
+                    format: 'YYYY-MM-DD',
+                    separator: ' 至 ',
+                    applyLabel: "应用",
+                    cancelLabel: "清除",
+                    resetLabel: "重置",
+                    fromLabel: '起始时间',
+                    toLabel: '结束时间',
+                    daysOfWeek: ['日', '一', '二', '三', '四', '五', '六'],
+                    monthNames: ['一月', '二月', '三月', '四月', '五月', '六月',
+                        '七月', '八月', '九月', '十月', '十一月', '十二月'],
+                    firstDay: 1
+                },
+                autoApply: true,
+                opens: 'right',
+                format: 'YYYY-MM-DD'
+            }).on('apply.daterangepicker', function (ev, picker) {
+                allRequest.analysisWeatherRequestData(
+                    picker.startDate.format('YYYY-MM-DD'),
+                    picker.endDate.format('YYYY-MM-DD')
+                );
+            });
+
+
+            allRequest.init();
+            // -- end
         });
     </script>
 </div>

@@ -4,8 +4,12 @@ import in.hocg.web.lang.CheckError;
 import in.hocg.web.modules.weather.body.Forecast;
 import in.hocg.web.modules.weather.body.Location;
 import in.hocg.web.modules.weather.body.Weather;
+import in.hocg.web.modules.weather.domain.RequestCache;
 import in.hocg.web.modules.weather.filter.WeatherParamQueryFilter;
 import in.hocg.web.modules.weather.filter.WeatherQueryFilter;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by hocgin on 2017/11/22.
@@ -22,4 +26,6 @@ public interface RequestCacheService {
     
     Location getLocation(String ip,
                          CheckError checkError);
+    
+    List<RequestCache> findWeatherRequestData(Date createdDateBetween, Date createdDateAnd);
 }
