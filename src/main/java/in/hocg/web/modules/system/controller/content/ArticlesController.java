@@ -27,6 +27,7 @@ import java.io.IOException;
  */
 @Controller
 @RequestMapping("/admin/content/articles")
+@PreAuthorize("hasPermission(null, 'content.articles')")
 public class ArticlesController extends BaseController {
     public final String BASE_TEMPLATES_PATH = "/admin/content/articles/%s";
     

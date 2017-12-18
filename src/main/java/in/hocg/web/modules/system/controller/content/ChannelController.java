@@ -33,6 +33,7 @@ import java.util.*;
  */
 @Controller
 @RequestMapping("/admin/content/channel")
+@PreAuthorize("hasPermission(null, 'content.channel')")
 public class ChannelController extends BaseController {
     public final String BASE_TEMPLATES_PATH = "/admin/content/channel/%s";
     private ChannelService channelService;
