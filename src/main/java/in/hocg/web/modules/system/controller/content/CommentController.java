@@ -8,6 +8,7 @@ import in.hocg.web.modules.system.filter.CommentDataTablesInputFilter;
 import in.hocg.web.modules.system.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Controller
 @RequestMapping("/admin/content/comment")
+@PreAuthorize("hasPermission(null, 'content.comment')")
 public class CommentController extends BaseController {
     public final String BASE_TEMPLATES_PATH = "/admin/content/comment/%s";
     
@@ -64,7 +66,7 @@ public class CommentController extends BaseController {
     
     @PostMapping("/available/{id}")
     @ResponseBody
-//    @PreAuthorize("hasPermission(null, 'content.comment.edit')")
+    @PreAuthorize("hasPermission(null, 'content.comment.edit')")
     public Results available(@PathVariable("id") String id, boolean available) {
         commentService.available(id, available);
         return Results.success()

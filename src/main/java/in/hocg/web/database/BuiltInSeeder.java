@@ -210,12 +210,12 @@ public class BuiltInSeeder {
         menu2.setLocation(2);
         menu2 = sysMenuRepository.insert(menu2);
         // - 日志管理
-        SysMenu menu26 = DocumentFactory.menu("系统日志", "00020006",
+        SysMenu menu21 = DocumentFactory.menu("系统日志", "00020001",
                 "safety.log", "/admin/system/log/index.html");
-        menu26.setParent(menu2.getId());
-        menu26 = sysMenuRepository.insert(menu26);
-        SysMenu menu261 = DocumentFactory.data("清空日志", "000200060001", "safety.log.empty", menu26.getId());
-        menu261 = sysMenuRepository.insert(menu261);
+        menu21.setParent(menu2.getId());
+        menu21 = sysMenuRepository.insert(menu21);
+        SysMenu menu211 = DocumentFactory.data("清空日志", "000200010001", "safety.log.empty", menu21.getId());
+        menu211 = sysMenuRepository.insert(menu211);
         
         
         // 仪表盘
@@ -280,27 +280,27 @@ public class BuiltInSeeder {
         SysMenu menu613 = DocumentFactory.data("修改栏目", "000600010003", "content.channel.edit", menu61.getId());
         menu613 = sysMenuRepository.insert(menu613);
         // - 文章管理
-        SysMenu menu71 = DocumentFactory.menu("文章管理", "00060002",
+        SysMenu menu62 = DocumentFactory.menu("文章管理", "00060002",
                 "content.articles", "/admin/content/articles/index.html");
-        menu71.setParent(menu6.getId());
-        menu71 = sysMenuRepository.insert(menu71);
-        SysMenu menu711 = DocumentFactory.data("添加文章", "000600020001", "content.articles.add", menu71.getId());
-        menu711 = sysMenuRepository.insert(menu711);
-        SysMenu menu712 = DocumentFactory.data("删除文章", "000600020002", "content.articles.delete", menu71.getId());
-        menu712 = sysMenuRepository.insert(menu712);
-        SysMenu menu713 = DocumentFactory.data("修改文章", "000600020003", "content.articles.edit", menu71.getId());
-        menu713 = sysMenuRepository.insert(menu713);
-        // - 文章管理
-        SysMenu menu81 = DocumentFactory.menu("评论管理", "00070002",
-                "content.articles", "/admin/content/comment/index.html");
-        menu81.setParent(menu6.getId());
-        menu81 = sysMenuRepository.insert(menu81);
-//        SysMenu menu811 = DocumentFactory.data("添加文章", "000700020001", "content.comment.add", menu81.getId());
+        menu62.setParent(menu6.getId());
+        menu62 = sysMenuRepository.insert(menu62);
+        SysMenu menu621 = DocumentFactory.data("添加文章", "000600020001", "content.articles.add", menu62.getId());
+        menu621 = sysMenuRepository.insert(menu621);
+        SysMenu menu622 = DocumentFactory.data("删除文章", "000600020002", "content.articles.delete", menu62.getId());
+        menu622 = sysMenuRepository.insert(menu622);
+        SysMenu menu623 = DocumentFactory.data("修改文章", "000600020003", "content.articles.edit", menu62.getId());
+        menu623 = sysMenuRepository.insert(menu623);
+        // - 评论管理
+        SysMenu menu63 = DocumentFactory.menu("评论管理", "00060003",
+                "content.comment", "/admin/content/comment/index.html");
+        menu63.setParent(menu6.getId());
+        menu63 = sysMenuRepository.insert(menu63);
+        SysMenu menu631 = DocumentFactory.data("修改评论", "000600030001", "content.comment.edit", menu63.getId());
+        menu631 = sysMenuRepository.insert(menu631);
+    
+        
+//        SysMenu menu81 = DocumentFactory.data("添加文章", "0008", "ROLE_ACTUATOR", null);
 //        menu811 = sysMenuRepository.insert(menu811);
-//        SysMenu menu812 = DocumentFactory.data("删除文章", "000700020002", "content.comment.delete", menu81.getId());
-//        menu812 = sysMenuRepository.insert(menu812);
-//        SysMenu menu813 = DocumentFactory.data("修改文章", "000700020003", "content.comment.edit", menu81.getId());
-//        menu813 = sysMenuRepository.insert(menu813);
         
         SysMenu[] role_admin = new SysMenu[]{
                 menu1,
@@ -315,7 +315,7 @@ public class BuiltInSeeder {
                 menu19, menu191, menu192, menu193,
                 
                 menu2,
-                menu26, menu261,
+                menu21, menu211,
                 
                 menu3,
                 menu31,
@@ -330,24 +330,17 @@ public class BuiltInSeeder {
                 menu6,
                 // - 栏目管理
                 menu61, menu611, menu612, menu613,
-                // - 文章管理
-                menu71, menu711, menu712, menu713,
-                menu81
+                menu62, menu621, menu622, menu623,
+                menu63, menu631
         };
         
         SysMenu[] role_admin_old = new SysMenu[]{
-                menu1,
-                menu11, menu12, menu13, menu14, menu15, menu16, menu17, menu18, menu19,
-                menu2,
-                menu26,
-                menu3,
-                menu31,
-                menu4,
-                menu41,
-                menu5,
-                menu51,
-                menu6,
-                menu61, menu71, menu81
+                menu1, menu11, menu12, menu13, menu14, menu15, menu16, menu17, menu18, menu19,
+                menu2, menu21,
+                menu3, menu31,
+                menu4, menu41,
+                menu5, menu51,
+                menu6, menu61, menu62, menu63
         };
         
         /**
