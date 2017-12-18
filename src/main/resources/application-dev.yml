@@ -99,6 +99,7 @@ management:
   context-path: /admin/actuator
   security:
     enabled: true
+#    roles: ROLE_ACTUATOR
 
-initDatabase: false
-#initDatabase: true
+#initDatabase: false
+initDatabase: true

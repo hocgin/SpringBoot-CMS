@@ -2,11 +2,11 @@ package in.hocg.web.modules.system.service.impl;
 
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.modules.security.JwtTokenUtil;
-import in.hocg.web.modules.security.details.IUser;
 import in.hocg.web.modules.security.details.IManagerDetailsService;
-import in.hocg.web.modules.system.domain.user.User;
+import in.hocg.web.modules.security.details.IUser;
 import in.hocg.web.modules.system.domain.repository.RoleRepository;
 import in.hocg.web.modules.system.domain.repository.UserRepository;
+import in.hocg.web.modules.system.domain.user.User;
 import in.hocg.web.modules.system.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,7 +15,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -24,7 +23,7 @@ import java.util.Date;
  * Created by hocgin on 2017/10/25.
  * email: hocgin@gmail.com
  */
-@Service
+//@Service
 public class AuthServiceImpl implements AuthService {
     private UserRepository userRepository;
     private RoleRepository roleRepository;
