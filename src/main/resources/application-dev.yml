@@ -75,6 +75,23 @@ spring:
     mode: LEGACYHTML5
   messages:
     basename: messages_zh_CN
+#  rabbitmq:
+#    host: 127.0.0.1
+#    port: 5672
+#    username: root
+#    password: root
+
+# Actuator
+endpoints:
+  actuator:
+    enabled: true
+  shutdown:
+    enabled: true
+management:
+  context-path: /admin/actuator
+  security:
+    enabled: true
+#    roles: ROLE_ACTUATOR
 
 server:
   port: 8080
@@ -89,17 +106,5 @@ jwt:
   secret: mySecret
   expiration: 604800
 
-# Actuator
-endpoints:
-  actuator:
-    enabled: true
-  shutdown:
-    enabled: true
-management:
-  context-path: /admin/actuator
-  security:
-    enabled: true
-#    roles: ROLE_ACTUATOR
-
-#initDatabase: false
-initDatabase: true
+initDatabase: false
+#initDatabase: true

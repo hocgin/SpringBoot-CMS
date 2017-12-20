@@ -17,210 +17,58 @@
 
         <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
-                <!-- Messages: style can be found in dropdown.less-->
-                <li class="dropdown messages-menu" style="display: none">
+                <!-- 私信 -->
+                <li class="dropdown messages-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <i class="fa fa-envelope-o"></i>
                         <span class="label label-success">4</span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li class="header">你有 4 条信息</li>
+                        <li class="header">私信</li>
                         <li>
                             <!-- inner menu: contains the actual data -->
-                            <ul class="menu">
-                                <li><!-- start message -->
-                                    <a href="#">
-                                        <div class="pull-left">
-                                            <img th:src="@{/admin-lte/dist/img/user2-160x160.jpg}" class="img-circle"
-                                                 alt="User Image">
-                                        </div>
-                                        <h4>
-                                            Support Team
-                                            <small><i class="fa fa-clock-o"></i> 5 mins</small>
-                                        </h4>
-                                        <p>Why not buy a new awesome theme?</p>
-                                    </a>
-                                </li>
-                                <!-- end message -->
-                                <li>
-                                    <a href="#">
-                                        <div class="pull-left">
-                                            <img th:src="@{/admin-lte/dist/img/user3-128x128.jpg}" class="img-circle"
-                                                 alt="User Image">
-                                        </div>
-                                        <h4>
-                                            AdminLTE Design Team
-                                            <small><i class="fa fa-clock-o"></i> 2 hours</small>
-                                        </h4>
-                                        <p>Why not buy a new awesome theme?</p>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <div class="pull-left">
-                                            <img th:src="@{/admin-lte/dist/img/user4-128x128.jpg}" class="img-circle"
-                                                 alt="User Image">
-                                        </div>
-                                        <h4>
-                                            Developers
-                                            <small><i class="fa fa-clock-o"></i> Today</small>
-                                        </h4>
-                                        <p>Why not buy a new awesome theme?</p>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <div class="pull-left">
-                                            <img th:src="@{/admin-lte/dist/img/user3-128x128.jpg}" class="img-circle"
-                                                 alt="User Image">
-                                        </div>
-                                        <h4>
-                                            Sales Department
-                                            <small><i class="fa fa-clock-o"></i> Yesterday</small>
-                                        </h4>
-                                        <p>Why not buy a new awesome theme?</p>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <div class="pull-left">
-                                            <img th:src="@{/admin-lte/dist/img/user4-128x128.jpg}" class="img-circle"
-                                                 alt="User Image">
-                                        </div>
-                                        <h4>
-                                            Reviewers
-                                            <small><i class="fa fa-clock-o"></i> 2 days</small>
-                                        </h4>
-                                        <p>Why not buy a new awesome theme?</p>
-                                    </a>
-                                </li>
+                            <ul class="menu" id="notify-message">
+                                <li class="text-center">暂无私信</li>
                             </ul>
                         </li>
-                        <li class="footer"><a href="#">See All Messages</a></li>
+                        <li class="footer"><a href="#">查看更多</a></li>
                     </ul>
                 </li>
-                <!-- Notifications: style can be found in dropdown.less -->
-                <li class="dropdown notifications-menu" style="display: none">
+                <!-- 通知:订阅 -->
+                <li class="dropdown notifications-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <i class="fa fa-bell-o"></i>
                         <span class="label label-warning">10</span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li class="header">You have 10 notifications</li>
+                        <li class="header">通知</li>
                         <li>
                             <!-- inner menu: contains the actual data -->
-                            <ul class="menu">
-                                <li>
-                                    <a href="#">
-                                        <i class="fa fa-users text-aqua"></i> 5 new members joined today
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <i class="fa fa-warning text-yellow"></i> Very long description here that may
-                                        not fit into the
-                                        page and may cause design problems
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <i class="fa fa-users text-red"></i> 5 new members joined
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <i class="fa fa-shopping-cart text-green"></i> 25 sales made
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <i class="fa fa-user text-red"></i> You changed your username
-                                    </a>
+                            <ul class="menu" id="notify-remind">
+                                <li class="text-center">
+                                    暂无通知
                                 </li>
                             </ul>
                         </li>
-                        <li class="footer"><a href="#">View all</a></li>
+                        <li class="footer"><a href="#">查看更多</a></li>
                     </ul>
                 </li>
-                <!-- Tasks: style can be found in dropdown.less -->
-                <li class="dropdown tasks-menu" style="display: none">
+                <!-- 公告 -->
+                <li class="dropdown announce-menu tasks-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <i class="fa fa-flag-o"></i>
-                        <span class="label label-danger">9</span>
+                        <span class="label label-danger">1</span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li class="header">You have 9 tasks</li>
+                        <li class="header">公告</li>
                         <li>
                             <!-- inner menu: contains the actual data -->
-                            <ul class="menu">
-                                <li><!-- Task item -->
-                                    <a href="#">
-                                        <h3>
-                                            Design some buttons
-                                            <small class="pull-right">20%</small>
-                                        </h3>
-                                        <div class="progress xs">
-                                            <div class="progress-bar progress-bar-aqua" style="width: 20%"
-                                                 role="progressbar"
-                                                 aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
-                                                <span class="sr-only">20% Complete</span>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <!-- end task item -->
-                                <li><!-- Task item -->
-                                    <a href="#">
-                                        <h3>
-                                            Create a nice theme
-                                            <small class="pull-right">40%</small>
-                                        </h3>
-                                        <div class="progress xs">
-                                            <div class="progress-bar progress-bar-green" style="width: 40%"
-                                                 role="progressbar"
-                                                 aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
-                                                <span class="sr-only">40% Complete</span>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <!-- end task item -->
-                                <li><!-- Task item -->
-                                    <a href="#">
-                                        <h3>
-                                            Some task I need to do
-                                            <small class="pull-right">60%</small>
-                                        </h3>
-                                        <div class="progress xs">
-                                            <div class="progress-bar progress-bar-red" style="width: 60%"
-                                                 role="progressbar"
-                                                 aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
-                                                <span class="sr-only">60% Complete</span>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <!-- end task item -->
-                                <li><!-- Task item -->
-                                    <a href="#">
-                                        <h3>
-                                            Make beautiful transitions
-                                            <small class="pull-right">80%</small>
-                                        </h3>
-                                        <div class="progress xs">
-                                            <div class="progress-bar progress-bar-yellow" style="width: 80%"
-                                                 role="progressbar"
-                                                 aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
-                                                <span class="sr-only">80% Complete</span>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <!-- end task item -->
+                            <ul class="menu" id="notify-announce">
+                                <li class="text-center">暂无公告</li>
                             </ul>
                         </li>
                         <li class="footer">
-                            <a href="#">View all tasks</a>
+                            <a href="#">查看更多</a>
                         </li>
                     </ul>
                 </li>
@@ -279,4 +127,106 @@
             </ul>
         </div>
     </nav>
+    <script>
+        $(function () {
+            var $notifyMessage = $('#notify-message');
+            var $notifyAnnounce = $('#notify-announce');
+            var $notifyRemind = $('#notify-remind');
+            var notify = {
+                requestMessage: function (page, size) {
+                    var that = this;
+                    $.post('/admin/message/notify', {
+                        type: 'Message',
+                        page: page,
+                        size: size
+                    }, function (rs) {
+                        if (rs.code === 200) {
+                            that.addMessage(rs.data.result)
+                        } else {
+                            layer.msg(rs.message);
+                        }
+                    });
+                },
+                requestAnnounce: function (page, size) {
+                    var that = this;
+                    $.post('/admin/message/notify', {
+                        type: 'Announce',
+                        page: page,
+                        size: size
+                    }, function (rs) {
+                        if (rs.code === 200) {
+                            that.addAnnounce(rs.data.result[0])
+                        } else {
+                            layer.msg(rs.message);
+                        }
+                    });
+                },
+                requestRemind: function (page, size) {
+                    var that = this;
+                    $.post('/admin/message/notify', {
+                        type: 'Remind',
+                        page: page,
+                        size: size
+                    }, function (rs) {
+                        if (rs.code === 200) {
+                            that.addRemind(rs.data.result)
+                        } else {
+                            layer.msg(rs.message);
+                        }
+                    });
+                },
+                addMessage: function (userNotifies) {
+                    if (userNotifies.length > 0) {
+                        $notifyMessage.empty();
+                        $.each(userNotifies, function (i, userNotify) {
+                            $notifyMessage.append('<li>\n' +
+                                '                                    <a href="#">\n' +
+                                '                                        <div class="pull-left">\n' +
+                                '                                            <img src="' + userNotify.sender.avatar + '" class="img-circle"\n' +
+                                '                                                 alt="User Image">\n' +
+                                '                                        </div>\n' +
+                                '                                        <h4>\n' + userNotify.notify.sender.username +
+                                '                                            <small><i class="fa fa-clock-o"></i> ' + userNotify.notify.createdAt + '</small>\n' +
+                                '                                        </h4>\n' +
+                                '                                        <p>' + userNotify.notify.content + '</p>\n' +
+                                '                                    </a>\n' +
+                                '                                </li>');
+                        })
+                    }
+                },
+                addAnnounce: function (userNotify) {
+                    $notifyAnnounce.empty();
+                    console.log(userNotify.notify.content);
+                    $notifyAnnounce.append(userNotify.notify.content);
+                },
+                addRemind: function (userNotifies) {
+                    if (userNotifies.length > 0) {
+                        $notifyRemind.empty();
+                        $.each(userNotifies, function (i, userNotify) {
+                            // 可以进行消息的分类[文章..]
+                            $notifyRemind.append('<li>\n' +
+                                '                <a href="#">\n' +
+                                '                <i class="fa fa-users text-aqua"></i>' + userNotify.notify.content +
+                                '                </a>\n' +
+                                '                </li>');
+                        })
+                    }
+                },
+                init: function () {
+                    var that = this;
+                    $(document).on('show.bs.dropdown', '.messages-menu', function () {
+                        that.requestMessage(1, 5);
+                    });
+                    $(document).on('show.bs.dropdown', '.notifications-menu', function () {
+                        that.requestRemind(1, 5);
+                    });
+                    $(document).on('show.bs.dropdown', '.announce-menu', function () {
+                        that.requestAnnounce(1, 1);
+                    });
+                }
+
+            };
+            notify.init();
+        });
+    </script>
 </header>

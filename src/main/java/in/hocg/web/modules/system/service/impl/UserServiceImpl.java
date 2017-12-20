@@ -1,5 +1,8 @@
 package in.hocg.web.modules.system.service.impl;
 
+import in.hocg.web.modules.base.Base2Service;
+import in.hocg.web.modules.system.domain.repository.UserRepository;
+import in.hocg.web.modules.system.domain.user.User;
 import in.hocg.web.modules.system.service.UserService;
 import org.springframework.stereotype.Service;
 
@@ -8,5 +11,5 @@ import org.springframework.stereotype.Service;
  * email: hocgin@gmail.com
  */
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl extends Base2Service<User, String, UserRepository> implements UserService {
 }

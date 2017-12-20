@@ -24,15 +24,21 @@ public class BuiltInSeeder {
     private SysTaskRepository sysTaskRepository;
     private CommentRepository commentRepository;
     private ArticlesRepository articlesRepository;
+    private UserNotifyRepository userNotifyRepository;
+    private NotifyRepository notifyRepository;
+    private SubscriptionRepository subscriptionRepository;
     
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     
     public BuiltInSeeder(
             VariableRepository variableRepository,
             SysTaskRepository sysTaskRepository,
+            UserNotifyRepository userNotifyRepository,
             RoleRepository roleRepository,
             DepartmentRepository departmentRepository,
             UserRepository userRepository,
+            NotifyRepository notifyRepository,
+            SubscriptionRepository subscriptionRepository,
             CommentRepository commentRepository,
             SysMenuRepository sysMenuRepository,
             ArticlesRepository articlesRepository,
@@ -46,6 +52,9 @@ public class BuiltInSeeder {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.commentRepository = commentRepository;
         this.articlesRepository = articlesRepository;
+        this.userNotifyRepository = userNotifyRepository;
+        this.notifyRepository = notifyRepository;
+        this.subscriptionRepository = subscriptionRepository;
     }
     
     public BuiltInSeeder drop() {
@@ -65,6 +74,10 @@ public class BuiltInSeeder {
         commentRepository.deleteAll();
         // 文章
         articlesRepository.deleteAll();
+    
+        userNotifyRepository.deleteAll();
+        subscriptionRepository.deleteAll();
+        notifyRepository.deleteAll();
         return this;
     }
     
@@ -250,7 +263,7 @@ public class BuiltInSeeder {
         SysMenu menu5 = DocumentFactory.menu("消息系统", "0005", "message", "");
         menu5.setLocation(4);
         menu5 = sysMenuRepository.insert(menu5);
-        // - 城市管理
+        // - 邮件模版管理
         SysMenu menu51 = DocumentFactory.menu("邮件模版管理", "00050001",
                 "message.mail", "/admin/message/mail/index.html");
         menu51.setParent(menu5.getId());
@@ -263,6 +276,16 @@ public class BuiltInSeeder {
         menu513 = sysMenuRepository.insert(menu513);
         SysMenu menu514 = DocumentFactory.data("发送邮件", "000500010003", "message.mail.send", menu51.getId());
         menu514 = sysMenuRepository.insert(menu514);
+        // - 公告管理
+        SysMenu menu52 = DocumentFactory.menu("公告管理", "00050002",
+                "message.announce", "/admin/message/announce/index.html");
+        menu52.setParent(menu5.getId());
+        menu52 = sysMenuRepository.insert(menu52);
+        SysMenu menu521 = DocumentFactory.data("添加公告", "000500020001", "message.announce.add", menu52.getId());
+        menu521 = sysMenuRepository.insert(menu521);
+        SysMenu menu522 = DocumentFactory.data("删除公告", "000500020002", "message.announce.delete", menu52.getId());
+        menu522 = sysMenuRepository.insert(menu522);
+        
         
         // 内容管理
         SysMenu menu6 = DocumentFactory.menu("内容管理", "0006", "content", "");
@@ -297,8 +320,8 @@ public class BuiltInSeeder {
         menu63 = sysMenuRepository.insert(menu63);
         SysMenu menu631 = DocumentFactory.data("修改评论", "000600030001", "content.comment.edit", menu63.getId());
         menu631 = sysMenuRepository.insert(menu631);
-    
-        
+
+
 //        SysMenu menu81 = DocumentFactory.data("添加文章", "0008", "ROLE_ACTUATOR", null);
 //        menu811 = sysMenuRepository.insert(menu811);
         
@@ -325,6 +348,7 @@ public class BuiltInSeeder {
                 
                 menu5,
                 menu51, menu511, menu512, menu513, menu514,
+                menu52, menu521, menu522,
                 
                 
                 menu6,
@@ -339,7 +363,7 @@ public class BuiltInSeeder {
                 menu2, menu21,
                 menu3, menu31,
                 menu4, menu41,
-                menu5, menu51,
+                menu5, menu51, menu52,
                 menu6, menu61, menu62, menu63
         };
         

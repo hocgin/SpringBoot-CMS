@@ -149,6 +149,17 @@ public class SecurityConfig {
         }
     }
     
+    
+    @Order(3)
+    @EnableGlobalMethodSecurity(prePostEnabled = true)
+    public static class WebSocketSecurityConfig extends WebSecurityConfigurerAdapter {
+    
+        @Override
+        protected void configure(HttpSecurity http) throws Exception {
+            http.antMatcher("/ws/**");
+        }
+    }
+    
     /**
      * 前台认证
      */

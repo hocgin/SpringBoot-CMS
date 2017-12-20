@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="/admin/_layouts/default">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div layout:fragment="content">
+    状态:
+    <div class="ws-status" style="height: 5em; overflow-y: scroll">
+
+    </div>
+    传输内容:
+    <div class="ws-box" style="height: 5em; overflow-y: scroll">
+
+    </div>
+    <hr>
+    文本<textarea class="message" style="height: 3em">测试文本</textarea>
+    <button class="send">发送</button>
+    <script>
+
+        var $wsStatus = $('.ws-status');
+        var $wsBox = $('.ws-box');
+        var stompClient = null;
+
+        function setConnected(connected) {
+            $wsStatus[0].innerHTML += '<br/>' + connected;
+        }
+
+        // 开启socket连接
+        function connect() {
+            var socket = new SockJS('/ws/socket');
+            stompClient = Stomp.over(socket);
+            var token = $("meta[name='_csrf']").attr('content');
+            var header = $("meta[name='_csrf_header']").attr('content');
+            var headers = {};
+            headers[header] = token;
+            stompClient.connect(headers, function (frame) {
+                setConnected(true);
+                // stompClient.subscribe('/ws/topic/notice', function (data) {
+                //     $wsBox[0].innerHTML += '<br/>' + data.body;
+                // });
+                stompClient.subscribe('/ws/topic/notify/announce', function (data) {
+                    $wsBox[0].innerHTML += '<br/>' + data.body;
+                });
+            });
+        }
+
+        // 断开socket连接
+        function disconnect() {
+            if (stompClient != null) {
+                stompClient.disconnect();
+            }
+            setConnected(false);
+            console.log("Disconnected");
+        }
+
+        // 向‘/app/change-notice’服务端发送消息
+        $('button.send').on('click', function () {
+            var val = $('.message').val();
+            if (!val) {
+                return;
+            }
+            stompClient.send("/ws/app/change-notice", {}, val);
+        });
+        connect();
+    </script>
+</div>
+</body>
+</html>

@@ -1,4 +1,4 @@
-package in.hocg.web.modules.system.service.impl;
+package in.hocg.web.modules.system.service.kit;
 
 import in.hocg.web.lang.utils.SecurityKit;
 import in.hocg.web.lang.utils.tree.Node;
@@ -17,11 +17,11 @@ import java.util.List;
  */
 @Service("langService")
 public class LangService {
-    ManagerService userService;
+    private ManagerService managerService;
     
     @Autowired
-    public LangService(ManagerService userService) {
-        this.userService = userService;
+    public LangService(ManagerService managerService) {
+        this.managerService = managerService;
     }
     
     public List<Node<SysMenu>> getLeftMenu() {
@@ -29,6 +29,6 @@ public class LangService {
         if (ObjectUtils.isEmpty(iUser)) {
             return null;
         }
-        return userService.getLeftMenu(iUser.getUser().getId());
+        return managerService.getLeftMenu(iUser.getUser().getId());
     }
 }

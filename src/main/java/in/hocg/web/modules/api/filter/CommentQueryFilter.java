@@ -10,13 +10,9 @@ import javax.validation.constraints.NotNull;
  */
 @Data
 public class CommentQueryFilter {
-    public interface Reply {
+    public interface Reply {}
     
-    }
-    
-    public interface ReplyReply {
-    
-    }
+    public interface ReplyReply {}
     
     /**
      * 评论的对象
