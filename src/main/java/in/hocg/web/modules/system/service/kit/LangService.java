@@ -29,6 +29,6 @@ public class LangService {
         if (ObjectUtils.isEmpty(iUser)) {
             return null;
         }
-        return managerService.getLeftMenu(iUser.getUser().getId());
+        return managerService.getLeftMenu(iUser.getId());
     }
 }

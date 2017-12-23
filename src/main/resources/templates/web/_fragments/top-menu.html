@@ -27,7 +27,7 @@
             </ul>
             <ul class="nav navbar-nav navbar-right g-main-color">
                 <th:block th:if="${#authorization.expression('hasRole(''USER'')')}">
-                    <li><a href="javascript:;;" th:href="@{/u}" th:text="${#authentication.getPrincipal().user.nickname}">用户名</a></li>
+                    <li><a href="javascript:;;" th:href="@{/u}" th:text="${#authentication.getPrincipal().username}">用户名</a></li>
                     <li><a href="javascript:;;" th:href="@{/logout}">退出</a></li>
                 </th:block>
                 <th:block th:unless="${#authorization.expression('hasRole(''USER'')')}">

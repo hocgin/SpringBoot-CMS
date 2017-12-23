@@ -33,10 +33,10 @@ public abstract class Universal extends BaseDomain {
     @JsonIgnore
     Date lastPasswordResetAt; // 最后一次修改密码时间
     String avatar; // 头像地址
-    private Integer type; // 用户类型 [管理员 / 会员]
+    Integer type; // 用户类型 [管理员 / 会员]
     
-    private Boolean available = Boolean.FALSE; // 是否可用, 默认保留, 不分配。
-    private Boolean builtIn = Boolean.FALSE; // 是否为内置, 默认False
+    Boolean available = Boolean.FALSE; // 是否可用, 默认保留, 不分配。
+    Boolean builtIn = Boolean.FALSE; // 是否为内置, 默认False
     
     @DBRef
     Collection<Role> role; // 角色

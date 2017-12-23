@@ -181,12 +181,18 @@ public class ManagerServiceImpl implements ManagerService {
             return;
         }
         user.setDepartment(department);
-        
         // 检测用户名是否已被使用
-        if (!ObjectUtils.isEmpty(userRepository.findByUsernameAndTypeIs(filter.getUsername(), User.Type.Manager.getCode()))) {
+        if (!ObjectUtils.isEmpty(userRepository.findOneByUsername(filter.getUsername()))) {
             checkError.putError("用户名已被使用, 请更换");
             return;
         }
+        // 检测邮箱是否已被使用
+        if (!ObjectUtils.isEmpty(userRepository.findOneByEmail(filter.getEmail()))) {
+            checkError.putError("邮箱已被使用, 请更换");
+            return;
+        }
+        
+        
         user.setUsername(filter.getUsername());
         user.setSignUpIP(RequestKit.getClientIP(request));
         // 密码加密

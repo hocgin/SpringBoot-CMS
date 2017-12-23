@@ -22,11 +22,16 @@ import java.util.stream.Collectors;
 public class IUser implements UserDetails {
     private final Collection<? extends GrantedAuthority> authorities;
     private final String id;
-    private final User user;
+    private final String password;
+    private final String username;
+    private final String avatar;
+//    private final User user;
     
     public IUser(User user) {
         this.id = user.getId();
-        this.user = user;
+        this.password = user.getPassword();
+        this.username = user.getUsername();
+        this.avatar = user.getAvatar();
         this.authorities = getGrantedAuthority(user.getRole());
     }
     
@@ -37,12 +42,12 @@ public class IUser implements UserDetails {
     
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return this.password;
     }
     
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return this.username;
     }
     
     @Override

@@ -139,6 +139,15 @@ public class UserNotifyServiceImpl extends Base2Service<UserNotify, String, User
         return repository.pageByUser_IdIsAndNotify_IdInOrderByCreatedAtDesc(filter.getPage(), filter.getSize(), userID, notifyIDs);
     }
     
+    @Override
+    public List<User> getMostRecentContact(String userID) {
+        return repository.getMostRecentContact(userID)
+                .stream()
+                .limit(5)
+                .collect(Collectors.toList());
+    }
+    
+    
     /**
      * 未读
      *

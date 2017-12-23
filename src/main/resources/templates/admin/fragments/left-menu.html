@@ -6,8 +6,7 @@
         <!-- Sidebar user panel -->
         <div class="user-panel">
             <div class="pull-left image">
-                <!--/*@thymesVar id="user" type="in.hocg.web.modules.system.domain.user.User"*/-->
-                <img th:src="@{__${#authentication.getPrincipal().user.avatar}__}" class="img-circle" alt="User Image">
+                <img th:src="@{__${#authentication.getPrincipal().avatar}__}" class="img-circle" alt="User Image">
             </div>
             <div class="pull-left info">
                 <p sec:authentication="name">用户名</p>

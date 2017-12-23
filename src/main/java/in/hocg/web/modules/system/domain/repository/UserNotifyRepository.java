@@ -30,5 +30,4 @@ public interface UserNotifyRepository extends MongoRepository<UserNotify, String
     
     List<UserNotify> findAllByUser_IdIsAndNotify_IdIn(String userID, String... notifyIDs);
     
-    
 }

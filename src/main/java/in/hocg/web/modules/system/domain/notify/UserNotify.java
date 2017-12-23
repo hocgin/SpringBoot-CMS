@@ -16,13 +16,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Data
 @Document(collection = "UserNotifies")
 public class UserNotify extends BaseDomain {
+    public final static String COLLECTION = "UserNotifies";
     @Id
     private String id;
     
     private boolean read;
     @DBRef
     private User user;
-    @DBRef
     private Notify notify;
     
     public UserNotify(User user, Notify notify) {

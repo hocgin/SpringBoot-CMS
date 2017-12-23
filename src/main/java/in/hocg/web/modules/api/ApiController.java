@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
  * email: hocgin@gmail.com
  */
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/weather")
 @Api(value = "天气 API", description = "天气 API")
 public class ApiController extends BaseController {
     private RequestCacheService requestCacheService;

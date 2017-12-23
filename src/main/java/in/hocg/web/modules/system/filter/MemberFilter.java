@@ -48,6 +48,7 @@ public class MemberFilter extends BaseFilter {
     public User get() {
         User member = new User();
         member.setNickname(nickname);
+        member.setUsername(nickname);
         member.setAvailable(available);
         member.setEmail(email);
         

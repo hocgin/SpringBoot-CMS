@@ -188,7 +188,8 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public String toggleToken(CheckError checkError) {
         IUser iUser = SecurityKit.iUser();
-        User member = iUser.getUser();
+        User member = memberRepository.findOne(iUser.getId());
+        
         Member.Token token = member.getToken();
         if (ObjectUtils.isEmpty(member) || ObjectUtils.isEmpty(token)) {
             checkError.putError("异常");
@@ -236,8 +237,12 @@ public class MemberServiceImpl implements MemberService {
         User member = filter.get();
         
         // 检测用户名是否已被使用
-        if (!ObjectUtils.isEmpty(memberRepository.findByEmailForMember(filter.getEmail()))) {
+        if (Objects.nonNull(memberRepository.findOneByEmail(filter.getEmail()))) {
             checkError.putError("邮箱已被注册");
+            return;
+        }
+        if (Objects.nonNull(memberRepository.findOneByUsername(member.getUsername()))) {
+            checkError.putError("用户名已被注册");
             return;
         }
         

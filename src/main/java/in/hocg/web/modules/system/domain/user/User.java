@@ -13,6 +13,8 @@ import java.util.Date;
  * Created by hocgin on 2017/10/24.
  * email: hocgin@gmail.com
  * 用户[管理员 + 会员]
+ *
+ * - 邮箱 和 username 全站唯一
  */
 @EqualsAndHashCode(callSuper = true)
 @Data

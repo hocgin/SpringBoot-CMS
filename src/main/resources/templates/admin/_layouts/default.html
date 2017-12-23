@@ -42,7 +42,8 @@
           th:href="@{/admin-lte/bower_components/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css}">
     <!-- Bootstrap time Picker -->
     <link rel="stylesheet" th:href="@{/admin-lte/plugins/timepicker/bootstrap-timepicker.min.css}">
-    <link rel="stylesheet" th:href="@{/admin-lte/bower_components/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css}">
+    <link rel="stylesheet"
+          th:href="@{/admin-lte/bower_components/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css}">
     <!-- Select2 -->
     <link rel="stylesheet" th:href="@{/admin-lte/bower_components/select2/dist/css/select2.min.css}">
     <!-- iCheck -->
@@ -61,6 +62,7 @@
     <link rel="stylesheet" th:href="@{/dist/webuploader/webuploader.css}">
 
     <link rel="stylesheet" th:href="@{/dist/hint.css}">
+    <link rel="stylesheet" th:href="@{/dist/layui/css/layui.css}">
 
     <link rel="stylesheet" th:href="@{/web-lte/css/upload.css}">
     <link rel="stylesheet" th:href="@{/admin-lte/css/app.css}">
@@ -83,6 +85,8 @@
     <script type="text/javascript" th:src="@{/dist/echarts/china.js}"></script>
     <script th:src="@{/dist/sockjs/sockjs.min.js}"></script>
     <script th:src="@{/dist/stomp/stomp.js}"></script>
+    <script th:src="@{/dist/layer/layer.js}"></script>
+    <script th:src="@{/dist/layui/layui.js}"></script>
     <script th:src="@{/admin-lte/js/app-config.js}"></script>
     <script>
         $(function () {
@@ -132,7 +136,6 @@
 <script th:src="@{/dist/jquery.form.js}"></script>
 <script th:src="@{/dist/webuploader/webuploader.nolog.min.js}"></script>
 <script th:src="@{/dist/jquery.nestable.js}"></script>
-<script th:src="@{/dist/layer/layer.js}"></script>
 <script th:src="@{/dist/jstree/jstree.js}"></script>
 <script th:src="@{/dist/stepy/jquery.stepy.js}"></script>
 <!--treetable-->
@@ -227,6 +230,8 @@
             });
             bindLeftMenusEvent();
         }
+
+
     });
 </script>
 </body>

@@ -66,18 +66,7 @@ public interface NotifyService {
     DataTablesOutput data(DataTablesInput filter);
     
     void deletes(String... IDs);
-//    /**
-//     * 获取订阅配置
-//     *
-//     * @param userID
-//     */
-//    void getSubscriptionConfig(String userID);
-//
-//    /**
-//     * 更新订阅配置
-//     *
-//     * @param userID
-//     */
-//    void updateSubscriptionConfig(String userID);
+    
+    
     
 }

@@ -76,8 +76,8 @@ public class NotifyTest {
     
     @Test
     public void notifyMessage() {
-        User user = userService.findOne("5a375d12ff286867726ec886");
-        User sender = userService.findOne("5a375d12ff286867726ec887");
+        User user = userService.findOne("5a3a02983d79b0e134df43c3");
+        User sender = userService.findOne("5a3a02983d79b0e134df43c4");
         notifyService.createMessage("这是一条私信", sender, user);
     }
 }

@@ -44,8 +44,10 @@
 
 ### `in.hocg.web.modules.system.domain.User`
 > 用户
+> username 与 mail 为全站唯一
 - 用户(User)
     - 管理员 (Manager)
     - 会员 (Member)
 
+1. 是否删除 nickname
 

@@ -150,13 +150,20 @@ public class SecurityConfig {
     }
     
     
-    @Order(3)
+    @Order(4)
     @EnableGlobalMethodSecurity(prePostEnabled = true)
-    public static class WebSocketSecurityConfig extends WebSecurityConfigurerAdapter {
-    
+    public static class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
+        
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            http.antMatcher("/ws/**");
+            http.antMatcher("/api/v1/**")
+                    .headers().frameOptions().disable()
+                    .and()
+                    .authorizeRequests()
+                    // 允许对静态资源无授权访问
+                    .antMatchers(
+                            "/api/v1/weather/**"
+                    ).permitAll();
         }
     }
     

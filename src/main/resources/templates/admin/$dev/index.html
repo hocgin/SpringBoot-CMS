@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="/admin/_layouts/default">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div layout:fragment="content">
+
+    <script>
+        $(function () {
+            layui.use('layim', function (layim) {
+                // layim.config({
+                //     init: {}, member: {
+                //         url: ''
+                //     }
+                // });
+                //先来个客服模式压压精
+                layim.config({
+                });
+            });
+        });
+    </script>
+</div>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="/admin/_layouts/default">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div layout:fragment="content">
+
+
+    <script>
+        var F = {};
+        layui.config({debug: true});
+        layui.use(['layim'], function () {
+            var $ = layui.jquery,
+                layim = layui.layim;
+
+            //
+            var socket = new SockJS('/socket');
+            stompClient = Stomp.over(socket);
+            var token = $("meta[name='_csrf']").attr('content');
+            var header = $("meta[name='_csrf_header']").attr('content');
+            var headers = {};
+            headers[header] = token;
+            stompClient.connect(headers, function (frame) {
+                stompClient.subscribe('/user/queue/messages', function (rs) {
+                    var body = JSON.parse(rs.data.body);
+                    if (body.type === 1) { // 用户发给用户
+                        layim.getMessage(body.data);
+                    }
+                });
+            });
+
+            layim.config({
+                title: '私信',
+                init: {
+                    url: '/api/v1/im/init',
+                    type: 'POST'
+                },
+                members: {
+                    url: '',
+                    data: {}
+                },
+                brief: false,
+                min: false,
+                isgroup: true,
+                voice: false,
+                copyright: true,
+                find: '/api/v1/im/find.html'
+            }).on('ready', function (res) {
+                console.log("IM Ready")
+            }).on('sendMessage', function (data) {
+                stompClient.send("/app/reply", {}, JSON.stringify({
+                    type: 1,
+                    data: data
+                }));
+            });
+
+            F.chat = function (option, callback) {
+                layim.chat(option, callback);
+            }
+        });
+    </script>
+</div>
+</body>
+</html>

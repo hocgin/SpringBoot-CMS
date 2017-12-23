@@ -107,4 +107,9 @@ jwt:
   expiration: 604800
 
 initDatabase: false
+
+tio.socket:
+    ip: 127.0.0.1
+    port: 8888
+    timeout: 0
 #initDatabase: true

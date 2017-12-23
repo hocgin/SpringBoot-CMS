@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/admin/dashboard")
 @PreAuthorize("hasPermission(null, 'dashboard')")
 public class DashboardController extends BaseController {
+    public final String BASE_TEMPLATES_PATH = "/admin/dashboard/%s";
     private RequestCacheService requestCacheService;
     
     @Autowired
@@ -36,7 +37,6 @@ public class DashboardController extends BaseController {
         this.requestCacheService = requestCacheService;
     }
     
-    public final String BASE_TEMPLATES_PATH = "/admin/dashboard/%s";
     
     @GetMapping({"/index.html", "/"})
     public String index() {

@@ -2,13 +2,22 @@
 <html
         xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta name="_csrf" content="${_csrf.token}" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <meta name="_csrf" th:content="${_csrf.token}" />
     <!-- default header name is X-CSRF-TOKEN -->
-    <meta name="_csrf_header" content="${_csrf.headerName}" />
-    <meta th:replace="/admin/fragments/meta::meta"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
     <title>登陆</title>
-    <css th:replace="/admin/fragments/all-css :: all-css"></css>
-    <js th:replace="/admin/fragments/head-js :: head-js"></js>
+    <!-- Bootstrap 3.3.7 -->
+    <link rel="stylesheet" th:href="@{/admin-lte/bower_components/bootstrap/dist/css/bootstrap.min.css}">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" th:href="@{/admin-lte/bower_components/font-awesome/css/font-awesome.min.css}">
+    <!-- Ionicons -->
+    <link rel="stylesheet" th:href="@{/admin-lte/bower_components/Ionicons/css/ionicons.min.css}">
+    <!-- Theme style -->
+    <link rel="stylesheet" th:href="@{/admin-lte/dist/css/AdminLTE.min.css}">
 </head>
 <body class="hold-transition login-page">
 <div class="login-box">
@@ -54,7 +63,6 @@
     </div>
     <!-- /.login-box-body -->
 </div>
-<js th:replace="/admin/fragments/footer-js::footer-js"></js>
 <script th:inline="javascript">
     var message = /*[[${session?.SPRING_SECURITY_LAST_EXCEPTION?.message}]]*/ '';
     if (!!message) {

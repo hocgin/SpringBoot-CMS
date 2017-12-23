@@ -14,6 +14,7 @@ import in.hocg.web.modules.system.filter.CommentDataTablesInputFilter;
 import in.hocg.web.modules.system.service.ArticlesService;
 import in.hocg.web.modules.system.service.CommentService;
 import in.hocg.web.modules.system.service.MemberService;
+import in.hocg.web.modules.system.service.UserService;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -34,12 +35,15 @@ public class CommentServiceImpl
         implements CommentService {
     private ArticlesService articlesService;
     private MemberService memberService;
+    private UserService userService;
     
     @Autowired
     public CommentServiceImpl(ArticlesService articlesService,
-                              MemberService memberService) {
+                              MemberService memberService,
+                              UserService userService) {
         this.articlesService = articlesService;
         this.memberService = memberService;
+        this.userService = userService;
     }
     
     @Override
@@ -58,7 +62,7 @@ public class CommentServiceImpl
     
     @Override
     public Comment insert(CommentAddFilter filter, CheckError checkError) {
-        User member = SecurityKit.iUser().getUser();
+        User member = userService.findOne(SecurityKit.iUser().getId());
         if (ObjectUtils.isEmpty(member)) {
             checkError.putError("请先登陆");
             return null;

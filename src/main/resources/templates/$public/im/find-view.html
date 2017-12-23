@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head xmlns:th="http://www.thymeleaf.org">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <!-- default header name is X-CSRF-TOKEN -->
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>发现</title>
+    <link rel="stylesheet" th:href="@{/admin-lte/bower_components/bootstrap/dist/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/admin-lte/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/admin-lte/bower_components/font-awesome/css/font-awesome.min.css}">
+    <link rel="stylesheet" th:href="@{/dist/layui/css/layui.css}">
+    <!-- jQuery 3 -->
+    <script th:src="@{/admin-lte/bower_components/jquery/dist/jquery.min.js}"></script>
+    <!-- Bootstrap 3.3.7 -->
+    <script th:src="@{/admin-lte/bower_components/bootstrap/dist/js/bootstrap.min.js}"></script>
+    <script th:src="@{/admin-lte/bower_components/datatables.net/js/jquery.dataTables.js}"></script>
+    <script th:src="@{/admin-lte/bower_components/datatables.net-bs/js/dataTables.bootstrap.js}"></script>
+    <script th:src="@{/dist/layer/layer.js}"></script>
+    <script th:src="@{/dist/layui/layui.js}"></script>
+    <script th:src="@{/admin-lte/js/app-config.js}"></script>
+    <script>
+        $(function () {
+            // 添加 CSRF 头
+            var token = $("meta[name='_csrf']").attr("content");
+            var header = $("meta[name='_csrf_header']").attr("content");
+            $.ajaxSetup({
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader(header, token);
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+<div style="margin: 15px;">
+    <div class="container">
+        <div class="row">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <div class="form-group">
+                        <label for="nicknameOrUsernameOrIDorEmail" class="col-sm-2 control-label">查找</label>
+                        <div class="col-sm-6">
+                            <input type="text" name="nicknameOrUsernameOrIDorEmail" class="form-control"
+                                   id="nicknameOrUsernameOrIDorEmail" placeholder="输入关键词">
+                        </div>
+                        <div class="col-sm-2">
+                            <button class="btn btn-info" type="button" id="search">搜索</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-10 col-sm-offset-1">
+                    <table id="js-users-table" class="table table-bordered table-hover">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>昵称(nickname)</th>
+                            <th>邮箱</th>
+                            <th>类型</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    layui.use('layim', function (layim) {
+        var layim = layui.layim
+            , layer = layui.layer
+            , layero = layui.layer.layero
+            , laytpl = layui.laytpl
+            , $ = layui.jquery
+            , laypage = layui.laypage;
+
+        var userTable = {
+            $obj: $('#js-users-table'),
+            dataTableObject: {},
+            getSelectedRow: function () {
+                return this.dataTableObject.rows('.selected').data();
+            },
+            init: function () {
+                // 初始化
+                this.dataTableObject = this.$obj.DataTable({
+                    dom: '<"toolbar">frtip',
+                    ordering: true,
+                    searching: false,
+                    select: true,
+                    autoWidth: true,
+                    processing: false,
+                    serverSide: true,
+                    deferRender: true,
+                    language: DATA_TABLE_CONFIG.language,
+                    preDrawCallback: DATA_TABLE_CONFIG.preDrawCallback,
+                    ajax: {
+                        url: '/admin/system/user/find',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: function (params) {
+                            params.nicknameOrUsernameOrIDorEmail = $('input[name="nicknameOrUsernameOrIDorEmail"]').val() || null;
+                            // 携带参数
+                            return JSON.stringify(params);
+                        }
+                    },
+                    columns: [
+                        {
+                            data: 'id', bSortable: true
+                        },
+                        {
+                            data: 'nickname', bSortable: true,
+                            defaultContent: '<span class="text-danger">暂无</span>'
+                        },
+                        {
+                            data: 'username', bSortable: true,
+                            defaultContent: '<span class="text-danger">暂无</span>'
+                        },
+                        {data: 'email', bSortable: true},
+                        {data: 'type', bSortable: true},
+                        {data: 'available', bSortable: true}
+                    ],
+                    order: [[0, "desc"]],
+                    columnDefs: [
+                        {
+                            render: function (data, type, row) { // 类型
+                                return ['后台人员', '会员'][data];
+                            },
+                            targets: 4
+                        },
+                        {
+                            render: function (data, type, row) { // 状态
+                                if (!!data) {
+                                    return '<i class="fa fa-circle text-success"></i>';
+                                } else {
+                                    return '<i class="fa fa-circle text-danger"></i>';
+                                }
+                            },
+                            targets: 5
+                        },
+                        {
+                            render: function (data, type, row) { // 操作
+                                return '<button data-id="' + row.id + '" data-name="' + row.username + '" data-avatar="' + row.avatar + '" class="btn btn-default chat-call">私聊</button>';
+                            },
+                            targets: 6
+                        }
+                    ]
+                });
+                // 绑定多选
+                this.$obj.children('tbody').on('click', 'tr', function () {
+                    $(this).toggleClass('selected');
+                });
+
+                var that = this;
+                // ==========================自定义=============================
+                // 搜索
+                $('#search').on('click', function () {
+                    that.reloadPage();
+                });
+                var IParent = parent;
+                var IWindow = window;
+                $(document).on('click', 'button.chat-call', function (e) {
+                    var $this = $(this);
+                    var iframeWin = parent.window;
+                    iframeWin.F.chat({
+                        name: $this.data('name')
+                        , type: 'friend'
+                        , avatar: $this.data('avatar')
+                        , id: $this.data('id')
+                    }, function () {
+                        var index = IParent.layer.getFrameIndex(IWindow.name);
+                        IParent.layer.close(index);
+                    });
+                });
+            },
+            reloadPage: function () {
+                this.dataTableObject.ajax.reload(null, false);
+            },
+            reloadAll: function () {
+                this.dataTableObject.ajax.reload();
+            }
+        };
+        userTable.init();
+    });
+</script>
+</body>
+</html>

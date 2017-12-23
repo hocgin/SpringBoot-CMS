@@ -438,6 +438,7 @@ public class BuiltInSeeder {
                 Collections.singleton(r1),
                 "578797748@qq.com",
                 bCryptPasswordEncoder.encode("123"));
+        hocgin.setUsername("hocgin");
         userRepository.insert(hocgin);
     }
 }

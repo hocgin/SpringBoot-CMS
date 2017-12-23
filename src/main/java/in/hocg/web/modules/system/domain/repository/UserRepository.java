@@ -18,7 +18,11 @@ public interface UserRepository
         UserRepositoryCustom,
         DataTablesRepository<User, String> {
     
-    User findByUsernameAndTypeIs(String username, Integer type);
+//    User findByUsernameAndTypeIs(String username, Integer type);
+    
+    User findOneByUsername(String username);
+    User findOneByEmail(String mail);
+    
     void deleteAllByIdInAndTypeIs(String[] id, Integer type);
     
     List<User> findAllByIdInAndTypeIs(String[] ids, Integer type);

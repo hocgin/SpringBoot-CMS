@@ -55,9 +55,16 @@ public interface UserNotifyService {
      */
     List<UserNotify> createUserNotify(User user, List<Notify> notifies);
     
+    
+    
+    
+    
     @Deprecated
     List<UserNotify> getUserNotify(String userID);
     
     Page<UserNotify> pager(UserNotifyQueryFilter filter, String userID, CheckError checkError);
+    
+    
+    List<User> getMostRecentContact(String userID);
     
 }

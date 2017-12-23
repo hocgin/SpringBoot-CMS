@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * email: hocgin@gmail.com
  */
 @Controller
-@RequestMapping("/admin/message/remind")
+@RequestMapping("/admin/self/remind")
 public class RemindController {
     public final String BASE_TEMPLATES_PATH = "/admin/self/remind/%s";
     
