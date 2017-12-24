@@ -1,10 +1,10 @@
 package in.hocg.web.modules.im.processor;
 
 import com.google.gson.Gson;
-import in.hocg.web.modules.im.packets.transmit.UserToUserTransmit;
-import in.hocg.web.modules.im.packets.accept.common.Mine;
-import in.hocg.web.modules.im.packets.accept.common.To;
-import in.hocg.web.modules.im.packets.accept.UserToUserAccept;
+import in.hocg.web.modules.im.packets.transmit.im.UserToUserTransmit;
+import in.hocg.web.modules.im.packets.accept.im.common.Mine;
+import in.hocg.web.modules.im.packets.accept.im.common.To;
+import in.hocg.web.modules.im.packets.accept.im.UserToUserAccept;
 import in.hocg.web.modules.system.domain.user.User;
 import in.hocg.web.modules.system.service.UserService;
 import in.hocg.web.modules.system.service.notify.NotifyService;

@@ -1,6 +1,7 @@
 package in.hocg.web.modules.system.domain.repository.impl;
 
 import in.hocg.web.modules.base.BaseMongoCustom;
+import in.hocg.web.modules.base.body.Page;
 import in.hocg.web.modules.system.domain.user.User;
 import in.hocg.web.modules.system.domain.repository.custom.UserRepositoryCustom;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -61,5 +62,10 @@ public class UserRepositoryImpl
         Query query = Query.query(Criteria.where("token").ne(null)
                 .and("type").is(User.Type.Member.getCode()));
         updateMulti(query, Update.update("token.$.count", 0));
+    }
+    
+    @Override
+    public Page<User> pager(Query query, int page, int size) {
+        return pageX(query, (page - 1) < 0 ? 0 : (page - 1), size);
     }
 }

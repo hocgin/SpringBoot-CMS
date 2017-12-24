@@ -7,188 +7,223 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>发现</title>
-    <link rel="stylesheet" th:href="@{/admin-lte/bower_components/bootstrap/dist/css/bootstrap.min.css}">
-    <link rel="stylesheet" th:href="@{/admin-lte/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css}">
-    <link rel="stylesheet" th:href="@{/admin-lte/bower_components/font-awesome/css/font-awesome.min.css}">
     <link rel="stylesheet" th:href="@{/dist/layui/css/layui.css}">
-    <!-- jQuery 3 -->
-    <script th:src="@{/admin-lte/bower_components/jquery/dist/jquery.min.js}"></script>
-    <!-- Bootstrap 3.3.7 -->
-    <script th:src="@{/admin-lte/bower_components/bootstrap/dist/js/bootstrap.min.js}"></script>
-    <script th:src="@{/admin-lte/bower_components/datatables.net/js/jquery.dataTables.js}"></script>
-    <script th:src="@{/admin-lte/bower_components/datatables.net-bs/js/dataTables.bootstrap.js}"></script>
-    <script th:src="@{/dist/layer/layer.js}"></script>
+    <style type="text/css">
+        .layui-find-list div img {
+            position: absolute;
+            left: 15px;
+            top: 8px;
+            width: 36px;
+            height: 36px;
+            border-radius: 100%;
+        }
+
+        .layui-find-list div {
+            position: relative;
+            padding: 5px 15px 5px 60px;
+            font-size: 0;
+            cursor: pointer;
+        }
+
+        .layui-find-list div * {
+            display: inline-block;
+            vertical-align: top;
+            font-size: 14px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .layui-find-list div span {
+            margin-top: 4px;
+            max-width: 155px;
+        }
+
+        .layui-find-list div p {
+            display: block;
+            line-height: 18px;
+            font-size: 12px;
+            color: #999;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .back {
+            cursor: pointer;
+        }
+
+        .lay_page {
+            position: fixed;
+            bottom: 0;
+            margin-left: -15px;
+            margin-bottom: 20px;
+            background: #fff;
+            width: 100%;
+        }
+
+        .layui-laypage {
+            width: 105px;
+            margin: 0 auto;
+            display: block
+        }
+    </style>
     <script th:src="@{/dist/layui/layui.js}"></script>
-    <script th:src="@{/admin-lte/js/app-config.js}"></script>
     <script>
-        $(function () {
-            // 添加 CSRF 头
-            var token = $("meta[name='_csrf']").attr("content");
-            var header = $("meta[name='_csrf_header']").attr("content");
-            $.ajaxSetup({
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader(header, token);
+        layui.use(['layim', 'laypage', 'form'], function () {
+            var layim = layui.layim
+                , layer = layui.layer
+                , laytpl = layui.laytpl
+                , form = layui.form
+                , $ = layui.jquery
+                , laypage = layui.laypage;
+
+            function index() {
+                var html = laytpl(LAY_tpl.value).render({
+                    data: [],
+                    legend:'推荐',
+                    type:'index'
+                });
+                $('#LAY_view').html(html);
+            }
+            
+            $('body').on('click', '.add', function () {//添加好友
+                // var othis = $(this), type = othis.data('type');
+                //弹出添加好友框
+                // parent.layui.im.addFriendGroup(othis,type);
+            });
+            //下一篇分享创建群的html
+            // $('body').on('click', '.createGroup', function () {//创建群
+            //     var othis = $(this);
+            //     parent.layui.im.createGroup(othis);
+            // });
+            $('body').on('click', '.back', function () {//返回推荐好友
+                index();
+                $("#LAY_page").css("display", "none");
+            });
+
+            $("body").keydown(function (event) {
+                if (event.keyCode == 13) {
+                    $(".find").click();
                 }
+            });
+            $('body').on('click', '.find', function () {
+                $("#LAY_page").css("display", "block");
+                var $that = $(this),
+                    input = $that.parents('.layui-col-space3').find('input').val();
+                var findType = $('input:radio:checked').val();
+                console.log(input);
+                if (!!input) {
+                    //这里需要从服务器获取数据然后进行填充
+                    //以下为示例
+                    var url = '/api/v1/im/find';
+                    $.get(url, {type: findType, value: input}, function (rs) {
+                        if (rs.code !== 200) {
+                            return layer.msg(rs.message);
+                        }
+                        laypage.render({
+                            elem: 'LAY_page'
+                            , count: rs.data.total
+                            , limit: rs.data.size
+                            , prev: '<i class="layui-icon">&#58970;</i>'
+                            , next: '<i class="layui-icon">&#xe65b;</i>'
+                            , layout: ['prev', 'next']
+                            , curr: rs.data.size
+                            , jump: function (obj, first) {
+                                //obj包含了当前分页的所有参数，比如：
+                                var url = '/api/v1/im/find';
+                                //首次不执行
+                                $.get(url, {type: findType, value: input, page: obj.curr || 1}, function (res) {
+                                    var html = laytpl(LAY_tpl.value).render({
+                                        data: res.data.result,
+                                        legend: '<a class="back"><i class="layui-icon">&#xe65c;</i>返回</a> 查找结果',
+                                        type: findType
+                                    });
+                                    $('#LAY_view').html(html);
+                                });
+                            }
+                        });
+                    });
+                }
+            });
+
+            $(document).on('click', 'button.chat-call', function (e) {
+                var $this = $(this);
+                var $info = $this.parent().prev('.user-info');
+                parent.layui.layim.chat({
+                    name: $info.data('name')
+                    , type: $this.data('type')
+                    , avatar: $info.data('avatar')
+                    , id: $info.data('id')
+                });
             });
         });
     </script>
 </head>
 <body>
-<div style="margin: 15px;">
-    <div class="container">
-        <div class="row">
-            <div class="form-horizontal">
-                <div class="box-body">
-                    <div class="form-group">
-                        <label for="nicknameOrUsernameOrIDorEmail" class="col-sm-2 control-label">查找</label>
-                        <div class="col-sm-6">
-                            <input type="text" name="nicknameOrUsernameOrIDorEmail" class="form-control"
-                                   id="nicknameOrUsernameOrIDorEmail" placeholder="输入关键词">
-                        </div>
-                        <div class="col-sm-2">
-                            <button class="btn btn-info" type="button" id="search">搜索</button>
-                        </div>
-                    </div>
-                </div>
+<div class="layui-form">
+    <div class="layui-container" style="padding:0;margin-top: 15px">
+        <div class="layui-row layui-col-space3">
+            <div class="layui-col-xs7 mt15">
+                <input type="text" name="title" lay-verify="title" autocomplete="off" placeholder="请输入用户名/昵称/ID/邮箱"
+                       class="layui-input">
             </div>
-            <div class="row">
-                <div class="col-sm-10 col-sm-offset-1">
-                    <table id="js-users-table" class="table table-bordered table-hover">
-                        <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Username</th>
-                            <th>昵称(nickname)</th>
-                            <th>邮箱</th>
-                            <th>类型</th>
-                            <th>状态</th>
-                            <th>操作</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
+            <div class="layui-col-xs1 mt15">
+                <button class="layui-btn btncolor find">查找</button>
+            </div>
+
+            <div class="layui-col-xs3 mt15">
+                <input type="radio" name="find" value="friend" title="找人" checked>
+                <!--<input type="radio" name="add" value="group" title="找群">-->
+                <!--<button class="layui-btn layui-btn-mini btncolor createGroup">我要建群</button>-->
             </div>
         </div>
+        <div id="LAY_view"></div>
+        <textarea title="消息模版" id="LAY_tpl" style="display:none;">
+			<fieldset class="layui-elem-field layui-field-title">
+			  <legend>{{ d.legend}}</legend>
+			</fieldset>
+			<div class="layui-row ">
+				{{# if(d.type == 'friend'){ }}
+					{{#  layui.each(d.data, function(index, item){ }}
+					<div class="layui-col-xs3 layui-find-list">
+						<div class="user-info"
+                             data-avatar="{{ item.avatar }}"
+                             data-id="{{ item.id }}"
+                             data-name="{{item.username}}">
+							<img src="{{item.avatar}}">
+							<span>{{item.nickname}}({{item.username}})</span>
+							<p>{{item.email}}</p>
+						</div>
+						<div style="margin: 0 auto">
+							<!--<button class="layui-btn layui-btn-xs layui-btn-primary" data-type="friend" disabled><i-->
+                                    <!--class="layui-icon">&#xe654;</i>加好友</button>-->
+							<button class="layui-btn layui-btn-xs layui-btn-primary chat-call" data-type="friend"><i
+                                    class="layui-icon"></i>私信</button>
+						</div>
+					</div>
+					{{#  }); }}
+				{{# }else if(d.type == 'friend'){ }}
+                <!--{{#  layui.each(d.data, function(index, item){ }}-->
+                <!--<div class="layui-col-xs3 layui-find-list">-->
+                <!--<li layim-event="add" data-type="group" data-approval="{{ item.approval }}" data-index="0"-->
+                <!--data-uid="{{ item.groupIdx }}" data-name="{{item.groupName}}">-->
+                <!--<img src="{{item.groupIdx}}.jpg">-->
+                <!--<span>{{item.groupName}}({{item.groupIdx}})</span>-->
+                <!--<p>{{item.des}}  {{#  if(item.des == ''){ }}无{{#  } }} </p>-->
+                <!--<button class="layui-btn layui-btn-mini btncolor add" data-type="group"><i-->
+                <!--class="layui-icon">&#xe654;</i>加群</button>-->
+                <!--</li>-->
+                <!--</div>-->
+                <!--{{#  }); }}-->
+				{{# }else{ }}
+                    这是首页(没内容)
+				{{# } }}
+			</div>	
+        </textarea>
+
+        <div class="lay_page" id="LAY_page"></div>
     </div>
 </div>
-<script>
-    layui.use('layim', function (layim) {
-        var layim = layui.layim
-            , layer = layui.layer
-            , layero = layui.layer.layero
-            , laytpl = layui.laytpl
-            , $ = layui.jquery
-            , laypage = layui.laypage;
-
-        var userTable = {
-            $obj: $('#js-users-table'),
-            dataTableObject: {},
-            getSelectedRow: function () {
-                return this.dataTableObject.rows('.selected').data();
-            },
-            init: function () {
-                // 初始化
-                this.dataTableObject = this.$obj.DataTable({
-                    dom: '<"toolbar">frtip',
-                    ordering: true,
-                    searching: false,
-                    select: true,
-                    autoWidth: true,
-                    processing: false,
-                    serverSide: true,
-                    deferRender: true,
-                    language: DATA_TABLE_CONFIG.language,
-                    preDrawCallback: DATA_TABLE_CONFIG.preDrawCallback,
-                    ajax: {
-                        url: '/admin/system/user/find',
-                        type: 'POST',
-                        contentType: 'application/json',
-                        data: function (params) {
-                            params.nicknameOrUsernameOrIDorEmail = $('input[name="nicknameOrUsernameOrIDorEmail"]').val() || null;
-                            // 携带参数
-                            return JSON.stringify(params);
-                        }
-                    },
-                    columns: [
-                        {
-                            data: 'id', bSortable: true
-                        },
-                        {
-                            data: 'nickname', bSortable: true,
-                            defaultContent: '<span class="text-danger">暂无</span>'
-                        },
-                        {
-                            data: 'username', bSortable: true,
-                            defaultContent: '<span class="text-danger">暂无</span>'
-                        },
-                        {data: 'email', bSortable: true},
-                        {data: 'type', bSortable: true},
-                        {data: 'available', bSortable: true}
-                    ],
-                    order: [[0, "desc"]],
-                    columnDefs: [
-                        {
-                            render: function (data, type, row) { // 类型
-                                return ['后台人员', '会员'][data];
-                            },
-                            targets: 4
-                        },
-                        {
-                            render: function (data, type, row) { // 状态
-                                if (!!data) {
-                                    return '<i class="fa fa-circle text-success"></i>';
-                                } else {
-                                    return '<i class="fa fa-circle text-danger"></i>';
-                                }
-                            },
-                            targets: 5
-                        },
-                        {
-                            render: function (data, type, row) { // 操作
-                                return '<button data-id="' + row.id + '" data-name="' + row.username + '" data-avatar="' + row.avatar + '" class="btn btn-default chat-call">私聊</button>';
-                            },
-                            targets: 6
-                        }
-                    ]
-                });
-                // 绑定多选
-                this.$obj.children('tbody').on('click', 'tr', function () {
-                    $(this).toggleClass('selected');
-                });
-
-                var that = this;
-                // ==========================自定义=============================
-                // 搜索
-                $('#search').on('click', function () {
-                    that.reloadPage();
-                });
-                var IParent = parent;
-                var IWindow = window;
-                $(document).on('click', 'button.chat-call', function (e) {
-                    var $this = $(this);
-                    var iframeWin = parent.window;
-                    iframeWin.F.chat({
-                        name: $this.data('name')
-                        , type: 'friend'
-                        , avatar: $this.data('avatar')
-                        , id: $this.data('id')
-                    }, function () {
-                        var index = IParent.layer.getFrameIndex(IWindow.name);
-                        IParent.layer.close(index);
-                    });
-                });
-            },
-            reloadPage: function () {
-                this.dataTableObject.ajax.reload(null, false);
-            },
-            reloadAll: function () {
-                this.dataTableObject.ajax.reload();
-            }
-        };
-        userTable.init();
-    });
-</script>
 </body>
 </html>

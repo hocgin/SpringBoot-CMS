@@ -27,5 +27,4 @@ public interface UserRepository
     
     List<User> findAllByIdInAndTypeIs(String[] ids, Integer type);
     
-    
 }

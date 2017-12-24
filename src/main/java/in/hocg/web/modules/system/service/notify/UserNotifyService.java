@@ -2,6 +2,7 @@ package in.hocg.web.modules.system.service.notify;
 
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.modules.base.body.Page;
+import in.hocg.web.modules.im.filter.ChatLogQueryFilter;
 import in.hocg.web.modules.system.domain.notify.Notify;
 import in.hocg.web.modules.system.domain.notify.UserNotify;
 import in.hocg.web.modules.system.domain.user.User;
@@ -67,4 +68,5 @@ public interface UserNotifyService {
     
     List<User> getMostRecentContact(String userID);
     
+    Page<UserNotify> getChatLog(ChatLogQueryFilter filter);
 }

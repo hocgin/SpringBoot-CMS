@@ -11,7 +11,7 @@ import java.util.List;
  * email: hocgin@gmail.com
  */
 public interface UserNotifyRepositoryCustom {
-    Page<UserNotify> pageByUser_IdIsAndNotify_IdInOrderByCreatedAtDesc(int page, int size, String userID, String... notifyIDs);
+    Page<UserNotify> pageByUserAndNotifyTypeOrderByCreatedAtDesc(int page, int size, String userID, String notifyType);
     
     /**
      * 获取最后的联系人
@@ -19,4 +19,9 @@ public interface UserNotifyRepositoryCustom {
      * @return
      */
     List<User> getMostRecentContact(String userID);
+    
+    Page<UserNotify> pageByUserIDsAndNotifySenderIDsAndNotifyTypeOrderByCreatedAtDesc(int page, int size,
+                                                                                      String[] userID,
+                                                                                      String[] senderID,
+                                                                                      String notifyType);
 }

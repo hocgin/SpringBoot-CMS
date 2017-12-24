@@ -21,7 +21,7 @@
                 <li class="dropdown messages-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <i class="fa fa-envelope-o"></i>
-                        <span class="label label-success">4</span>
+                        <span class="label label-success notify-messages-label"></span>
                     </a>
                     <ul class="dropdown-menu">
                         <li class="header">私信</li>
@@ -31,39 +31,39 @@
                                 <li class="text-center">暂无私信</li>
                             </ul>
                         </li>
-                        <li class="footer"><a href="#">查看更多</a></li>
+                        <li class="footer"><a href="#">使用聊天查看更多</a></li>
                     </ul>
                 </li>
                 <!-- 通知:订阅 -->
-                <li class="dropdown notifications-menu">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        <i class="fa fa-bell-o"></i>
-                        <span class="label label-warning">10</span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li class="header">通知</li>
-                        <li>
-                            <!-- inner menu: contains the actual data -->
-                            <ul class="menu" id="notify-remind">
-                                <li class="text-center">
-                                    暂无通知
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="footer"><a href="#">查看更多</a></li>
-                    </ul>
-                </li>
+                <!--<li class="dropdown notifications-menu">-->
+                <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown">-->
+                <!--<i class="fa fa-bell-o"></i>-->
+                <!--<span class="label label-warning">10</span>-->
+                <!--</a>-->
+                <!--<ul class="dropdown-menu">-->
+                <!--<li class="header">通知</li>-->
+                <!--<li>-->
+                <!--&lt;!&ndash; inner menu: contains the actual data &ndash;&gt;-->
+                <!--<ul class="menu" id="notify-remind">-->
+                <!--<li class="text-center">-->
+                <!--暂无通知-->
+                <!--</li>-->
+                <!--</ul>-->
+                <!--</li>-->
+                <!--<li class="footer"><a href="#">查看更多</a></li>-->
+                <!--</ul>-->
+                <!--</li>-->
                 <!-- 公告 -->
                 <li class="dropdown announce-menu tasks-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <i class="fa fa-flag-o"></i>
-                        <span class="label label-danger">1</span>
+                        <span class="label label-danger notify-announce-label"></span>
                     </a>
                     <ul class="dropdown-menu">
                         <li class="header">公告</li>
                         <li>
                             <!-- inner menu: contains the actual data -->
-                            <ul class="menu" id="notify-announce">
+                            <ul class="menu" id="notify-announce" style="margin: 0 5px;">
                                 <li class="text-center">暂无公告</li>
                             </ul>
                         </li>
@@ -76,33 +76,31 @@
                 <li class="dropdown user user-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <!--160x160-->
-                        <img th:src="@{__${#authentication.getPrincipal().avatar}__(w=160, h=160)}" class="user-image" alt="User Image">
+                        <img th:src="@{__${#authentication.getPrincipal().avatar}__(w=160, h=160)}" class="user-image"
+                             alt="User Image">
                         <span class="hidden-xs" sec:authentication="name">用户名</span>
                     </a>
                     <ul class="dropdown-menu">
                         <!-- User image -->
                         <li class="user-header">
-                            <img th:src="@{__${#authentication.getPrincipal().avatar}__(w=160, h=160)}" class="img-circle" alt="User Image">
+                            <img th:src="@{__${#authentication.getPrincipal().avatar}__(w=160, h=160)}"
+                                 class="img-circle" alt="User Image">
 
                             <p>
-                                <!--<span sec:authentication="principal.authorities[0].role.name"></span>-->
                                 <small>Member since Nov. 2012</small>
                             </p>
-                            <!--<div sec:authorize="hasRole('ADMIN')"> &lt;!&ndash; 用户类型为ROLE_ADMIN 显示 &ndash;&gt;-->
-                            <!--<p class="bg-info">ADMIN</p>-->
-                            <!--</div>-->
                         </li>
                         <!-- Menu Body -->
                         <li class="user-body">
                             <div class="row">
-                                <div class="col-xs-6 text-center">
-                                    <a href="#">私信</a>
-                                </div>
-                                <div class="col-xs-6 text-center">
-                                    <a href="#">通知</a>
-                                </div>
+                                <!--<div class="col-xs-6 text-center">-->
+                                <!--<a href="#">私信</a>-->
+                                <!--</div>-->
+                                <!--<div class="col-xs-6 text-center">-->
+                                <!--<a href="#">通知</a>-->
+                                <!--</div>-->
                                 <!--<div class="col-xs-4 text-center">-->
-                                    <!--<a href="#">Friends</a>-->
+                                <!--<a href="#">Friends</a>-->
                                 <!--</div>-->
                             </div>
                             <!-- /.row -->
@@ -132,6 +130,8 @@
             var $notifyMessage = $('#notify-message');
             var $notifyAnnounce = $('#notify-announce');
             var $notifyRemind = $('#notify-remind');
+            var $notifyMessageLabel = $('.notify-messages-label')
+
             var notify = {
                 requestMessage: function (page, size) {
                     var that = this;
@@ -182,22 +182,23 @@
                             $notifyMessage.append('<li>\n' +
                                 '                                    <a href="#">\n' +
                                 '                                        <div class="pull-left">\n' +
-                                '                                            <img src="' + userNotify.sender.avatar + '" class="img-circle"\n' +
+                                '                                            <img src="' + userNotify.notify.sender.avatar + '" class="img-circle"\n' +
                                 '                                                 alt="User Image">\n' +
                                 '                                        </div>\n' +
                                 '                                        <h4>\n' + userNotify.notify.sender.username +
-                                '                                            <small><i class="fa fa-clock-o"></i> ' + userNotify.notify.createdAt + '</small>\n' +
+                                '                                            <small><i class="fa fa-clock-o"></i> ' + moment(userNotify.notify.createdAt).fromNow() + '</small>\n' +
                                 '                                        </h4>\n' +
-                                '                                        <p>' + userNotify.notify.content + '</p>\n' +
+                                '                                        <p>' + $('<div/>').text(userNotify.notify.content).html() + '</p>\n' +
                                 '                                    </a>\n' +
                                 '                                </li>');
                         })
                     }
                 },
                 addAnnounce: function (userNotify) {
-                    $notifyAnnounce.empty();
-                    console.log(userNotify.notify.content);
-                    $notifyAnnounce.append(userNotify.notify.content);
+                    if (!!userNotify) {
+                        $notifyAnnounce.empty();
+                        $notifyAnnounce.append(userNotify.notify.content);
+                    }
                 },
                 addRemind: function (userNotifies) {
                     if (userNotifies.length > 0) {
@@ -215,18 +216,82 @@
                 init: function () {
                     var that = this;
                     $(document).on('show.bs.dropdown', '.messages-menu', function () {
+                        $notifyMessageLabel.text('');
                         that.requestMessage(1, 5);
                     });
                     $(document).on('show.bs.dropdown', '.notifications-menu', function () {
                         that.requestRemind(1, 5);
                     });
                     $(document).on('show.bs.dropdown', '.announce-menu', function () {
+                        $('.notify-announce-label').text('');
                         that.requestAnnounce(1, 1);
                     });
                 }
 
             };
             notify.init();
+
+
+            layui.use(['layim'], function () {
+                var $ = layui.jquery,
+                    layim = layui.layim;
+
+                //
+                var socket = new SockJS('/socket');
+                stompClient = Stomp.over(socket);
+                var token = $("meta[name='_csrf']").attr('content');
+                var header = $("meta[name='_csrf_header']").attr('content');
+                var headers = {};
+                headers[header] = token;
+                stompClient.connect(headers, function (frame) {
+                    // 接收私人信息
+                    stompClient.subscribe('/user/queue/messages', function (rs) {
+                        var body = JSON.parse(rs.body);
+                        if (body.type === 1) {
+                            var text = $notifyMessageLabel.text();
+                            $notifyMessageLabel.text((!!text ? parseInt(text) : 0) + 1);
+                            layim.getMessage(body.data);
+                            stompClient.send("/app/messages/reply", {}, JSON.stringify({
+                                type: 1,
+                                data: {
+                                    type: 1,
+                                    id: [body.data.id]
+                                }
+                            }));
+                        }
+                    });
+                    stompClient.subscribe('/topic/update/announcement', function (rs) {
+                        var body = JSON.parse(rs.body);
+                        $('.notify-announce-label').text('1');
+                    });
+                });
+
+                layim.config({
+                    title: '聊天',
+                    init: {
+                        url: '/api/v1/im/init',
+                        type: 'POST'
+                    },
+                    members: {
+                        url: '',
+                        data: {}
+                    },
+                    brief: false,
+                    min: false,
+                    isgroup: true,
+                    voice: false,
+                    copyright: true,
+                    find: '/api/v1/im/find.html',
+                    chatLog: '/api/v1/im/chat-log.html'
+                }).on('ready', function (res) {
+                    console.log("IM Ready")
+                }).on('sendMessage', function (data) {
+                    stompClient.send("/app/reply", {}, JSON.stringify({
+                        type: 1,
+                        data: data
+                    }));
+                });
+            });
         });
     </script>
 </header>

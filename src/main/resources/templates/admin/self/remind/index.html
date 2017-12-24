@@ -10,9 +10,7 @@
 <body>
 <div layout:fragment="content">
 
-
     <script>
-        var F = {};
         layui.config({debug: true});
         layui.use(['layim'], function () {
             var $ = layui.jquery,
@@ -26,16 +24,28 @@
             var headers = {};
             headers[header] = token;
             stompClient.connect(headers, function (frame) {
+                // 接收私人信息
                 stompClient.subscribe('/user/queue/messages', function (rs) {
-                    var body = JSON.parse(rs.data.body);
-                    if (body.type === 1) { // 用户发给用户
+                    var body = JSON.parse(rs.body);
+                    if (body.type === 1) {
                         layim.getMessage(body.data);
+                        stompClient.send("/app/messages/reply", {}, JSON.stringify({
+                            type: 1,
+                            data: {
+                                type: 1,
+                                id: [body.data.id]
+                            }
+                        }));
                     }
+                });
+                stompClient.subscribe('/topic/update/announcement', function (rs) {
+                    var body = JSON.parse(rs.body);
+                    console.log('公告更新', body.data.content);
                 });
             });
 
             layim.config({
-                title: '私信',
+                title: '聊天',
                 init: {
                     url: '/api/v1/im/init',
                     type: 'POST'
@@ -58,10 +68,6 @@
                     data: data
                 }));
             });
-
-            F.chat = function (option, callback) {
-                layim.chat(option, callback);
-            }
         });
     </script>
 </div>

@@ -1,6 +1,8 @@
 package in.hocg.web.modules.system.domain.repository.custom;
 
+import in.hocg.web.modules.base.body.Page;
 import in.hocg.web.modules.system.domain.user.User;
+import org.springframework.data.mongodb.core.query.Query;
 
 import java.util.List;
 
@@ -30,4 +32,6 @@ public interface UserRepositoryCustom {
     User findOneByTokenForMember(String token);
     
     void resumeTokenForMember();
+    
+    Page<User> pager(Query query, int page, int size);
 }

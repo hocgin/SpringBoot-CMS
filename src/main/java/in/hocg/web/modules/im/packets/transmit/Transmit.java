@@ -9,4 +9,7 @@ public interface Transmit {
     byte SystemToUser = 0;
     // 用户发送给用户
     byte USER_TO_USER = 1;
+    
+    // 更新公告
+    byte UPDATE_ANNOUNCEMENT = 9;
 }

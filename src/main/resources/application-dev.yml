@@ -101,15 +101,5 @@ logging:
   level:
     org.springframework.data.mongodb.core.MongoTemplate: DEBUG
 
-# JWT
-jwt:
-  secret: mySecret
-  expiration: 604800
-
 initDatabase: false
-
-tio.socket:
-    ip: 127.0.0.1
-    port: 8888
-    timeout: 0
 #initDatabase: true

@@ -1,12 +1,12 @@
 package in.hocg.web.modules.system.service.impl;
 
 import in.hocg.web.modules.base.Base2Service;
+import in.hocg.web.modules.base.body.Page;
 import in.hocg.web.modules.system.domain.repository.UserRepository;
 import in.hocg.web.modules.system.domain.user.User;
-import in.hocg.web.modules.system.filter.UserQueryDataTablesFilter;
 import in.hocg.web.modules.system.service.UserService;
 import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.util.StringUtils;
 
@@ -20,19 +20,19 @@ import java.util.List;
 @Service
 public class UserServiceImpl extends Base2Service<User, String, UserRepository> implements UserService {
     @Override
-    public DataTablesOutput find(UserQueryDataTablesFilter filter) {
+    public Page<User> findByUsernameOrNicknameOrIDOrMail(String value, int page, int size) {
         Criteria criteria = new Criteria();
         List<Criteria> orOperators = new ArrayList<>();
-        if (!StringUtils.isEmpty(filter.getNicknameOrUsernameOrIDorEmail())) {
-            orOperators.add(Criteria.where("username").regex(String.format("%s.*", filter.getNicknameOrUsernameOrIDorEmail())));
-            orOperators.add(Criteria.where("nickname").regex(String.format("%s.*", filter.getNicknameOrUsernameOrIDorEmail())));
-            orOperators.add(Criteria.where("id").regex(String.format("%s.*", filter.getNicknameOrUsernameOrIDorEmail())));
-            orOperators.add(Criteria.where("email").regex(String.format("%s.*", filter.getNicknameOrUsernameOrIDorEmail())));
+        if (!StringUtils.isEmpty(value)) {
+            orOperators.add(Criteria.where("username").regex(String.format("%s.*", value)));
+            orOperators.add(Criteria.where("nickname").regex(String.format("%s.*", value)));
+            orOperators.add(Criteria.where("id").is(String.format("%s.*", value)));
+            orOperators.add(Criteria.where("email").is(String.format("%s.*", value)));
         }
-        
         if (!orOperators.isEmpty()) {
             criteria.orOperator(orOperators.toArray(new Criteria[0]));
         }
-        return repository.findAll(filter, criteria);
+        criteria.andOperator(Criteria.where("available").is(true));
+        return repository.pager(Query.query(criteria), page, size);
     }
 }

@@ -1,7 +1,9 @@
 package in.hocg.web.modules.im;
 
 import com.google.gson.Gson;
+import in.hocg.web.lang.utils.SecurityKit;
 import in.hocg.web.modules.im.packets.MessagePacket;
+import in.hocg.web.modules.im.packets.accept.AcceptFeedback;
 import in.hocg.web.modules.im.packets.accept.AcceptType;
 import in.hocg.web.modules.im.processor.MessageProcessor;
 import in.hocg.web.modules.im.processor.UserToUserProcessor;
@@ -36,13 +38,13 @@ public class WebSocketController {
                                UserNotifyService userNotifyService,
                                NotifyService notifyService,
                                Gson gson,
-                               
+    
                                UserToUserProcessor userToUserProcessor) {
         this.simpMessagingTemplate = simpMessagingTemplate;
         this.userNotifyService = userNotifyService;
         this.notifyService = notifyService;
         this.gson = gson;
-    
+        
         processors.put(AcceptType.USER_TO_USER, userToUserProcessor);
     }
     
@@ -56,9 +58,18 @@ public class WebSocketController {
             return;
         }
         // 处理未知消息
-//        System.out.println("内容 " + value);
         this.simpMessagingTemplate.convertAndSendToUser(principal.getName(), QUEUE_MESSAGE, "无法进行处理");
-//        this.simpMessagingTemplate.convertAndSend("/ws/queue/user/messages-user" +principal.getName(), "无法进行处理");
     }
     
+    /**
+     * 消息被接收后回馈
+     * @param value
+     * @param principal
+     * @throws Exception
+     */
+    @MessageMapping("/messages/reply") // 服务端接收入口
+    public void feedback(String value, Principal principal) throws Exception {
+        AcceptFeedback feedback = gson.fromJson(value, AcceptFeedback.class);
+        userNotifyService.read(SecurityKit.iUser().getId(), feedback.getData().getId());
+    }
 }

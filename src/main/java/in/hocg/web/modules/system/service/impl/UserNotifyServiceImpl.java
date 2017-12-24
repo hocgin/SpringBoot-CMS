@@ -1,8 +1,10 @@
 package in.hocg.web.modules.system.service.impl;
 
 import in.hocg.web.lang.CheckError;
+import in.hocg.web.lang.utils.SecurityKit;
 import in.hocg.web.modules.base.Base2Service;
 import in.hocg.web.modules.base.body.Page;
+import in.hocg.web.modules.im.filter.ChatLogQueryFilter;
 import in.hocg.web.modules.system.domain.notify.Notify;
 import in.hocg.web.modules.system.domain.notify.UserNotify;
 import in.hocg.web.modules.system.domain.repository.UserNotifyRepository;
@@ -64,6 +66,7 @@ public class UserNotifyServiceImpl extends Base2Service<UserNotify, String, User
             List<Notify> singletonList = Collections.singletonList(notifies.get(0));
             createUserNotify(user, singletonList);
         }
+        
     }
     
     /**
@@ -126,17 +129,12 @@ public class UserNotifyServiceImpl extends Base2Service<UserNotify, String, User
             checkError.putError("异常");
             return null;
         }
-    
+        
         // 判断是否有更新
         pullAnnounce(user);
         pullRemind(user);
         
-        
-        String[] notifyIDs = notifyService.findAllByType(filter.getType()).stream()
-                .map(Notify::getId)
-                .toArray(String[]::new);
-    
-        return repository.pageByUser_IdIsAndNotify_IdInOrderByCreatedAtDesc(filter.getPage(), filter.getSize(), userID, notifyIDs);
+        return repository.pageByUserAndNotifyTypeOrderByCreatedAtDesc(filter.getPage(), filter.getSize(), userID, filter.getType());
     }
     
     @Override
@@ -145,6 +143,17 @@ public class UserNotifyServiceImpl extends Base2Service<UserNotify, String, User
                 .stream()
                 .limit(5)
                 .collect(Collectors.toList());
+    }
+    
+    @Override
+    public Page<UserNotify> getChatLog(ChatLogQueryFilter filter) {
+        String[] IDs = new String[]{SecurityKit.iUser().getId(), filter.getId()};
+        return repository.pageByUserIDsAndNotifySenderIDsAndNotifyTypeOrderByCreatedAtDesc(filter.getPage(),
+                filter.getSize(),
+                IDs,
+                IDs,
+                Notify.Type.Message.name()
+        );
     }
     
     

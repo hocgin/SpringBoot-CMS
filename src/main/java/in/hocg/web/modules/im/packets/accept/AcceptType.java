@@ -7,4 +7,7 @@ package in.hocg.web.modules.im.packets.accept;
 public interface AcceptType {
     // 用户发送给用户
     byte USER_TO_USER = 1;
+    
+    // 接收回馈
+    byte ACCEPT_FEEDBACK = 2;
 }

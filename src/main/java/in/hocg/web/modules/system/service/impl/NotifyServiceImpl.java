@@ -7,6 +7,7 @@ import in.hocg.web.modules.system.domain.notify.TargetType;
 import in.hocg.web.modules.system.domain.repository.NotifyRepository;
 import in.hocg.web.modules.system.domain.user.User;
 import in.hocg.web.modules.system.service.UserService;
+import in.hocg.web.modules.system.service.kit.NSNotifyService;
 import in.hocg.web.modules.system.service.notify.NotifyService;
 import in.hocg.web.modules.system.service.notify.UserNotifyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,17 +30,21 @@ public class NotifyServiceImpl extends Base2Service<Notify, String, NotifyReposi
     
     private UserNotifyService userNotifyService;
     private UserService userService;
+    NSNotifyService nsNotifyService;
     
     @Autowired
     public NotifyServiceImpl(@Lazy UserNotifyService userNotifyService,
+                             NSNotifyService nsNotifyService,
                              UserService userService) {
         this.userNotifyService = userNotifyService;
         this.userService = userService;
+        this.nsNotifyService = nsNotifyService;
     }
     
     @Override
     public void createAnnounce(String content, User sender) {
         repository.insert(new Notify(content, null, null, null, Notify.Type.Announce, sender));
+        nsNotifyService.sendAnnouncement(content);
     }
     
     @Override

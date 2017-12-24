@@ -23,9 +23,11 @@ import java.util.stream.Collectors;
 public class UserNotifyRepositoryImpl extends BaseMongoCustom<UserNotify, String>
         implements UserNotifyRepositoryCustom {
     @Override
-    public Page<UserNotify> pageByUser_IdIsAndNotify_IdInOrderByCreatedAtDesc(int page, int size, String userID, String... notifyIDs) {
-        Criteria criteria = Criteria.where("user.$id").is(new ObjectId(userID))
-                .and("notify.$id").in(Arrays.stream(notifyIDs).map(ObjectId::new).toArray(ObjectId[]::new));
+    public Page<UserNotify> pageByUserAndNotifyTypeOrderByCreatedAtDesc(int page, int size, String userID, String notifyType) {
+        Criteria criteria = new Criteria();
+        criteria.andOperator(Criteria.where("user.$id").is(new ObjectId(userID)),
+                Criteria.where("notify.type").in(notifyType)
+        );
         Query query = Query.query(criteria).with(new Sort(new Sort.Order(Sort.Direction.DESC, "createdAt")));
         return pageX(query, (page - 1) < 0 ? 0 : (page - 1), size);
     }
@@ -41,5 +43,24 @@ public class UserNotifyRepositoryImpl extends BaseMongoCustom<UserNotify, String
                 .collect(Collectors.toList());
         return mongoTemplate().find(Query.query(Criteria.where("id").in(userIDs)), User.class);
     }
+    
+    @Override
+    public Page<UserNotify> pageByUserIDsAndNotifySenderIDsAndNotifyTypeOrderByCreatedAtDesc(int page, int size,
+                                                                                             String[] userIDs,
+                                                                                             String[] senderIDs,
+                                                                                             String notifyType) {
+        Criteria criteria = new Criteria();
+        criteria.andOperator(Criteria.where("user.$id").in(Arrays.stream(userIDs)
+                        .map(ObjectId::new)
+                        .toArray(ObjectId[]::new)),
+                Criteria.where("notify.type").in(notifyType),
+                Criteria.where("notify.sender.$id").in(Arrays.stream(senderIDs)
+                        .map(ObjectId::new)
+                        .toArray(ObjectId[]::new))
+        );
+        Query query = Query.query(criteria).with(new Sort(new Sort.Order(Sort.Direction.DESC, "createdAt")));
+        return pageX(query, (page - 1) < 0 ? 0 : (page - 1), size);
+    }
+    
     
 }

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <!-- default header name is X-CSRF-TOKEN -->
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <meta charset="UTF-8">
+    <title>聊天记录</title>
+    <link rel="stylesheet" th:href="@{/dist/layui/css/layui.css}">
+    <style>
+        body .layim-chat-main {
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+
+<div class="layim-chat-main">
+    <ul id="LAY_view"></ul>
+</div>
+
+<div id="LAY_page" style="margin: 0 10px;"></div>
+
+
+<textarea title="消息模版" id="LAY_tpl" style="display:none;">
+{{# layui.each(d.data, function(index, item){
+  if(item.id == parent.layui.layim.cache().mine.id){ }}
+    <li class="layim-chat-mine"><div class="layim-chat-user"><img src="{{ item.avatar }}"><cite><i>{{ layui.data.date(item.timestamp) }}</i>{{ item.username }}</cite></div><div
+            class="layim-chat-text">{{ layui.layim.content(item.content) }}</div></li>
+  {{# } else { }}
+    <li><div class="layim-chat-user"><img src="{{ item.avatar }}"><cite>{{ item.username }}<i>{{ layui.data.date(item.timestamp) }}</i></cite></div><div
+            class="layim-chat-text">{{ layui.layim.content(item.content) }}</div></li>
+  {{# }
+}); }}
+</textarea>
+
+<!--
+上述模版采用了 laytpl 语法，不了解的同学可以去看下文档：http://www.layui.com/doc/modules/laytpl.html
+
+-->
+
+<script th:src="@{/dist/layui/layui.js}"></script>
+<script th:inline="javascript">
+    layui.use(['layim', 'laypage'], function () {
+        var layim = layui.layim
+            , layer = layui.layer
+            , laytpl = layui.laytpl
+            , $ = layui.jquery
+            , laypage = layui.laypage;
+        var id = [[${id}]];
+        var type = [[${type}]];
+        var size = 10;
+
+        var url = '/api/v1/im/chat-log';
+        $.get(url, {
+            id: id,
+            type: type,
+            size: 10
+        }, function (rs) {
+            var html = laypage.render({
+                elem: 'LAY_page',
+                data: rs.data.result,
+                count: rs.data.total,
+                limit: rs.data.size,
+                jump: function (obj, first) {
+                    // if (first) {
+                    //     return;
+                    // }
+                    $.get(url, {
+                        id: id,
+                        type: type,
+                        page: obj.curr || 1,
+                        size: size
+                    }, function (rs) {
+                        var html = laytpl(LAY_tpl.value).render({
+                            data: rs.data.result
+                        });
+                        $('#LAY_view').html(html);
+                    });
+                }
+            });
+            $('#LAY_view').html(html);
+        });
+
+    });
+</script>
+</body>
+</html>
