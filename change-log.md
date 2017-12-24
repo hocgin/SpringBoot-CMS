@@ -185,3 +185,4 @@ fixed 修正序列化时数字开头字段丢失
 - 聊天记录
 - 查找好友
 - 公告订阅
+- Spring Boot Session 共享
