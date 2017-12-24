@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 public class NSNotifyService {
     // 更新公告
     public static final String TOPIC_ANNOUNCEMENT = "/topic/update/announcement";
+    public static final String QUEUE_MESSAGE = "/queue/messages";
     
     
     private SimpMessagingTemplate simpMessagingTemplate;
@@ -23,5 +24,9 @@ public class NSNotifyService {
     
     public void sendAnnouncement(String content) {
         simpMessagingTemplate.convertAndSend(TOPIC_ANNOUNCEMENT, new UpdateAnnouncementTransmit().full(content));
+    }
+    
+    public void sendMessageToUser(String username, Object payload) {
+        this.simpMessagingTemplate.convertAndSendToUser(username, QUEUE_MESSAGE, payload);
     }
 }

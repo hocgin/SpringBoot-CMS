@@ -4,7 +4,6 @@ import in.hocg.web.global.config.socket.custom.WebSocketSessionCapturingHandlerD
 import in.hocg.web.global.config.socket.events.StompConnectEvent;
 import in.hocg.web.global.config.socket.events.StompDisconnectEvent;
 import in.hocg.web.global.config.socket.interceptors.HttpSessionIdHandshakeInterceptor;
-import in.hocg.web.global.config.socket.interceptors.SessionKeepAliveChannelInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
@@ -99,8 +98,4 @@ public class WebSocketConfig extends AbstractSecurityWebSocketMessageBrokerConfi
         return new HttpSessionIdHandshakeInterceptor();
     }
     
-    @Bean
-    public SessionKeepAliveChannelInterceptor sessionKeepAliveChannelInterceptor() {
-        return new SessionKeepAliveChannelInterceptor();
-    }
 }

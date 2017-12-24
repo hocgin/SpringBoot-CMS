@@ -7,6 +7,7 @@ import in.hocg.web.modules.im.packets.accept.AcceptFeedback;
 import in.hocg.web.modules.im.packets.accept.AcceptType;
 import in.hocg.web.modules.im.processor.MessageProcessor;
 import in.hocg.web.modules.im.processor.UserToUserProcessor;
+import in.hocg.web.modules.system.service.kit.NSNotifyService;
 import in.hocg.web.modules.system.service.notify.NotifyService;
 import in.hocg.web.modules.system.service.notify.UserNotifyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,23 +25,22 @@ import java.util.Map;
  */
 @Controller
 public class WebSocketController {
-    public static final String TOPIC_MESSAGE = "/topic/message";
     public static final String QUEUE_MESSAGE = "/queue/messages";
     
-    private SimpMessagingTemplate simpMessagingTemplate;
+    private NSNotifyService nsNotifyService;
     private UserNotifyService userNotifyService;
     private NotifyService notifyService;
     private Gson gson;
     private Map<Byte, MessageProcessor<?>> processors = new HashMap<>();
     
     @Autowired
-    public WebSocketController(SimpMessagingTemplate simpMessagingTemplate,
+    public WebSocketController(NSNotifyService nsNotifyService,
                                UserNotifyService userNotifyService,
                                NotifyService notifyService,
                                Gson gson,
     
                                UserToUserProcessor userToUserProcessor) {
-        this.simpMessagingTemplate = simpMessagingTemplate;
+        this.nsNotifyService = nsNotifyService;
         this.userNotifyService = userNotifyService;
         this.notifyService = notifyService;
         this.gson = gson;
@@ -58,7 +58,7 @@ public class WebSocketController {
             return;
         }
         // 处理未知消息
-        this.simpMessagingTemplate.convertAndSendToUser(principal.getName(), QUEUE_MESSAGE, "无法进行处理");
+        nsNotifyService.sendMessageToUser(principal.getName(), "无法进行处理");
     }
     
     /**

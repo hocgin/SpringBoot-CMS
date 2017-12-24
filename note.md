@@ -1,5 +1,6 @@
 
 ## @当前进程
+- Spring Boot Session 共享
 - Service 整体整改
 - 底层抽离(模块划分) 分布式规范
 - 微信公众号接入
