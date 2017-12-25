@@ -24,7 +24,7 @@ public class Application {
     final Logger logger = LoggerFactory.getLogger(getClass());
     
     
-    @Value("${initDatabase}")
+    @Value("${dev.init}")
     private Boolean mongoInit = false;
     
     public static void main(String[] args) {

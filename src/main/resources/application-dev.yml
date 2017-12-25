@@ -101,5 +101,10 @@ logging:
   level:
     org.springframework.data.mongodb.core.MongoTemplate: DEBUG
 
-initDatabase: false
-#initDatabase: true
+# 自定义参数
+dev:
+  init: false
+  variable:
+    host: http://127.0.0.1
+    file.upload.dir: /Users/hocgin/Desktop/FileUpload
+    images.dir: /Users/hocgin/Desktop/images

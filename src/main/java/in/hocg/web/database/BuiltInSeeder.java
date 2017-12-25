@@ -3,6 +3,7 @@ package in.hocg.web.database;
 import in.hocg.web.modules.system.domain.*;
 import in.hocg.web.modules.system.domain.repository.*;
 import in.hocg.web.modules.system.domain.user.User;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +17,14 @@ import java.util.HashMap;
  */
 @Component
 public class BuiltInSeeder {
+    
+    @Value("${dev.variable.host}")
+    private String HOST;
+    @Value("${dev.variable.file.upload.dir}")
+    private String FILE_UPLOAD_DIR;
+    @Value("${dev.images.dir}")
+    private String IMAGES_DIR;
+    
     private RoleRepository roleRepository;
     private DepartmentRepository departmentRepository;
     private UserRepository userRepository;
@@ -415,11 +424,11 @@ public class BuiltInSeeder {
         /**
          * 添加系统变量
          */
-        Variable variable = DocumentFactory.variable(Variable.FILE_UPLOAD_DIR, "/Users/hocgin/Desktop/FileUpload", "文件上传目录");
+        Variable variable = DocumentFactory.variable(Variable.FILE_UPLOAD_DIR, FILE_UPLOAD_DIR, "文件上传目录");
         variableRepository.insert(variable);
-        Variable variable2 = DocumentFactory.variable(Variable.HOST, "http://127.0.0.1:8080", "域名");
+        Variable variable2 = DocumentFactory.variable(Variable.HOST, HOST, "域名");
         variableRepository.insert(variable2);
-        Variable variable3 = DocumentFactory.variable(Variable.IMAGES_DIR, "/Users/hocgin/Desktop/images", "公共图片目录");
+        Variable variable3 = DocumentFactory.variable(Variable.IMAGES_DIR, IMAGES_DIR, "公共图片目录");
         variableRepository.insert(variable3);
         
         
