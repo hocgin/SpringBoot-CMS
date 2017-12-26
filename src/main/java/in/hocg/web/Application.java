@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.session.SessionAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
@@ -17,7 +18,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.context.request.RequestContextListener;
 
-@SpringBootApplication
+@SpringBootApplication(exclude = SessionAutoConfiguration.class)
 @EnableAsync
 @EnableMongoRepositories(repositoryFactoryBeanClass = DataTablesRepositoryFactoryBean.class)
 public class Application {
@@ -53,7 +54,7 @@ public class Application {
     private SysTaskService sysTaskService;
     
     @Bean
-    CommandLineRunner preLoadMongo() throws Exception {
+    CommandLineRunner preLoadMongo() {
         return args -> {
             logger.info("正在初始化 MongoDB 数据");
             if (mongoInit) {

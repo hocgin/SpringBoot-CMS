@@ -1,0 +1,50 @@
+version: '3.3'
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+#      args:
+    container_name: app
+    ports:
+      - 8080:8080
+    links:
+      - mongodb:mongodb
+      - redis:redis
+    depends_on:
+      - mongodb
+      - redis
+    volumes:
+      - ./dirs/file-upload:/tmp/file-upload
+      - ./dirs/images:/tmp/images
+
+  mongodb:
+    image: aashreys/mongo-auth:latest
+    container_name: mongodb
+    hostname: mongodb
+    environment:
+      - AUTH=yes
+      - MONGODB_ADMIN_USER=admin
+      - MONGODB_ADMIN_PASS=admin123
+      - MONGODB_APPLICATION_DATABASE=mall
+      - MONGODB_APPLICATION_USER=mall
+      - MONGODB_APPLICATION_PASS=hocgin
+    ports:
+      - 27017
+    expose:
+      - 27017
+
+  redis:
+    image: redis:3.0.3
+    container_name: redis
+    hostname: redis
+#    restart: always
+    ports:
+      - 6379
+    expose:
+      - 6379
+
+# Mongodb
+# Redis
+# Java
+# 执行 docker-compose up -d

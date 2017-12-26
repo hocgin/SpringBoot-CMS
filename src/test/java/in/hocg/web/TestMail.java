@@ -25,7 +25,7 @@ public class TestMail {
     MailService mailService;
     
     @Test
-    public void testMail2() throws MessagingException, IOException, com.sun.xml.internal.messaging.saaj.packaging.mime.MessagingException {
+    public void testMail2() throws MessagingException, IOException {
         Map<String, Object> param = new HashMap<>();
         param.put("today", "2017");
         param.put("tup", "tup");

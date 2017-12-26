@@ -17,11 +17,12 @@ spring:
     # 数据库索引
     database: 0
     # Redis地址
-    host: 127.0.0.1
+#    host: 127.0.0.1
+    host: redis
     # Redis端口
     port: 6379
     # Redis 密码
-    password:
+#    password:
     pool:
       # 连接池最大连接数
       max-active: 8
@@ -43,7 +44,7 @@ spring:
     #                       |___/
     ################################################
     mongodb:
-      uri: mongodb://mall:hocgin@127.0.0.1:27017/mall
+      uri: mongodb://mall:hocgin@mongodb:27017/mall
 
   #######################
   #                 _ _
@@ -73,8 +74,11 @@ spring:
   thymeleaf:
     cache: false
     mode: LEGACYHTML5
+    prefix: classpath:/templates
   messages:
     basename: messages_zh_CN
+  session:
+    store-type: redis
 #  rabbitmq:
 #    host: 127.0.0.1
 #    port: 5672
@@ -103,8 +107,8 @@ logging:
 
 # 自定义参数
 dev:
-  init: false
+  init: true
   variable:
     host: http://127.0.0.1
-    file.upload.dir: /Users/hocgin/Desktop/FileUpload
-    images.dir: /Users/hocgin/Desktop/images
+    file.upload.dir: /tmp/file-upload
+    images.dir: /tmp/images

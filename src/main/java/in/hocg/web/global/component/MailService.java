@@ -1,6 +1,5 @@
 package in.hocg.web.global.component;
 
-import com.sun.istack.internal.NotNull;
 import in.hocg.web.global.StringTemplateResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +9,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ObjectUtils;
 import org.thymeleaf.context.WebContext;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.templateresolver.TemplateResolver;
@@ -24,7 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
-import java.io.ObjectInput;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -84,7 +81,7 @@ public class MailService {
      * @throws UnsupportedEncodingException
      */
     @Async
-    public void send(@NotNull String[] to, @NotNull String subject, @NotNull String text,
+    public void send(String[] to, String subject, String text,
                      Map<String, File> inline,
                      Map<String, File> attachment) throws javax.mail.MessagingException, UnsupportedEncodingException {
         
@@ -121,13 +118,13 @@ public class MailService {
         mailSender.send(messageHelper.getMimeMessage());
     }
     
-    public void send(@NotNull String to, @NotNull String subject, @NotNull String text,
+    public void send(String to, String subject, String text,
                      Map<String, File> inline,
                      Map<String, File> attachment) throws javax.mail.MessagingException, UnsupportedEncodingException {
         send(new String[]{to}, subject, text, inline, attachment);
     }
     
-    public void send(@NotNull String to, @NotNull String subject, @NotNull String text) throws UnsupportedEncodingException, javax.mail.MessagingException {
+    public void send(String to, String subject, String text) throws UnsupportedEncodingException, javax.mail.MessagingException {
         send(to, subject, text, null, null);
     }
     
@@ -143,7 +140,7 @@ public class MailService {
      * @throws UnsupportedEncodingException
      * @throws javax.mail.MessagingException
      */
-    public void sendUseTemplate(@NotNull String to, @NotNull String subject, @NotNull String templateName,
+    public void sendUseTemplate(String to, String subject, String templateName,
                                 Map<String, Object> params,
                                 Map<String, File> inline,
                                 Map<String, File> attachment) throws UnsupportedEncodingException, javax.mail.MessagingException {
@@ -162,7 +159,7 @@ public class MailService {
      * @throws UnsupportedEncodingException
      * @throws MessagingException
      */
-    public void sendUseThymeleafText(@NotNull String[] to, @NotNull String subject, @NotNull String thymeleafText,
+    public void sendUseThymeleafText(String[] to, String subject, String thymeleafText,
                                      Map<String, Object> params,
                                      Map<String, File> inline,
                                      Map<String, File> attachment) throws UnsupportedEncodingException, MessagingException {
@@ -181,14 +178,14 @@ public class MailService {
      * @throws IOException
      * @throws MessagingException
      */
-    public void sendUseThymeleafFile(@NotNull String to, @NotNull String subject, @NotNull Path thymeleafFilePath,
+    public void sendUseThymeleafFile(String to, String subject, Path thymeleafFilePath,
                                      Map<String, Object> params,
                                      Map<String, File> inline,
                                      Map<String, File> attachment) throws IOException, MessagingException {
         send(to, subject, thymeleaf(thymeleafFilePath, params), inline, attachment);
     }
     
-    public void sendUseThymeleafFile(@NotNull Collection<String> to, @NotNull String subject, @NotNull Path thymeleafFilePath,
+    public void sendUseThymeleafFile(Collection<String> to, String subject, Path thymeleafFilePath,
                                      Map<String, Object> params,
                                      Map<String, File> inline,
                                      Map<String, File> attachment) throws IOException, MessagingException {

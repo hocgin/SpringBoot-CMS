@@ -22,7 +22,7 @@ public class BuiltInSeeder {
     private String HOST;
     @Value("${dev.variable.file.upload.dir}")
     private String FILE_UPLOAD_DIR;
-    @Value("${dev.images.dir}")
+    @Value("${dev.variable.images.dir}")
     private String IMAGES_DIR;
     
     private RoleRepository roleRepository;

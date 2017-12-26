@@ -38,3 +38,10 @@
 initDatabase: true
 ```
 2.启动后, 修改为false
+
+Docker
+```sh
+mvn clean
+mvn package -Dmaven.test.skip=true
+docker-compose up -d
+```
