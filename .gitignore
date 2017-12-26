@@ -18,6 +18,7 @@ target/
 ### NetBeans ###
 nbproject/private/
 build/
-nbbuild/
-nbdist/
-.nb-gradle/
+
+data/db/
+dirs/file-upload/
+

@@ -6,6 +6,9 @@ services:
       dockerfile: Dockerfile
 #      args:
     container_name: app
+    volumes:
+      - ./dirs/file-upload:/tmp/file-upload
+      - ./dirs/images:/tmp/images
     ports:
       - 8080:8080
     links:
@@ -14,14 +17,13 @@ services:
     depends_on:
       - mongodb
       - redis
-    volumes:
-      - ./dirs/file-upload:/tmp/file-upload
-      - ./dirs/images:/tmp/images
 
   mongodb:
     image: aashreys/mongo-auth:latest
     container_name: mongodb
     hostname: mongodb
+    volumes:
+      - ./data/db:/data/db
     environment:
       - AUTH=yes
       - MONGODB_ADMIN_USER=admin
