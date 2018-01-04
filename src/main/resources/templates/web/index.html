@@ -21,7 +21,7 @@
     <main class="g-main">
         <div class="container">
             <div class="row">
-                <div class="g-weather-card col-sm-7 col-sm-offset-2">
+                <div class="g-weather-card col-sm-7 col-sm-offset-2" style="overflow-x: scroll">
                     <form id="query" method="POST" action="/">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                         <div class="search-wrapper pull-right">
