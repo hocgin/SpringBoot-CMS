@@ -107,5 +107,5 @@ logging:
 dev:
   variable:
     host: http://127.0.0.1
-    file.upload.dir: /tmp/file-upload
-    images.dir: /tmp/images
+    file.upload.dir: /Users/hocgin/Document/Projects/JavaWeb/Mall/dirs/file-upload
+    images.dir: /Users/hocgin/Document/Projects/JavaWeb/Mall/dirs/images
