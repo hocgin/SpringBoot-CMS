@@ -449,5 +449,8 @@ public class BuiltInSeeder {
                 bCryptPasswordEncoder.encode("123"));
         hocgin.setUsername("hocgin");
         userRepository.insert(hocgin);
+        
+        Variable variable4 = DocumentFactory.variable(Variable.DEV_INIT_MONGO, Boolean.FALSE.toString(), "初始化 Mongo 数据, true 为开启。");
+        variableRepository.insert(variable4);
     }
 }

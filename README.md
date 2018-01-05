@@ -33,15 +33,21 @@
 
 ## 初始化运行
 
-1.编辑`application-dev.yml`做如下修改:
+1.编辑`application.yml`做如下修改:
 ```yaml
-initDatabase: true
+# 设置加载的配置文件
+spring:
+  profiles:
+    active: docker
 ```
-2.启动后, 修改为false
 
-Docker
-```sh
+2. 打包运行 jar
+```bash
 mvn clean
 mvn package -Dmaven.test.skip=true
+```
+
+3. 运行 Docker
+```bash
 docker-compose up -d
 ```

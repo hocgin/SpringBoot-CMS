@@ -1,6 +1,7 @@
 package in.hocg.web.database;
 
 import in.hocg.web.modules.system.domain.*;
+import in.hocg.web.modules.system.domain.user.Member;
 import in.hocg.web.modules.system.domain.user.User;
 
 import java.util.Collection;
@@ -167,6 +168,11 @@ public class DocumentFactory {
         member.setIsVerifyEmail(true);
         member.setEmail(email);
         member.setPassword(password);
+        Member.Token token = new Member.Token();
+        token.setToken(Member.Token.genToken("123"));
+        token.setAvailable(true);
+        token.setCount(1000);
+        member.setToken(token);
         member.setType(User.Type.Member.getCode());
         return member;
     }

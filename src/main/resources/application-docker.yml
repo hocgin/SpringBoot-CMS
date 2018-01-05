@@ -16,7 +16,8 @@ spring:
     # 数据库索引
     database: 0
     # Redis地址
-    host: 127.0.0.1
+#    host: 127.0.0.1
+    host: redis
     # Redis端口
     port: 6379
     # Redis 密码
@@ -42,7 +43,7 @@ spring:
     #                       |___/
     ################################################
     mongodb:
-      uri: mongodb://mall:hocgin@127.0.0.1:27017/mall
+      uri: mongodb://mall:hocgin@mongodb:27017/mall
 
   #######################
   #                 _ _
@@ -106,6 +107,6 @@ logging:
 # 自定义参数
 dev:
   variable:
-    host: http://127.0.0.1
+    host: https://dev.hocg.in
     file.upload.dir: /tmp/file-upload
     images.dir: /tmp/images

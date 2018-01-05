@@ -1,9 +1,9 @@
 package in.hocg.web.modules.system.service.impl;
 
-import in.hocg.web.modules.system.filter.VariableFilter;
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.modules.system.domain.Variable;
 import in.hocg.web.modules.system.domain.repository.VariableRepository;
+import in.hocg.web.modules.system.filter.VariableFilter;
 import in.hocg.web.modules.system.service.VariableService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.datatables.mapping.DataTablesInput;
@@ -31,24 +31,26 @@ public class VariableServiceImpl implements VariableService {
     }
     
     @Override
-    public void insert(VariableFilter filter, CheckError checkError) {
+    public Variable insert(VariableFilter filter,
+                           CheckError checkError) {
         Variable variable = filter.get();
         if (variableRepository.countAllByKey(variable.getKey()) > 0) {
             checkError.putError("字段名已经存在");
-            return;
+            return variable;
         }
-        variableRepository.insert(variable);
+        return variableRepository.insert(variable);
     }
     
     @Override
-    public void update(VariableFilter filter, CheckError checkError) {
+    public Variable update(VariableFilter filter,
+                           CheckError checkError) {
         Variable variable = variableRepository.findVariableByIdAndKey(filter.getId(), filter.getKey());
         if (ObjectUtils.isEmpty(variable)) {
             checkError.putError("该系统变量不存在");
-            return;
+            return null;
         }
         
-        variableRepository.save(filter.update(variable));
+        return variableRepository.save(filter.update(variable));
     }
     
     @Override
@@ -74,6 +76,11 @@ public class VariableServiceImpl implements VariableService {
             return def;
         }
         return variable.getValue();
+    }
+    
+    @Override
+    public boolean getBool(String key, boolean def) {
+        return Boolean.TRUE.toString().equals(getValue(key, Boolean.FALSE.toString()));
     }
     
     

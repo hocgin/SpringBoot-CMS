@@ -1,11 +1,12 @@
 package in.hocg.web;
 
 import in.hocg.web.database.BuiltInSeeder;
+import in.hocg.web.modules.system.domain.Variable;
 import in.hocg.web.modules.system.service.SysTaskService;
+import in.hocg.web.modules.system.service.VariableService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.session.SessionAutoConfiguration;
@@ -23,10 +24,6 @@ import org.springframework.web.context.request.RequestContextListener;
 @EnableMongoRepositories(repositoryFactoryBeanClass = DataTablesRepositoryFactoryBean.class)
 public class Application {
     final Logger logger = LoggerFactory.getLogger(getClass());
-    
-    
-    @Value("${dev.init}")
-    private Boolean mongoInit = false;
     
     public static void main(String[] args) {
         new SpringApplicationBuilder()
@@ -52,14 +49,17 @@ public class Application {
     private BuiltInSeeder builtInSeeder;
     @Autowired
     private SysTaskService sysTaskService;
+    @Autowired
+    private VariableService variableService;
     
     @Bean
     CommandLineRunner preLoadMongo() {
         return args -> {
-            logger.info("正在初始化 MongoDB 数据");
-            if (mongoInit) {
+            if (variableService.getBool(Variable.DEV_INIT_MONGO, true)) {
+                logger.info("正在初始化 Mongo 数据..");
                 builtInSeeder.drop().init();
             }
+            logger.info("正在唤醒定时任务..");
             sysTaskService.init();
         };
     }

@@ -14,12 +14,14 @@ import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
 public interface VariableService {
     DataTablesOutput data(DataTablesInput input);
     
-    void insert(VariableFilter filter, CheckError checkError);
+    Variable insert(VariableFilter filter, CheckError checkError);
     
-    void update(VariableFilter filter, CheckError checkError);
+    Variable update(VariableFilter filter, CheckError checkError);
     void delete(CheckError checkError, String... id);
     
     Variable findById(String id);
     
     String getValue(String key, String def);
+    
+    boolean getBool(String key, boolean def);
 }
