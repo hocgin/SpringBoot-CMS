@@ -169,9 +169,9 @@ public class DocumentFactory {
         member.setEmail(email);
         member.setPassword(password);
         Member.Token token = new Member.Token();
-        token.setToken(Member.Token.genToken("123"));
+        token.setToken("fafe3a248f8d9b4d7799c88aa3dab860");
         token.setAvailable(true);
-        token.setCount(1000);
+        token.setCount(0);
         member.setToken(token);
         member.setType(User.Type.Member.getCode());
         return member;
