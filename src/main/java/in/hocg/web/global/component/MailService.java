@@ -80,7 +80,7 @@ public class MailService {
      * @throws javax.mail.MessagingException
      * @throws UnsupportedEncodingException
      */
-    @Async
+    
     public void send(String[] to, String subject, String text,
                      Map<String, File> inline,
                      Map<String, File> attachment) throws javax.mail.MessagingException, UnsupportedEncodingException {
@@ -118,11 +118,13 @@ public class MailService {
         mailSender.send(messageHelper.getMimeMessage());
     }
     
+    
     public void send(String to, String subject, String text,
                      Map<String, File> inline,
                      Map<String, File> attachment) throws javax.mail.MessagingException, UnsupportedEncodingException {
         send(new String[]{to}, subject, text, inline, attachment);
     }
+    
     
     public void send(String to, String subject, String text) throws UnsupportedEncodingException, javax.mail.MessagingException {
         send(to, subject, text, null, null);
@@ -140,6 +142,7 @@ public class MailService {
      * @throws UnsupportedEncodingException
      * @throws javax.mail.MessagingException
      */
+    
     public void sendUseTemplate(String to, String subject, String templateName,
                                 Map<String, Object> params,
                                 Map<String, File> inline,
@@ -159,6 +162,7 @@ public class MailService {
      * @throws UnsupportedEncodingException
      * @throws MessagingException
      */
+    
     public void sendUseThymeleafText(String[] to, String subject, String thymeleafText,
                                      Map<String, Object> params,
                                      Map<String, File> inline,
@@ -178,12 +182,14 @@ public class MailService {
      * @throws IOException
      * @throws MessagingException
      */
+    
     public void sendUseThymeleafFile(String to, String subject, Path thymeleafFilePath,
                                      Map<String, Object> params,
                                      Map<String, File> inline,
                                      Map<String, File> attachment) throws IOException, MessagingException {
         send(to, subject, thymeleaf(thymeleafFilePath, params), inline, attachment);
     }
+    
     
     public void sendUseThymeleafFile(Collection<String> to, String subject, Path thymeleafFilePath,
                                      Map<String, Object> params,

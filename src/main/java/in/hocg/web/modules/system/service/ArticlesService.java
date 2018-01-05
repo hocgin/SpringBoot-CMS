@@ -30,4 +30,6 @@ public interface ArticlesService {
     void deletesByChannel(String... channelsId);
     
     void allowComments(String id, boolean allowComments);
+    
+    List<Articles> findByChannelAlias(String alias);
 }

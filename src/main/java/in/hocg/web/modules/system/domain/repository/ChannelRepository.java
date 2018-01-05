@@ -26,4 +26,7 @@ public interface ChannelRepository extends MongoRepository<Channel, String>,
      * @return
      */
     List<Channel> findAllByPathRegex(String path);
+    
+    Channel findTopByAliasIsAndAvailableIs(String alias, boolean available);
+    
 }

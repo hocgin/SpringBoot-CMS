@@ -21,7 +21,7 @@
     <main class="g-main">
         <div class="container">
             <div class="row">
-                <div class="g-weather-card col-sm-7 col-sm-offset-2" style="overflow-x: scroll">
+                <div class="g-weather-card col-sm-7 col-sm-offset-2">
                     <form id="query" method="POST" action="/">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                         <div class="search-wrapper pull-right">
@@ -82,7 +82,8 @@
                     <!--天气图表-->
                     <div id="main" class="col-sm-12" style="height:230px;"></div>
                     <!--天气预报-->
-                    <div class="g-weather-forecast col-sm-12">
+                    <div class="g-weather-forecast col-sm-12"
+                         style="overflow-x: scroll">
                         <div class="g-weather-forecast-card-group">
 
                             <!-- JS .append-->
@@ -97,23 +98,40 @@
         <div class="container">
             <hr class="half-rule">
             <h2>下载体验</h2>
-            <p class="lead">全球数以百万计的网站都是基于 Bootstrap 构建的。你可以先参观一下我们提供的实例精选或者看一看我们粉丝的网站吧。</p>
+            <p class="lead">提供了 Web、macOS、Chrome 供用户进行体验。</p>
             <hr class="half-rule">
             <div class="row">
                 <div class="col-sm-4">
-                    <img src="http://v3.bootcss.com/assets/img/sass-less.png" alt="" class="img-responsive">
-                    <h3>Chrome 插件</h3>
-                    <p class="c-gy">一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述</p>
+                    <img th:src="@{/web-lte/img/weather-chrome.png}" alt="" class="img-responsive"
+                         style="margin: 0 auto;">
+                    <h3>Chrome</h3>
+                    <p class="c-gy">
+                        Chrome 插件&nbsp;
+                        <a href="https://chrome.google.com/webstore/detail/weather/ibieofighcnndjcjchdahdiacjpmkhgf"
+                           rel="nofollow">
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </p>
                 </div>
                 <div class="col-sm-4">
-                    <img src="http://v3.bootcss.com/assets/img/sass-less.png" alt="" class="img-responsive">
-                    <h3>Chrome 插件</h3>
-                    <p class="c-gy">一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述</p>
+                    <img th:src="@{/web-lte/img/weather-macOS.png}" alt="" class="img-responsive"
+                         style="margin: 0 auto;">
+                    <h3>macOS</h3>
+                    <p class="c-gy">
+                        macOS 软件&nbsp;
+                        <a href="https://chrome.google.com/webstore/detail/weather/ibieofighcnndjcjchdahdiacjpmkhgf"
+                           rel="nofollow">
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </p>
                 </div>
                 <div class="col-sm-4">
-                    <img src="http://v3.bootcss.com/assets/img/sass-less.png" alt="" class="img-responsive">
-                    <h3>Chrome 插件</h3>
-                    <p class="c-gy">一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述一堆描述</p>
+                    <img th:src="@{/web-lte/img/weather-macOS.png}" alt="" class="img-responsive"
+                         style="margin: 0 auto;">
+                    <h3>Web</h3>
+                    <p class="c-gy">
+                        即使方便浏览实时天气..
+                    </p>
                 </div>
             </div>
             <hr class="half-rule">

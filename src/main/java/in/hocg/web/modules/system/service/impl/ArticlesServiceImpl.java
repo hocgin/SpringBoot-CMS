@@ -19,7 +19,9 @@ import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by hocgin on 2017/12/4.
@@ -125,5 +127,14 @@ public class ArticlesServiceImpl
             articles.updatedAt();
             repository.save(articles);
         }
+    }
+    
+    @Override
+    public List<Articles> findByChannelAlias(String alias) {
+        Channel channel = channelService.findOneByAlias(alias);
+        if (Objects.nonNull(channel)) {
+            return findByChannel(channel.getId());
+        }
+        return Collections.emptyList();
     }
 }

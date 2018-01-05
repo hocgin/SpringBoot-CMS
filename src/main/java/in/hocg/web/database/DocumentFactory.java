@@ -176,4 +176,29 @@ public class DocumentFactory {
         member.setType(User.Type.Member.getCode());
         return member;
     }
+    
+    public static Channel channel(String name, String alias, String path) {
+        Channel channel = new Channel();
+        channel.setName(name);
+        channel.setHasChildren(false);
+        channel.setAlias(alias);
+        channel.setPath(path);
+        channel.setAvailable(true);
+        channel.createdAt();
+        return channel;
+    }
+    
+    public static Articles article(Channel channel, String title, String content, String synopsis) {
+        Articles articles = new Articles();
+        articles.setAllowComments(true);
+        articles.setSynopsis(synopsis);
+        articles.setContent(content);
+        articles.setTitle(title);
+        articles.setAvailable(true);
+        articles.setChannel(channel);
+        articles.setSendAt(new Date());
+        articles.setAuthor("admin");
+        articles.createdAt();
+        return articles;
+    }
 }

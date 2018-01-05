@@ -28,4 +28,6 @@ public interface ChannelService {
     List<Channel> queryAllOrderByLocationAscAndPathAsc();
     
     void sort(String... id);
+    
+    Channel findOneByAlias(String alias);
 }

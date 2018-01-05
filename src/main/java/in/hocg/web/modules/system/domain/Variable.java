@@ -32,5 +32,5 @@ public class Variable extends BaseDomain {
     public final static String HOST = "HOST";
     
     @Transient
-    public final static String DEV_INIT_MONGO = "dev.init.mongo";
+    public final static String DEV_INIT_MONGO = "dev_init_mongo";
 }

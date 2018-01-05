@@ -17,6 +17,8 @@ public class Channel extends BaseDomain implements TreeNode {
     private String id;
     
     private String name;
+    
+    private String alias;
     /**
      * 路径值
      */

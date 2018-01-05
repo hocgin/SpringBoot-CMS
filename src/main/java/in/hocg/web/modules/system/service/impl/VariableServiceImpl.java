@@ -79,8 +79,8 @@ public class VariableServiceImpl implements VariableService {
     }
     
     @Override
-    public boolean getBool(String key, boolean def) {
-        return Boolean.TRUE.toString().equals(getValue(key, Boolean.FALSE.toString()));
+    public boolean getBool(String key, Boolean def) {
+        return Boolean.TRUE.toString().equals(getValue(key, def.toString()));
     }
     
     

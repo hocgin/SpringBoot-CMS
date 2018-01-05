@@ -117,6 +117,11 @@ public class ChannelServiceImpl
         repository.updateLocation(ids);
     }
     
+    @Override
+    public Channel findOneByAlias(String alias) {
+        return repository.findTopByAliasIsAndAvailableIs(alias, true);
+    }
+    
     
     /**
      * 获取子路径结构算法

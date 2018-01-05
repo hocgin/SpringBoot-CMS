@@ -36,6 +36,7 @@ public class BuiltInSeeder {
     private UserNotifyRepository userNotifyRepository;
     private NotifyRepository notifyRepository;
     private SubscriptionRepository subscriptionRepository;
+    private ChannelRepository channelRepository;
     
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     
@@ -51,6 +52,7 @@ public class BuiltInSeeder {
             CommentRepository commentRepository,
             SysMenuRepository sysMenuRepository,
             ArticlesRepository articlesRepository,
+            ChannelRepository channelRepository,
             BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.roleRepository = roleRepository;
         this.departmentRepository = departmentRepository;
@@ -64,6 +66,7 @@ public class BuiltInSeeder {
         this.userNotifyRepository = userNotifyRepository;
         this.notifyRepository = notifyRepository;
         this.subscriptionRepository = subscriptionRepository;
+        this.channelRepository = channelRepository;
     }
     
     public BuiltInSeeder drop() {
@@ -87,6 +90,8 @@ public class BuiltInSeeder {
         userNotifyRepository.deleteAll();
         subscriptionRepository.deleteAll();
         notifyRepository.deleteAll();
+    
+        channelRepository.deleteAll();
         return this;
     }
     
@@ -449,8 +454,21 @@ public class BuiltInSeeder {
                 bCryptPasswordEncoder.encode("123"));
         hocgin.setUsername("hocgin");
         userRepository.insert(hocgin);
-        
+    
+        /**
+         * 栏目
+         * zixun
+         */
+        Channel channel = DocumentFactory.channel("资讯", "ZiXun", "001");
+        channelRepository.insert(channel);
+    
+    
+        Articles article = DocumentFactory.article(channel, "测试", "测试内容", "测试简介");
+        articlesRepository.insert(article);
+    
         Variable variable4 = DocumentFactory.variable(Variable.DEV_INIT_MONGO, Boolean.FALSE.toString(), "初始化 Mongo 数据, true 为开启。");
+        variable4.setBuiltIn(false);
         variableRepository.insert(variable4);
+        
     }
 }

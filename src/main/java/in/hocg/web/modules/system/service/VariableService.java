@@ -23,5 +23,6 @@ public interface VariableService {
     
     String getValue(String key, String def);
     
-    boolean getBool(String key, boolean def);
+    
+    boolean getBool(String key, Boolean def);
 }

@@ -307,7 +307,7 @@ public class MemberServiceImpl implements MemberService {
                 variableService.getValue(Variable.HOST, "http://127.0.0.1:8080"),
                 mailVerify.getId()));
         try {
-            mailService.sendUseTemplate(member.getEmail(), String.format("邮箱验证 (%s)", member.getNickname()), "verify-email",
+            mailService.sendUseTemplate(member.getEmail(), String.format("邮箱验证 (%s)", member.getNickname()), "verify-mail",
                     params, null, null);
         } catch (UnsupportedEncodingException | MessagingException e) {
             e.printStackTrace();

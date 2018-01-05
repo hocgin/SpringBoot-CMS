@@ -124,7 +124,7 @@
                         <div class="input-group input-boxs">
                             <input spellcheck="false"
                                    id="token"
-                                   th:value="${user.token?.token}"
+                                   th:value="${user?.token?.token}"
                                    disabled="disabled"
                                    class="input">
                             <div class="action-box">
@@ -154,7 +154,7 @@
                         <span class="title">状态</span>
                         <div class="input-group input-boxs">
                             <input spellcheck="false"
-                                   th:value="${user.token?.available?'开启':'关闭'}"
+                                   th:value="${(user.token?.available?:false)?'开启':'关闭'}"
                                    disabled="disabled"
                                    class="input">
                             <div class="action-box">
