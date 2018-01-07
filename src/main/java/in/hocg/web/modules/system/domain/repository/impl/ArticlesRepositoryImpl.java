@@ -3,6 +3,7 @@ package in.hocg.web.modules.system.domain.repository.impl;
 import in.hocg.web.modules.base.BaseMongoCustom;
 import in.hocg.web.modules.system.domain.Articles;
 import in.hocg.web.modules.system.domain.repository.custom.ArticlesRepositoryCustom;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
@@ -22,6 +23,7 @@ public class ArticlesRepositoryImpl
     
     @Override
     public List<Articles> findAllByChannel(String channelID) {
-        return find(Query.query(Criteria.where("channel.id").is(channelID)));
+        Query query = Query.query(Criteria.where("channel.id").is(channelID)).with(new Sort(new Sort.Order(Sort.Direction.DESC, "createdAt")));
+        return find(query);
     }
 }

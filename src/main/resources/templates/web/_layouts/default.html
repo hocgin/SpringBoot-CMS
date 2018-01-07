@@ -20,6 +20,7 @@
     <link rel="stylesheet" th:href="@{/web-lte/css/weather-app.css}">
 
     <script type="text/javascript" th:src="@{/dist/jquery-3.2.1.min.js}"></script>
+    <script th:src="@{/dist/jquery.pjax.js}"></script>
     <script type="text/javascript" th:src="@{/dist/jquery.form.js}"></script>
     <script type="text/javascript" th:src="@{/admin-lte/bower_components/bootstrap/dist/js/bootstrap.min.js}"></script>
     <script type="text/javascript" th:src="@{/dist/layer/layer.js}"></script>
@@ -47,6 +48,13 @@
                         replace: true,
                         fragment: '#pjax-web-container',
                         timeout: 8000
+                    });
+
+                    $('.g-menus a[data-pjax]').on('click', function () {
+                        $('.g-menus .active').each(function (i, el) {
+                            $(el).removeClass('active');
+                        });
+                        $(this).parent().addClass('active');
                     });
                 }
             });

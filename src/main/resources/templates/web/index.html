@@ -176,9 +176,11 @@
         /*]]>*/
 
         function done() {
-            $('body').removeClass('loading')
-                .addClass('loaded');
-            $('#loader-wrapper').remove();
+            if (!$('body').hasClass('loaded')) {
+                $('body').removeClass('loading')
+                    .addClass('loaded');
+            }
+            $('#loader-wrapper').hide().remove();
         }
 
         function submit() {

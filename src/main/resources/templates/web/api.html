@@ -23,10 +23,12 @@
     <script>
         $('#api-html').on('load', function () {
             var main = $(window.parent.document).find("#api-html");
+            main.hide();
             var height = $(document).height() + 30;
             main.height(height);
-            setInterval(function () {
+            setTimeout(function () {
                 $(window.parent.document).find("#api-html").contents().find('#header').remove();
+                main.show();
             }, 1000);
         });
     </script>

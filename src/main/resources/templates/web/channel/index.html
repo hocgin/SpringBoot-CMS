@@ -5,10 +5,12 @@
       layout:decorator="/web/_layouts/default">
 <head>
     <title th:text="${channel.name}">栏目</title>
+</head>
+<body>
+<div id="pjax-web-container"
+     layout:fragment="content"
+     style="min-height: 850px;">
     <style>
-        body {
-            font-size: 16px;
-        }
 
         .post-title-link {
             display: inline-block;
@@ -89,12 +91,6 @@
             color: white;
         }
     </style>
-</head>
-<body>
-
-<div id="pjax-web-container"
-     layout:fragment="content"
-     style="min-height: 850px;">
     <header class="jumbotron subhead" id="overview">
         <div class="container">
             <h1>资讯</h1>
