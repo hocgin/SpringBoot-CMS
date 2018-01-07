@@ -6,6 +6,7 @@ import in.hocg.web.modules.system.service.ShortUrlService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -35,5 +36,15 @@ public class IndexController {
             return PageKit.v404;
         }
         return String.format("redirect:%s", shortUrl.getOriginalUrl());
+    }
+    
+    
+    /**
+     * API 文档
+     * @return
+     */
+    @GetMapping("/api.html")
+    public String api() {
+        return "/web/api";
     }
 }

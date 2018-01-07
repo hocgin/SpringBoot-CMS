@@ -145,7 +145,9 @@ public class SecurityConfig {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             http.antMatcher("/public/**")
-                    .csrf().disable();
+                    .csrf().disable()
+                    .authorizeRequests().anyRequest().permitAll()
+                    ;
         }
     }
     
@@ -210,13 +212,16 @@ public class SecurityConfig {
                             "/swagger-ui.html",
                             "/v2/api-docs",
                             "/webjars/**"
-                    ).permitAll()
-                    
+                    ).permitAll().and().headers().frameOptions().disable()
+                    .and().authorizeRequests()
                     // 允许匿名访问(前台登陆)
                     .antMatchers(
                             "/",
                             "/index.html",
                             "/register",
+                            "/api.html",
+                            "/channel/*",
+                            "/article/*",
                             "/send-reset-password",
                             "/reset-password.html",
                             "/set-new-password.html",

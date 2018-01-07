@@ -290,7 +290,11 @@
     margin-top: 0;
     color: #99979c;
     text-align: center;
-    background-color: #2a2730;
+    background-color: #fff;
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.16), 0 0 0 1px rgba(0,0,0,0.08);
+}
+.g-footer a {
+    color: #878FD6;
 }
 
 .g-footer-links {

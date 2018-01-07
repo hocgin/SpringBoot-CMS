@@ -38,13 +38,26 @@
                     xhr.setRequestHeader(header, token);
                 }
             });
+
+            $(document).ready(function () {
+                if ($.support.pjax) {
+                    $(document).pjax('a[data-pjax]', '#pjax-web-container', {
+                        maxCacheLength: 0,
+                        push: false,
+                        replace: true,
+                        fragment: '#pjax-web-container',
+                        timeout: 8000
+                    });
+                }
+            });
+
         });
     </script>
 </head>
 <body>
 <header th:replace="/web/_fragments/top-menu :: top-menu"></header>
 <div th:replace="/web/_fragments/login-register:: login-register"></div>
-<div layout:fragment="content"></div>
+<div layout:fragment="content" id="pjax-web-container"></div>
 <div th:replace="/web/_fragments/main-footer::main-footer"></div>
 </body>
 </html>

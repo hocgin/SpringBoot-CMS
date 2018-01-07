@@ -112,4 +112,5 @@ public class WebController extends BaseController {
         memberService.setNewPassword(filter.getId(), filter.getNewPassword(), checkError);
         return Results.check(checkError, "设置成功");
     }
+    
 }

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="/web/_layouts/default">
+<head>
+    <meta charset="UTF-8">
+    <title>API 文档</title>
+</head>
+<body style="height: 100%">
+<div id="pjax-web-container" layout:fragment="content">
+    <header class="jumbotron subhead" id="overview"
+            style="background: #878FD6;
+                    margin-bottom: 0;
+                    color: white;">
+        <div class="container">
+            <h1>API 文档</h1>
+            <p class="lead">服务文档、天气 API 文档。</p>
+        </div>
+    </header>
+    <iframe id="api-html" height="100%" width="100%"
+            th:src="@{/swagger-ui.html}" style="border: none;"></iframe>
+    <script>
+        $('#api-html').on('load', function () {
+            var main = $(window.parent.document).find("#api-html");
+            var height = $(document).height() + 30;
+            main.height(height);
+            setInterval(function () {
+                $(window.parent.document).find("#api-html").contents().find('#header').remove();
+            }, 1000);
+        });
+    </script>
+</div>
+</body>
+</html>

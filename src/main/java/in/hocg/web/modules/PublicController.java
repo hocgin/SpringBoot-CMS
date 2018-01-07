@@ -244,5 +244,4 @@ public class PublicController extends BaseController {
 //    public Results upload(@RequestParam("file") MultipartFile file) {
 //        return Results.success().setCode(ResultCode.FILE_ALREADY_EXISTS);
 //    }
-    
 }

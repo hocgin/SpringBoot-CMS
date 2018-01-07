@@ -6,6 +6,7 @@ import in.hocg.web.modules.api.filter.CommentAddFilter;
 import in.hocg.web.modules.api.filter.CommentQueryFilter;
 import in.hocg.web.modules.base.Base2Service;
 import in.hocg.web.modules.base.body.Page;
+import in.hocg.web.modules.security.details.IUser;
 import in.hocg.web.modules.system.domain.Articles;
 import in.hocg.web.modules.system.domain.Comment;
 import in.hocg.web.modules.system.domain.user.User;
@@ -62,7 +63,12 @@ public class CommentServiceImpl
     
     @Override
     public Comment insert(CommentAddFilter filter, CheckError checkError) {
-        User member = userService.findOne(SecurityKit.iUser().getId());
+        IUser iUser = SecurityKit.iUser();
+        if (ObjectUtils.isEmpty(iUser)) {
+            checkError.putError("请先登陆");
+            return null;
+        }
+        User member = userService.findOne(iUser.getId());
         if (ObjectUtils.isEmpty(member)) {
             checkError.putError("请先登陆");
             return null;

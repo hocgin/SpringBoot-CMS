@@ -35,8 +35,10 @@
     </style>
 </head>
 <!--/*@thymesVar id="article" type="in.hocg.web.modules.system.domain.Articles"*/-->
-<body layout:fragment="content">
-<div class="container">
+<body>
+
+<div id="pjax-web-container" class="container" layout:fragment="content"
+     style="min-height: 850px;">
     <div class="row text-center">
         <h2 th:text="${article.title}"></h2>
         <div class="post-meta">
@@ -79,12 +81,14 @@
              data-avatar="/public/images/default_avatar.gif"
         ></div>
     </div>
+
+    <script>
+        $(function () {
+            var comment = new Comment('.comment-holder');
+        });
+    </script>
 </div>
 
-<script>
-    $(function () {
-        var comment = new Comment('.comment-holder');
-    });
-</script>
+
 </body>
 </html>

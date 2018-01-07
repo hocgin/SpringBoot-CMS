@@ -4,15 +4,12 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="/web/_layouts/default">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title th:text="${channel.name}">栏目</title>
     <style>
         body {
             font-size: 16px;
         }
+
         .post-title-link {
             display: inline-block;
             position: relative;
@@ -23,11 +20,13 @@
 
             text-decoration: none;
         }
+
         .post-title-link:hover {
             color: #555;
             background: transparent;
             text-decoration: none;
         }
+
         .post-title-link:hover::before {
             visibility: visible;
             -webkit-transform: scaleX(1);
@@ -36,6 +35,7 @@
             -o-transform: scaleX(1);
             transform: scaleX(1);
         }
+
         .post-title-link::before {
             content: "";
             position: absolute;
@@ -54,6 +54,7 @@
             transition-timing-function: ease-in-out;
             transition-delay: 0s;
         }
+
         .post-meta {
             margin-top: 5px;
             margin-bottom: 20px;
@@ -61,12 +62,15 @@
             font-family: 'Lato', "PingFang SC", "Microsoft YaHei", sans-serif;
             font-size: 12px;
         }
+
         .post-meta-divider {
             margin: 0 0.5em;
         }
+
         p {
             margin: 0 0 25px 0;
         }
+
         .post-button .more-btn {
             color: #555;
             font-size: 14px;
@@ -79,19 +83,34 @@
             text-decoration: none;
             display: inline-block;
         }
+
+        .subhead {
+            background: #878FD6;
+            color: white;
+        }
     </style>
 </head>
-<body layout:fragment="content">
-<div class="container">
-    <!--/*@thymesVar id="articles" type="java.util.List<in.hocg.web.modules.system.domain.Articles>"*/-->
-    <!--/*@thymesVar id="article" type="in.hocg.web.modules.system.domain.Articles"*/-->
-    <div class="row" th:each="article, i:${articles}">
-        <h2>
-            <a th:href="@{/article/__${article.id}__}"
-               class="post-title-link"
-               th:text="${article.title}"></a>
-        </h2>
-        <div class="post-meta">
+<body>
+
+<div id="pjax-web-container"
+     layout:fragment="content"
+     style="min-height: 850px;">
+    <header class="jumbotron subhead" id="overview">
+        <div class="container">
+            <h1>资讯</h1>
+            <p class="lead">爱天气公告及资讯发布位置。</p>
+        </div>
+    </header>
+    <div class="container">
+        <!--/*@thymesVar id="articles" type="java.util.List<in.hocg.web.modules.system.domain.Articles>"*/-->
+        <!--/*@thymesVar id="article" type="in.hocg.web.modules.system.domain.Articles"*/-->
+        <div class="row" th:each="article, i:${articles}">
+            <h2>
+                <a th:href="@{/article/__${article.id}__}"
+                   class="post-title-link"
+                   th:text="${article.title}"></a>
+            </h2>
+            <div class="post-meta">
             <span class="post-time">
                 <span class="post-meta-item-icon">
                 <i class="fa fa-calendar-o"></i>
@@ -101,7 +120,7 @@
                       th:text="${@iText.format(article.sendAt)}">
                 </time>
             </span>
-            <span class="post-category">
+                <span class="post-category">
               <span class="post-meta-divider">|</span>
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
@@ -113,21 +132,23 @@
                   </a>
                 </span>
             </span>
-            <span class="post-author">
+                <span class="post-author">
                 <span class="post-meta-divider">|</span>
                 <span class="post-meta-item-text">作者:</span>
                 <span th:text="${article.author}"></span>
             </span>
-        </div>
-        <div class="post-body">
-            <p th:utext="${article.synopsis}"></p>
-            <div class="post-button">
-                <a class="more-btn" th:href="@{/article/__${article.id}__}">
-                    阅读全文 »
-                </a>
+            </div>
+            <div class="post-body">
+                <p th:utext="${article.synopsis}"></p>
+                <div class="post-button">
+                    <a class="more-btn" th:href="@{/article/__${article.id}__}">
+                        阅读全文 »
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
 </body>
 </html>

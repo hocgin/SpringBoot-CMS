@@ -30,7 +30,20 @@ public class SecurityKit {
         return SecurityContextHolder.getContext().getAuthentication().getAuthorities();
     }
     
+    
+    /**
+     * - 未登陆
+     * - 前台用户
+     * - 后台用户
+     * @return
+     */
     public static IUser iUser() {
-        return ((IUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        IUser user;
+        try {
+           user = (IUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        } catch (Exception e) {
+            return null;
+        }
+        return user;
     }
 }
