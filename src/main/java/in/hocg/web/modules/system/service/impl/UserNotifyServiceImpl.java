@@ -156,6 +156,11 @@ public class UserNotifyServiceImpl extends Base2Service<UserNotify, String, User
         );
     }
     
+    @Override
+    public List<UserNotify> findAllUnreadyUserNotifyOrderByCreatedAtDesc(String userID, Notify.Type type) {
+        return repository.findAllUnreadyUserNotifyOrderByCreatedAtDesc(userID, type);
+    }
+    
     
     /**
      * 未读
@@ -170,9 +175,11 @@ public class UserNotifyServiceImpl extends Base2Service<UserNotify, String, User
     
     
     @Override
-    public void read(String userID, String... notifyIDs) {
-        List<UserNotify> userNotifyList = repository.findAllByUser_IdIsAndNotify_IdIn(userID, notifyIDs);
-        userNotifyList.forEach(userNotify -> userNotify.setRead(true));
+    public void ready(String... userNotifyIDs) {
+        List<UserNotify> userNotifyList = repository.findAllByIdIn(userNotifyIDs);
+        userNotifyList.forEach(userNotify -> {
+            userNotify.setRead(true);
+        });
         repository.save(userNotifyList);
     }
 }

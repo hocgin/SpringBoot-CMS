@@ -4,6 +4,7 @@ import in.hocg.web.lang.CheckError;
 import in.hocg.web.modules.base.Base2Service;
 import in.hocg.web.modules.system.domain.notify.Notify;
 import in.hocg.web.modules.system.domain.notify.TargetType;
+import in.hocg.web.modules.system.domain.notify.UserNotify;
 import in.hocg.web.modules.system.domain.repository.NotifyRepository;
 import in.hocg.web.modules.system.domain.user.User;
 import in.hocg.web.modules.system.service.UserService;
@@ -63,10 +64,10 @@ public class NotifyServiceImpl extends Base2Service<Notify, String, NotifyReposi
     }
     
     @Override
-    public void createMessage(String content, User sender, User receiver) {
+    public UserNotify createMessage(String content, User sender, User receiver) {
         Notify notify = repository.insert(new Notify(content, receiver.getId(),
                 null, null, Notify.Type.Message, sender));
-        userNotifyService.createUserNotify(receiver, Collections.singletonList(notify));
+        return userNotifyService.createUserNotify(receiver, Collections.singletonList(notify)).get(0);
     }
     
     @Override

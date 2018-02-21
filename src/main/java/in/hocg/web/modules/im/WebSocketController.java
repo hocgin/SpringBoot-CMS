@@ -12,12 +12,12 @@ import in.hocg.web.modules.system.service.notify.NotifyService;
 import in.hocg.web.modules.system.service.notify.UserNotifyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by hocgin on 2017/12/18.
@@ -53,7 +53,7 @@ public class WebSocketController {
     public void reply(String value, Principal principal) throws Exception {
         MessagePacket packet = gson.fromJson(value, MessagePacket.class);
         MessageProcessor<?> processor = processors.get(packet.getType());
-        if (processor != null) {
+        if (Objects.nonNull(processor)) {
             processor.process(value);
             return;
         }
@@ -70,6 +70,6 @@ public class WebSocketController {
     @MessageMapping("/messages/reply") // 服务端接收入口
     public void feedback(String value, Principal principal) throws Exception {
         AcceptFeedback feedback = gson.fromJson(value, AcceptFeedback.class);
-        userNotifyService.read(SecurityKit.iUser().getId(), feedback.getData().getId());
+        userNotifyService.ready(feedback.getData().getId());
     }
 }

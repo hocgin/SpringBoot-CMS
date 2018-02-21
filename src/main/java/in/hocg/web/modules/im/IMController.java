@@ -9,13 +9,17 @@ import in.hocg.web.modules.im.body.ChatLogBody;
 import in.hocg.web.modules.im.body.LayIMInit;
 import in.hocg.web.modules.im.filter.ChatLogQueryFilter;
 import in.hocg.web.modules.im.filter.FindFilter;
+import in.hocg.web.modules.im.packets.transmit.im.UserToUserTransmit;
+import in.hocg.web.modules.security.details.IUser;
 import in.hocg.web.modules.system.domain.notify.Notify;
 import in.hocg.web.modules.system.domain.notify.UserNotify;
 import in.hocg.web.modules.system.domain.user.User;
 import in.hocg.web.modules.system.service.UserService;
+import in.hocg.web.modules.system.service.kit.NSNotifyService;
 import in.hocg.web.modules.system.service.notify.NotifyService;
 import in.hocg.web.modules.system.service.notify.UserNotifyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,6 +27,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -36,15 +41,18 @@ public class IMController {
     
     private UserNotifyService userNotifyService;
     private NotifyService notifyService;
+    private NSNotifyService nsNotifyService;
     private UserService userService;
     
     @Autowired
     public IMController(UserNotifyService userNotifyService,
                         NotifyService notifyService,
+                        NSNotifyService nsNotifyService,
                         UserService userService) {
         this.userNotifyService = userNotifyService;
         this.notifyService = notifyService;
         this.userService = userService;
+        this.nsNotifyService = nsNotifyService;
     }
     
     @GetMapping("/find.html")
@@ -94,13 +102,34 @@ public class IMController {
     
     @PostMapping("/init")
     @ResponseBody
-    public LayIMInit init() {
+    public Object init() {
         // 最近联系人分组
-        String userID = SecurityKit.iUser().getId();
+        IUser iUser = SecurityKit.iUser();
+        if (Objects.isNull(iUser)) {
+            return ResponseEntity.noContent();
+        }
+        String userID = iUser.getId();
         List<User> mostRecentContact = userNotifyService.getMostRecentContact(userID);
         return LayIMInit.get(userService.findOne(userID),
                 ImmutableMap.<String, List<User>>builder()
                         .put("最近联系人", mostRecentContact)
                         .build());
+    }
+    
+    @GetMapping("/unready")
+    @ResponseBody
+    public Object unreadyMessage() {
+        // 最近联系人分组
+        IUser iUser = SecurityKit.iUser();
+        if (Objects.isNull(iUser)) {
+            return ResponseEntity.noContent();
+        }
+        userNotifyService.findAllUnreadyUserNotifyOrderByCreatedAtDesc(iUser.getId(), Notify.Type.Message)
+                .forEach(unreadyMessage -> {
+                    Notify notify = unreadyMessage.getNotify();
+                    nsNotifyService.sendMessageToUser(iUser.getUsername(), new UserToUserTransmit()
+                            .full(notify.getSender(), unreadyMessage));
+                });
+        return ResponseEntity.ok("");
     }
 }

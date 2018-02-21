@@ -63,7 +63,7 @@ public class NotifyTest {
                 .map(UserNotify::getNotify)
                 .map(Notify::getId)
                 .toArray(String[]::new);
-        userNotifyService.read(user.getId(), userNotifyIDs);
+        userNotifyService.ready(userNotifyIDs);
     }
     
     @Test

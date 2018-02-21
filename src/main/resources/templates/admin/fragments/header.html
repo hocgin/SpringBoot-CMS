@@ -234,8 +234,8 @@
 
             layui.use(['layim'], function () {
                 var $ = layui.jquery,
-                    layim = layui.layim;
-
+                    layim = layui.layim,
+                    stompClient;
                 //
                 var socket = new SockJS('/socket');
                 stompClient = Stomp.over(socket);
@@ -244,18 +244,20 @@
                 var headers = {};
                 headers[header] = token;
                 stompClient.connect(headers, function (frame) {
-                    // 接收私人信息
+                    // 接收私信
                     stompClient.subscribe('/user/queue/messages', function (rs) {
                         var body = JSON.parse(rs.body);
+                        console.log("body", body)
                         if (body.type === 1) {
                             var text = $notifyMessageLabel.text();
                             $notifyMessageLabel.text((!!text ? parseInt(text) : 0) + 1);
                             layim.getMessage(body.data);
+                            console.log(body.data);
                             stompClient.send("/app/messages/reply", {}, JSON.stringify({
                                 type: 1,
                                 data: {
                                     type: 1,
-                                    id: [body.data.id]
+                                    id: [body.userNotifyId]
                                 }
                             }));
                         }
@@ -277,14 +279,14 @@
                         data: {}
                     },
                     brief: false,
-                    min: false,
+                    min: true,
                     isgroup: true,
                     voice: false,
                     copyright: true,
                     find: '/api/v1/im/find.html',
                     chatLog: '/api/v1/im/chat-log.html'
                 }).on('ready', function (res) {
-                    console.log("IM Ready")
+                    $.get('/api/v1/im/unready?tag=message');
                 }).on('sendMessage', function (data) {
                     stompClient.send("/app/reply", {}, JSON.stringify({
                         type: 1,

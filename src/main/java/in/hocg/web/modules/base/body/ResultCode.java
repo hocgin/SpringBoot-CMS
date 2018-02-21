@@ -21,6 +21,8 @@ public interface ResultCode {
     int BAD_REQUEST = 400;
     // 未授权
     int UNAUTHORIZED = 401;
+    // 未登陆
+    int NOT_LOGIN = 402;
     // 未找到
     int NOT_FOUND = 404;
     // 条件错误, Service 级别

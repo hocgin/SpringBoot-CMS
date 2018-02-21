@@ -16,6 +16,7 @@
     <link rel="stylesheet" th:href="@{/web-lte/css/comment.css}">
     <link rel="stylesheet" th:href="@{/web-lte/css/loading.css}">
     <link rel="stylesheet" th:href="@{/web-lte/css/search.css}">
+    <link rel="stylesheet" th:href="@{/dist/layui/css/layui.css}">
     <link rel="stylesheet" th:href="@{/web-lte/css/login-register.css}">
     <link rel="stylesheet" th:href="@{/web-lte/css/weather-app.css}">
 
@@ -29,6 +30,10 @@
     <script type="text/javascript" th:src="@{/web-lte/js/comment.widget.js}"></script>
     <script type="text/javascript" th:src="@{/dist/echarts/echarts.min.js}"></script>
     <script type="text/javascript" th:src="@{/web-lte/js/kit.js}"></script>
+    <script th:src="@{/dist/sockjs/sockjs.min.js}"></script>
+    <script th:src="@{/dist/stomp/stomp.js}"></script>
+    <script th:src="@{/dist/layer/layer.js}"></script>
+    <script th:src="@{/dist/layui/layui.js}"></script>
     <script type="text/javascript">
         $(function () {
             // 添加 CSRF 头
@@ -59,6 +64,65 @@
                 }
             });
 
+        });
+
+        layui.use(['layim'], function () {
+            var $ = layui.jquery,
+                layim = layui.layim,
+                stompClient;
+
+            var socket = new SockJS('/socket');
+            stompClient = Stomp.over(socket);
+            var token = $("meta[name='_csrf']").attr('content');
+            var header = $("meta[name='_csrf_header']").attr('content');
+            var headers = {};
+            headers[header] = token;
+            stompClient.connect(headers, function (frame) {
+                // 接收私信
+                stompClient.subscribe('/user/queue/messages', function (rs) {
+                    var body = JSON.parse(rs.body);
+                    if (body.type === 1) {
+                        layim.getMessage(body.data);
+                        console.log(body.data);
+                        stompClient.send("/app/messages/reply", {}, JSON.stringify({
+                            type: 1,
+                            data: {
+                                type: 1,
+                                id: [body.userNotifyId]
+                            }
+                        }));
+                    }
+                });
+                stompClient.subscribe('/topic/update/announcement', function (rs) {
+                    var body = JSON.parse(rs.body);
+                    // $('.notify-announce-label').text('1');
+                });
+            });
+            layim.config({
+                title: '聊天',
+                init: {
+                    url: '/api/v1/im/init',
+                    type: 'POST'
+                },
+                members: {
+                    url: '',
+                    data: {}
+                },
+                brief: false,
+                min: true,
+                isgroup: true,
+                voice: false,
+                copyright: true,
+                find: '/api/v1/im/find.html',
+                chatLog: '/api/v1/im/chat-log.html'
+            }).on('ready', function (res) {
+                $.get('/api/v1/im/unready?tag=message');
+            }).on('sendMessage', function (data) {
+                stompClient.send("/app/reply", {}, JSON.stringify({
+                    type: 1,
+                    data: data
+                }));
+            });
         });
     </script>
 </head>

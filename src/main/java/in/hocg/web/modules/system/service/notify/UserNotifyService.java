@@ -43,10 +43,9 @@ public interface UserNotifyService {
     /**
      * 设置为已读
      *
-     * @param userID
      * @param userNotifyIDs
      */
-    void read(String userID, String... userNotifyIDs);
+    void ready(String... userNotifyIDs);
     
     /**
      * 创建一条 UserNotify
@@ -69,4 +68,6 @@ public interface UserNotifyService {
     List<User> getMostRecentContact(String userID);
     
     Page<UserNotify> getChatLog(ChatLogQueryFilter filter);
+    
+    List<UserNotify> findAllUnreadyUserNotifyOrderByCreatedAtDesc(String userID, Notify.Type type);
 }

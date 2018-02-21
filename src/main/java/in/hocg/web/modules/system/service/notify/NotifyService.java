@@ -3,6 +3,7 @@ package in.hocg.web.modules.system.service.notify;
 import in.hocg.web.lang.CheckError;
 import in.hocg.web.modules.system.domain.notify.Notify;
 import in.hocg.web.modules.system.domain.notify.TargetType;
+import in.hocg.web.modules.system.domain.notify.UserNotify;
 import in.hocg.web.modules.system.domain.user.User;
 import org.springframework.data.mongodb.datatables.mapping.DataTablesInput;
 import org.springframework.data.mongodb.datatables.mapping.DataTablesOutput;
@@ -37,12 +38,11 @@ public interface NotifyService {
     
     /**
      * 创建一条私信
-     *
-     * @param content  the content
+     *  @param content  the content
      * @param sender   the sender
      * @param receiver the receiver
      */
-    void createMessage(String content, User sender, User receiver);
+    UserNotify createMessage(String content, User sender, User receiver);
     
     /**
      * 查询某订阅在指定时间之后发布的所有消息

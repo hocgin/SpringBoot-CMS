@@ -4,6 +4,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBRef;
 import in.hocg.web.modules.base.BaseMongoCustom;
 import in.hocg.web.modules.base.body.Page;
+import in.hocg.web.modules.system.domain.notify.Notify;
 import in.hocg.web.modules.system.domain.notify.UserNotify;
 import in.hocg.web.modules.system.domain.repository.custom.UserNotifyRepositoryCustom;
 import in.hocg.web.modules.system.domain.user.User;
@@ -62,5 +63,14 @@ public class UserNotifyRepositoryImpl extends BaseMongoCustom<UserNotify, String
         return pageX(query, (page - 1) < 0 ? 0 : (page - 1), size);
     }
     
+    @Override
+    public List<UserNotify> findAllUnreadyUserNotifyOrderByCreatedAtDesc(String userID, Notify.Type type) {
+        Criteria criteria = new Criteria();
+        criteria.andOperator(Criteria.where("read").is(false),
+                Criteria.where("notify.type").is(type.name()));
+        return find(Query.query(criteria).with(new Sort(new Sort.Order(Sort.Direction.DESC, "createdAt"))));
+    }
+    
     
 }
+

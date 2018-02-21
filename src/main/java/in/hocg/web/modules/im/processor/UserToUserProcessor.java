@@ -5,6 +5,7 @@ import in.hocg.web.modules.im.packets.accept.im.UserToUserAccept;
 import in.hocg.web.modules.im.packets.accept.im.common.Mine;
 import in.hocg.web.modules.im.packets.accept.im.common.To;
 import in.hocg.web.modules.im.packets.transmit.im.UserToUserTransmit;
+import in.hocg.web.modules.system.domain.notify.UserNotify;
 import in.hocg.web.modules.system.domain.user.User;
 import in.hocg.web.modules.system.service.UserService;
 import in.hocg.web.modules.system.service.kit.NSNotifyService;
@@ -38,7 +39,7 @@ public class UserToUserProcessor extends MessageProcessor<UserToUserAccept> {
         String content = mine.getContent();
         User sender = userService.findOne(mine.getId());
         User toUser = userService.findOne(to.getId());
-        notifyService.createMessage(content, sender, toUser);
-        this.nsNotifyService.sendMessageToUser(toUser.getUsername(), new UserToUserTransmit().full(sender, content));
+        UserNotify message = notifyService.createMessage(content, sender, toUser);
+        this.nsNotifyService.sendMessageToUser(toUser.getUsername(), new UserToUserTransmit().full(sender, message));
     }
 }

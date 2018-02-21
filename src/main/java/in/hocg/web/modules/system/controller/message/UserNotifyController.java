@@ -41,7 +41,7 @@ public class UserNotifyController {
     
     @RequestMapping("/read")
     Results ready(IdsFilter filter) {
-        userNotifyService.read(SecurityKit.iUser().getId(), filter.getId());
+        userNotifyService.ready(filter.getId());
         return Results.success();
     }
     

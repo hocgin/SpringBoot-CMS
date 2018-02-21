@@ -2,6 +2,7 @@ package in.hocg.web.modules.im.packets.transmit.im;
 
 import in.hocg.web.modules.im.packets.MessagePacket;
 import in.hocg.web.modules.im.packets.transmit.Transmit;
+import in.hocg.web.modules.system.domain.notify.UserNotify;
 import in.hocg.web.modules.system.domain.user.User;
 import lombok.Data;
 
@@ -12,7 +13,7 @@ import lombok.Data;
 @Data
 public class UserToUserTransmit extends MessagePacket {
     
-    
+    private String userNotifyId;
     private UserToUserTransmit.Data data;
     
     @lombok.Data
@@ -41,17 +42,18 @@ public class UserToUserTransmit extends MessagePacket {
         private long timestamp;
     }
     
-    public UserToUserTransmit full(User sender, String content) {
+    public UserToUserTransmit full(User sender, UserNotify userNotify) {
         Data data = new Data();
         data.setUsername(sender.getUsername());
         data.setAvatar(sender.getAvatar());
         data.setId(sender.getId());
         data.setType("friend");
-        data.setContent(content);
+        data.setContent(userNotify.getNotify().getContent());
         data.setFromid(sender.getId());
         data.setTimestamp(System.currentTimeMillis());
         setData(data);
         setType(Transmit.USER_TO_USER);
+        setUserNotifyId(userNotify.getId());
         return this;
     }
 }

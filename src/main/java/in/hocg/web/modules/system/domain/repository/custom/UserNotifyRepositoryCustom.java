@@ -1,6 +1,7 @@
 package in.hocg.web.modules.system.domain.repository.custom;
 
 import in.hocg.web.modules.base.body.Page;
+import in.hocg.web.modules.system.domain.notify.Notify;
 import in.hocg.web.modules.system.domain.notify.UserNotify;
 import in.hocg.web.modules.system.domain.user.User;
 
@@ -23,5 +24,10 @@ public interface UserNotifyRepositoryCustom {
     Page<UserNotify> pageByUserIDsAndNotifySenderIDsAndNotifyTypeOrderByCreatedAtDesc(int page, int size,
                                                                                       String[] userID,
                                                                                       String[] senderID,
-                                                                                      String notifyType);
+                                                                                      String noype);
+    
+    /**
+     * 查询某用户所有 未读站内信息
+     */
+    List<UserNotify> findAllUnreadyUserNotifyOrderByCreatedAtDesc(String userID, Notify.Type type);
 }
