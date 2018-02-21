@@ -1,6 +1,19 @@
 ## 更新日志
 [更新日志](/change-log.md)
 
+## 图片
+![image](screen/屏幕快照\%202018-02-21\%2022.21.52.png)
+
+![image](screen/屏幕快照\%202018-02-21\%2022.22.19.png)
+
+![image](screen/屏幕快照\%202018-02-21\%2022.22.54.png)
+
+![image](screen/屏幕快照\%202018-02-21\%2022.23.12.png)
+
+![image](screen/屏幕快照\%202018-02-21\%2022.41.36.png)
+
+![image](screen/屏幕快照\%202018-02-21\%2022.25.11.png)
+
 ## 细节
 ### 后端
 - Spring Security(权限控制)
@@ -18,7 +31,7 @@
 - EChart(图表)
 - PJAX
 - datatables(数据表格)
-- webuploader(上传组件)
+- webuploader(百度上传组件)
 - ..
 
 ## 模块

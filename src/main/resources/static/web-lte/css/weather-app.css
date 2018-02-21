@@ -356,3 +356,6 @@ body {
     color: #878FD6;
     text-decoration: none;
 }
+.layout-body {
+    margin-bottom: 20px;
+}
