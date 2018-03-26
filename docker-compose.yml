@@ -40,7 +40,6 @@ services:
     image: redis:3.0.3
     container_name: redis
     hostname: redis
-#    restart: always
     ports:
       - 6379
     expose:

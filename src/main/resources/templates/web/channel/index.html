@@ -100,7 +100,7 @@
     <div class="container">
         <!--/*@thymesVar id="articles" type="java.util.List<in.hocg.web.modules.system.domain.Articles>"*/-->
         <!--/*@thymesVar id="article" type="in.hocg.web.modules.system.domain.Articles"*/-->
-        <div class="row" th:each="article, i:${articles}">
+        <div class="row" th:each="article, i:${articles}" style="margin-bottom: 15px">
             <h2>
                 <a th:href="@{/article/__${article.id}__}"
                    class="post-title-link"

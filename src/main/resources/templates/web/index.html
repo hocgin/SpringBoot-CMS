@@ -7,17 +7,17 @@
     <meta charset="UTF-8">
     <title>爱天气</title>
 </head>
-<body class="loading">
+<body>
 <!--登陆和注册模块-->
 <div id="pjax-web-container" layout:fragment="content">
-    <div id="loader-wrapper">
-        <div class="loader">
-            <div class="ball-clip-rotate-pulse">
-                <div></div>
-                <div></div>
-            </div>
-        </div>
-    </div>
+    <!--<div id="loader-wrapper">-->
+        <!--<div class="loader">-->
+            <!--<div class="ball-clip-rotate-pulse">-->
+                <!--<div></div>-->
+                <!--<div></div>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
     <main class="g-main">
         <div class="container">
             <div class="row">
@@ -160,7 +160,7 @@
                     lon = position.coords.longitude;
                     callback(lat.toFixed(3), lon.toFixed(3));
                 }, function (error) {
-                    callback(24.636.toFixed(3), 118.074.toFixed(3));
+                    callback(24.636, 118.074);
                     console.log('[错误日志] Error occurred. Error code: ' + error.code);
                     // error.code can be:
                     //   0: unknown error
@@ -227,7 +227,7 @@
                     lat: lat,
                     units: 'metric'
                 }, function (data) {
-                    done();
+                    // done();
                     if (data.code === 200) {
                         /**
                          * 温度

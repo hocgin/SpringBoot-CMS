@@ -1,0 +1,112 @@
+spring:
+  http:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+      resolve-lazily: true
+  #######################
+  #              _ _
+  # _ __ ___  __| (_)___
+  #| '__/ _ \/ _` | / __|
+  #| | |  __/ (_| | \__ \
+  #|_|  \___|\__,_|_|___/
+  #
+  #######################
+  redis:
+    # 数据库索引
+    database: 0
+    # Redis地址
+#    host: 127.0.0.1
+    host: redis
+    # Redis端口
+    port: 6379
+    # Redis 密码
+#    password:
+    pool:
+      # 连接池最大连接数
+      max-active: 8
+      # 连接池最大等待数
+      max-wait: -1
+      # 连接池最小空闲数
+      max-idle: 8
+      # 连接池最大空闲数
+      min-idle: 0
+    # 连接超时时间(ms)
+    timeout: 0
+  data:
+    ################################################
+    #                                       _ _
+    # _ __ ___   ___  _ __   __ _  ___   __| | |__
+    #| '_ ` _ \ / _ \| '_ \ / _` |/ _ \ / _` | '_ \
+    #| | | | | | (_) | | | | (_| | (_) | (_| | |_) |
+    #|_| |_| |_|\___/|_| |_|\__, |\___/ \__,_|_.__/
+    #                       |___/
+    ################################################
+    mongodb:
+      uri: mongodb://mall:hocgin@mongodb:27017/mall
+
+  #######################
+  #                 _ _
+  # _ __ ___   __ _(_) |
+  #| '_ ` _ \ / _` | | |
+  #| | | | | | (_| | | |
+  #|_| |_| |_|\__,_|_|_|
+  #######################
+  mail:
+    host: smtp.163.com
+    username: 13600747016@163.com
+    # 此处 password 为授权码
+    password: 123456qA
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+      mail.smtp.starttls.required: true
+      mail.debug: true
+  ##################################################
+  # _   _                          _             __
+  #| |_| |__  _   _ _ __ ___   ___| | ___  __ _ / _|
+  #| __| '_ \| | | | '_ ` _ \ / _ \ |/ _ \/ _` | |_
+  #| |_| | | | |_| | | | | | |  __/ |  __/ (_| |  _|
+  # \__|_| |_|\__, |_| |_| |_|\___|_|\___|\__,_|_|
+  #           |___/
+  ##################################################
+  thymeleaf:
+    cache: false
+    mode: LEGACYHTML5
+    prefix: classpath:/templates
+  messages:
+    basename: messages_zh_CN
+  session:
+    store-type: redis
+#  rabbitmq:
+#    host: 127.0.0.1
+#    port: 5672
+#    username: root
+#    password: root
+
+# Actuator
+endpoints:
+  actuator:
+    enabled: true
+  shutdown:
+    enabled: true
+management:
+  context-path: /admin/actuator
+  security:
+    enabled: true
+#    roles: ROLE_ACTUATOR
+
+server:
+  port: 8080
+
+
+logging:
+  level:
+    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
+
+# 自定义参数
+dev:
+  variable:
+    host: https://dev.hocg.in
+    file.upload.dir: /tmp/file-upload
+    images.dir: /tmp/images
