@@ -87,8 +87,13 @@
         }
 
         .subhead {
-            background: #878FD6;
+            background: #449FD1;
             color: white;
+        }
+        .container .row:not(:last-child){
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 20px
         }
     </style>
     <header class="jumbotron subhead" id="overview">
@@ -97,10 +102,11 @@
             <p class="lead">爱天气公告及资讯发布位置。</p>
         </div>
     </header>
-    <div class="container">
+    <div class="container"
+         style="margin-bottom: 35px">
         <!--/*@thymesVar id="articles" type="java.util.List<in.hocg.web.modules.system.domain.Articles>"*/-->
         <!--/*@thymesVar id="article" type="in.hocg.web.modules.system.domain.Articles"*/-->
-        <div class="row" th:each="article, i:${articles}" style="margin-bottom: 15px">
+        <div class="row" th:each="article, i:${articles}">
             <h2>
                 <a th:href="@{/article/__${article.id}__}"
                    class="post-title-link"

@@ -22,8 +22,8 @@ services:
     image: aashreys/mongo-auth:latest
     container_name: mongodb
     hostname: mongodb
-    volumes:
-      - ./data/db:/data/db
+#    volumes:
+#      - ./data/db:/data/db
     environment:
       - AUTH=yes
       - MONGODB_ADMIN_USER=admin

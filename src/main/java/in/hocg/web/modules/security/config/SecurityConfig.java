@@ -152,7 +152,7 @@ public class SecurityConfig {
     }
     
     
-    @Order(4)
+    @Order(3)
     @EnableGlobalMethodSecurity(prePostEnabled = true)
     public static class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
         
@@ -172,6 +172,7 @@ public class SecurityConfig {
     /**
      * 前台认证
      */
+    @Order(4)
     @EnableGlobalMethodSecurity(prePostEnabled = true)
     public class ReceptionSecurityConfig extends WebSecurityConfigurerAdapter {
         private DaoAuthenticationProvider iMemberAuthenticationProvider;
@@ -222,6 +223,7 @@ public class SecurityConfig {
                             "/api.html",
                             "/channel/*",
                             "/article/*",
+                            "/login.html",
                             "/send-reset-password",
                             "/reset-password.html",
                             "/set-new-password.html",

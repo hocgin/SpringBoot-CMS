@@ -34,7 +34,7 @@
                 </div>
                 <div class="input-group">
                     <div class="input-box">
-                        <input class="input" type="text" name="password" placeholder="请输入密码">
+                        <input class="input" type="password" name="password" placeholder="请输入密码">
                     </div>
                 </div>
                 <button type="submit" class="btn">登陆</button>
@@ -91,6 +91,7 @@
             $('#login-form').ajaxForm({
                 dataType: 'json',
                 beforeSubmit: function (arr, form, option) {
+                    console.log("登陆？");
                     form.find("button:submit").attr('disable', true);
                 },
                 success: function (data, statusText, xhr, form) {

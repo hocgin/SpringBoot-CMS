@@ -16,13 +16,10 @@
 
         .post-meta {
             margin: 3px 0 60px 0;
-            color: #999;
+            color: #fff;
             font-family: 'Lato', "PingFang SC", "Microsoft YaHei", sans-serif;
-            font-size: 12px;
         }
-        .post-meta-divider {
-            margin: 0 0.5em;
-        }
+
         .post-body img {
             box-sizing: border-box;
             margin: auto;
@@ -32,60 +29,44 @@
             max-width: 100%;
             height: auto;
         }
+
+        .subhead {
+            background: #449FD1;
+            color: white;
+        }
     </style>
 </head>
 <!--/*@thymesVar id="article" type="in.hocg.web.modules.system.domain.Articles"*/-->
 <body>
 
-<div id="pjax-web-container" class="container layout-body" layout:fragment="content"
-     style="min-height: 850px;">
-    <div class="row text-center">
-        <h2 th:text="${article.title}"></h2>
-        <div class="post-meta">
-            <span class="post-time">
-                <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-                <span class="post-meta-item-text">发表于</span>
-                <time title="创建于"
-                      th:text="${@iText.format(article.sendAt)}">
-                </time>
-            </span>
-            <span class="post-category">
-              <span class="post-meta-divider">|</span>
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-                <span class="post-meta-item-text">分类于</span>
-                <span>
-                  <a href="#">
-                    <span th:text="${article.channel.name}"></span>
-                  </a>
-                </span>
-            </span>
-            <span class="post-author">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-text">作者:</span>
-                <span th:text="${article.author}"></span>
-            </span>
+<div id="pjax-web-container"
+     layout:fragment="content">
+    <header class="jumbotron subhead" id="overview">
+        <div class="container">
+            <h1 th:text="${article.title}">标题</h1>
+            <p class="lead">
+                由 <span th:text="${article.author!='无'?article.author:'匿名'}"></span> 发表于<time title="创建于"
+                         th:text="${@iText.format(article.sendAt)}">
+                     </time>
+            </p>
         </div>
-    </div>
-    <div class="row">
-        <div class="post-body"
-             th:utext="${article.content}"></div>
-    </div>
-    <div class="row">
-        <div class="comment-holder"
-             th:attr="data-oid=${article.id}"
-             data-type="1"
-             data-avatar="/public/images/default_avatar.gif"
-        ></div>
+    </header>
+    <div class="container">
+        <div class="row" style="min-height: 500px;">
+            <div class="post-body"
+                 th:utext="${article.content}"></div>
+        </div>
+        <div class="row">
+            <div class="comment-holder"
+                 th:attr="data-oid=${article.id}"
+                 data-type="1"
+                 data-avatar="/public/images/default_avatar.gif"
+            ></div>
+        </div>
     </div>
 
     <script>
-        $(function () {
-            var comment = new Comment('.comment-holder');
-        });
+        new Comment('.comment-holder');
     </script>
 </div>
 

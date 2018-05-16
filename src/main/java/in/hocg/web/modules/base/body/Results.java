@@ -1,6 +1,7 @@
 package in.hocg.web.modules.base.body;
 
 import in.hocg.web.lang.CheckError;
+import lombok.Data;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;

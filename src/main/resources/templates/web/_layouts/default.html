@@ -70,7 +70,10 @@
             var $ = layui.jquery,
                 layim = layui.layim,
                 stompClient;
-
+            if (!!$('a.login')[0]) {
+                return;
+            }
+            
             var socket = new SockJS('/socket');
             stompClient = Stomp.over(socket);
             var token = $("meta[name='_csrf']").attr('content');
