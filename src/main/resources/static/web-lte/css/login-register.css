@@ -33,7 +33,7 @@ html {
     width: 100%;
     height: 40px;
     color: #fff;
-    background-color: #878FD6;
+    background-color: #449FD1;
     border-radius: 2px;
     outline: none;
     box-sizing: border-box;
@@ -51,7 +51,7 @@ html {
 }
 
 .prompt-box .clickable {
-    color: #878FD6;
+    color: #449FD1;
     cursor: pointer;
     text-decoration: none;
 }

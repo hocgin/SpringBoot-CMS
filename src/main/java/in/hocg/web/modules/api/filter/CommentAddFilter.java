@@ -5,6 +5,7 @@ import lombok.Data;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 /**
  * Created by hocgin on 2017/12/7.
@@ -28,6 +29,7 @@ public class CommentAddFilter {
      * 评论内容
      */
     @NotEmpty(message = "请发送3到1000字且非纯表情的评论")
+    @Pattern(regexp = "^[\\u4e00-\\u9fa5_a-zA-Z0-9]+$", message = "内容不合法")
     private String message;
     
     public Comment get() {

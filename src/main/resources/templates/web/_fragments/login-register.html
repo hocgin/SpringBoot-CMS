@@ -37,6 +37,11 @@
                         <input class="input" type="password" name="password" placeholder="请输入密码">
                     </div>
                 </div>
+                <div class="input-group" id="check" style="display: none">
+                    <div class="input-box">
+                        <input class="input" type="text" placeholder="1+2=?">
+                    </div>
+                </div>
                 <button type="submit" class="btn">登陆</button>
                 <div class="prompt-box">
                     没有账号?
@@ -87,18 +92,44 @@
                     type: 1,
                     content: $('#login') //这里content是一个URL，如果你不想让iframe出现滚动条，你还可以content: ['http://sentsin.com', 'no']
                 });
+                refreshExp();
             });
+            function refreshExp() {
+                var $input = $('#check input');
+                var a = parseInt(10 * Math.random()) + 1;
+                var b = parseInt(2 * Math.random());
+                var c = parseInt(10 * Math.random()) + 1;
+                var exp = a + '' + ['+', '-'][b] + '' + c;
+                $input.attr('placeholder', exp + '=?')
+                $input.val('');
+            }
+
+            var errorCount = 0;
             $('#login-form').ajaxForm({
                 dataType: 'json',
                 beforeSubmit: function (arr, form, option) {
+                    if (errorCount !== 0) {
+                        var $input = $('#check input');
+                        var exp = $input.attr('placeholder');
+                        if (eval(exp.split('=')[0]) != $input.val()) {
+                            layer.msg('验证码错误', {icon: 2});
+                            refreshExp();
+                            return false;
+                        }
+                    }
                     console.log("登陆？");
                     form.find("button:submit").attr('disable', true);
                 },
                 success: function (data, statusText, xhr, form) {
                     if (data.code === 200) {
+                        errorCount = 0;
+                        $('#check').hide();
                         layer.msg(data.message, {icon: 1});
                         window.location.reload();
                     } else {
+                        errorCount++;
+                        refreshExp();
+                        $('#check').show();
                         layer.msg(data.message, {icon: 2});
                     }
                     form.find("button:submit").attr('disable', false);
