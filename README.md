@@ -64,3 +64,6 @@ mvn package -Dmaven.test.skip=true
 ```bash
 docker-compose up -d
 ```
+
+## 关于数据部分
+> 请参照 `BuiltInSeeder.class`

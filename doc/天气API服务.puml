@@ -1,0 +1,67 @@
+@startuml
+
+abstract class BaseController{
++ redirect(String redirect) String
++ vRedirect(String redirect) ModelAndView
+}
+
+interface RequestCacheService {
++ currentWeather(..): Weather
++ currentWeatherUseToken(..): Weather
++ forecast(..): Forecast
++ forecastUseToken(..): Forecast
++ getLocation(..): Location
++ findWeatherRequestData(..): List<RequestCache>
+}
+interface MongoRepository
+interface RequestCacheRepositoryCustom {
++ findByParamOnToday: RequestCache
+}
+interface RequestCacheRepository extends MongoRepository,RequestCacheRepositoryCustom{
++ findTopByParamAndType(..): RequestCache
++ findAllByTypeInAndCreatedAtBetween(..): List<RequestCache>
++ findAllByTypeIn(..): List<RequestCache>
+}
+class Gson
+class MemberService {
++ findOneByToken(..): User
+}
+class HttpService {
+- restTemplate: RestTemplate
+
++ getCurrentWeather(..): ResponseEntity<String>
++ getForecastWeather(..): ResponseEntity<String>
++ getLocation(..): ResponseEntity<String>
+}
+ApiController *-- RequestCacheServiceImpl
+RequestCacheServiceImpl *-- RequestCacheRepository
+RequestCacheServiceImpl *-- Gson
+RequestCacheServiceImpl *-- HttpService
+RequestCacheServiceImpl *-- MemberService
+
+class ApiController extends BaseController {
+- requestCacheService: RequestCacheService
++ current(..): ResponseEntity<Results<Weather>>
++ forecast(..): ResponseEntity<Results<Forecast>>
+}
+class RequestCacheServiceImpl implements RequestCacheService{
+- requestCacheRepository: RequestCacheRepository;
+- memberService: MemberService;
+- httpService: HttpService;
+- gson: Gson;
+
++ currentWeather(..): Weather
++ currentWeatherUseToken(..): Weather
++ forecast(..): Forecast
++ forecastUseToken(..): Forecast
++ getLocation(..): Location
++ findWeatherRequestData(..): List<RequestCache>
+- getParam(): String
+- _insertWeather()
+- _insertForecast()
+- _insertLocation()
+- _checkToken()
+}
+
+
+@enduml

@@ -1,0 +1,9 @@
+@startuml
+:用户: as User
+
+User --> (查询天气)
+User --> (下载服务)
+User --> (资讯查询)
+User --> (文档阅读)
+
+@enduml

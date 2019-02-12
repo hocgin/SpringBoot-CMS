@@ -1,0 +1,21 @@
+@startuml
+:开发者: as Dev
+:用户: as User
+
+Dev -> (登陆)
+(登陆) <..(注册):<<extend>>
+(登陆) <..(注销):<<include>>
+User <|-- Dev
+
+User -> (查询天气)
+User -> (下载服务)
+User -> (资讯查询)
+User -> (文档阅读)
+
+Dev --> (用户信息)
+Dev -up-> (Token管理)
+Dev -left-> (天气API服务)
+Dev -down-> (私信服务)
+Dev --> (评论)
+
+@enduml

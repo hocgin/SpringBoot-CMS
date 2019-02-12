@@ -1,0 +1,30 @@
+@startuml
+:管理员: as Admin
+:开发者: as Dev
+skinparam handwritten true
+skinparam usecase {
+	BackgroundColor DarkSeaGreen
+	BorderColor DarkSlateGray
+
+	BackgroundColor<< Main >> YellowGreen
+	BorderColor<< Main >> YellowGreen
+
+	ArrowColor Olive
+	ActorBorderColor black
+	ActorFontName Courier
+
+	ActorBackgroundColor<< Human >> Gold
+}
+服务器处理 as (服务器处理) <<Main>>
+服务器转发 as (服务器转发) <<Main>>
+Admin-->(查找用户):<<include>>
+Admin-->(历史消息):<<include>>
+
+
+(查找用户)-->(服务器处理)
+(历史消息)-->(服务器处理)
+Admin-->(服务器转发): 发送消息
+(服务器转发)--> Dev: 接收消息
+Dev --> (服务器转发): 发送消息
+(服务器转发)-->Admin: 接收消息
+@enduml
